@@ -66,7 +66,7 @@
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
 
-        /* JOB CARD STYLE (DeepSeek Version) */
+        /* JOB CARD STYLE */
         .job-card {
             background: white;
             border-radius: 16px;
@@ -84,7 +84,6 @@
             border-color: #818cf8;
         }
 
-        /* Garis warna di kiri kartu */
         .job-card::before {
             content: '';
             position: absolute;
@@ -110,19 +109,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-
-        .job-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 15px;
-            color: #64748b;
-            font-size: 0.9rem;
-        }
-
-        .job-meta i {
-            color: #94a3b8;
         }
 
         /* Badges */
@@ -169,29 +155,30 @@
                 </div>
             </div>
 
+            {{-- Stats (Data Real) --}}
             <div class="row g-4">
                 <div class="col-md-3 col-6">
                     <div class="stat-card text-center h-100">
-                        <div class="stat-value">{{ $events->count() }}+</div>
+                        <div class="stat-value">{{ \App\Models\Event::count() }}+</div>
                         <div class="stat-label">Lowongan Aktif</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="stat-card text-center h-100">
-                        <div class="stat-value">500+</div>
+                        <div class="stat-value">{{ \App\Models\User::where('role', 'organizer')->count() }}+</div>
                         <div class="stat-label">Perusahaan & Org</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="stat-card text-center h-100">
-                        <div class="stat-value">1,2k</div>
+                        <div class="stat-value">{{ \App\Models\User::where('role', 'volunteer')->count() }}</div>
                         <div class="stat-label">Talent Bergabung</div>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">
                     <div class="stat-card text-center h-100">
-                        <div class="stat-value">98%</div>
-                        <div class="stat-label">Success Rate</div>
+                        <div class="stat-value">{{ \App\Models\Application::where('status', 'completed')->count() }}</div>
+                        <div class="stat-label">Lulusan Sukses</div>
                     </div>
                 </div>
             </div>
@@ -201,6 +188,7 @@
     <div class="container pb-5" id="list-lowongan">
         <div class="row">
 
+            {{-- FILTER SIDEBAR --}}
             <div class="col-lg-3 mb-4">
                 <div class="filter-card p-4 sticky-top" style="top: 100px; z-index: 10;">
                     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -210,6 +198,11 @@
                     </div>
 
                     <form action="{{ route('events.index') }}" method="GET">
+                        {{-- Hidden Input untuk menjaga Sorting saat Filter --}}
+                        @if(request('sort'))
+                            <input type="hidden" name="sort" value="{{ request('sort') }}">
+                        @endif
+
                         <div class="mb-4">
                             <label class="form-label">Kata Kunci</label>
                             <div class="input-group">
@@ -264,19 +257,28 @@
                     </form>
                 </div>
             </div>
+
+            {{-- MAIN CONTENT --}}
             <div class="col-lg-9">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="fw-bold text-dark mb-0">
-                        Menampilkan <span class="text-primary">{{ $events->count() }}</span> Lowongan
+                        Menampilkan <span class="text-primary">{{ $events->total() }}</span> Lowongan
                     </h5>
+
+                    {{-- 🔥 SORTING DROPDOWN (SUDAH DIPERBAIKI) 🔥 --}}
                     <div class="dropdown">
                         <button class="btn btn-white border dropdown-toggle rounded-pill px-3 text-muted" type="button"
                             data-bs-toggle="dropdown">
-                            Urutkan: Terbaru
+                            <i class="fa-solid fa-arrow-down-short-wide me-1"></i> Urutkan
                         </button>
                         <ul class="dropdown-menu border-0 shadow">
-                            <li><a class="dropdown-item" href="#">Paling Baru</a></li>
-                            <li><a class="dropdown-item" href="#">Gaji Tertinggi</a></li>
+                            <li><a class="dropdown-item"
+                                    href="{{ request()->fullUrlWithQuery(['sort' => 'latest']) }}">Paling Baru</a></li>
+                            <li><a class="dropdown-item"
+                                    href="{{ request()->fullUrlWithQuery(['sort' => 'salary_desc']) }}">Gaji Tertinggi</a>
+                            </li>
+                            <li><a class="dropdown-item"
+                                    href="{{ request()->fullUrlWithQuery(['sort' => 'oldest']) }}">Terlama</a></li>
                         </ul>
                     </div>
                 </div>
@@ -334,16 +336,31 @@
                                             <i class="fa-solid fa-location-dot me-1"></i> {{ $event->location }} &bull;
                                             <i class="fa-regular fa-clock me-1"></i> {{ $event->created_at->diffForHumans() }}
                                         </div>
-                                        <button class="btn btn-primary rounded-pill px-4 btn-sm">Lihat Detail</button>
+                                        <a href="{{ route('events.show', $event->id) }}"
+                                            class="btn btn-primary rounded-pill px-4 btn-sm position-relative z-2">Lihat
+                                            Detail</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 @empty
+                    {{-- 🔥 TAMPILAN KALAU KOSONG (SUDAH DIPERBAIKI) 🔥 --}}
+                    <div class="text-center py-5 bg-white rounded-4 border">
+                        <div class="mb-3">
+                            <i class="fa-solid fa-folder-open fa-4x text-muted opacity-25"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark">Yah, belum ada lowongan nih.</h5>
+                        <p class="text-muted mb-3">Coba ganti kata kunci atau filter lainnya ya.</p>
+                        <a href="{{ route('events.index') }}" class="btn btn-outline-primary rounded-pill btn-sm">
+                            Reset Filter
+                        </a>
+                    </div>
                 @endforelse
 
+                {{-- 🔥 PAGINATION LINKS (WAJIB ADA) 🔥 --}}
                 <div class="mt-4 d-flex justify-content-center">
+                    {{ $events->links('pagination::bootstrap-5') }}
                 </div>
             </div>
         </div>

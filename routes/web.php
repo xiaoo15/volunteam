@@ -2,12 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Event;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AdminController;   // Tambahan Import
-use App\Http\Controllers\ProfileController; // Tambahan Import
-use App\Http\Controllers\NotificationController; // Tambahan Import
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +15,21 @@ use App\Http\Controllers\NotificationController; // Tambahan Import
 |--------------------------------------------------------------------------
 */
 
-// 1. HALAMAN DEPAN
-Route::get('/', [EventController::class, 'index'])->name('root');
+// 1. HALAMAN DEPAN (LANDING PAGE)
+// 🔥 PERBAIKAN: Logika harus di dalam Route::get, gak boleh telanjang di luar.
+Route::get('/', function () {
+    // Ambil 3 event terbaru aja buat pajangan di Home
+    $latestEvents = Event::with('organizer')->latest()->take(3)->get();
+
+    // Hitung statistik buat pamer
+    $stats = [
+        'events' => Event::count(),
+        'volunteers' => \App\Models\User::where('role', 'volunteer')->count(),
+        'organizers' => \App\Models\User::where('role', 'organizer')->count(),
+    ];
+
+    return view('welcome', compact('latestEvents', 'stats'));
+});
 
 // 2. AUTHENTICATION (Login/Register)
 Auth::routes();
@@ -27,9 +40,9 @@ Route::get('/events', [EventController::class, 'index'])->name('events.index');
 // 4. GROUP MIDDLEWARE (Harus Login)
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/home', function () {
-        return redirect()->route('events.index');
-    })->name('home');
+    // 🔥 PERBAIKAN: Pakai HomeController biar Dashboard Statistik Organizer muncul!
+    // Kalau pakai function redirect doang, fitur dashboard yang kita capek-capek bikin gak bakal kelihatan.
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // --- CRUD EVENT (ORGANIZER) ---
     // PENTING: 'create' harus dibaca duluan sebelum '{event}'
@@ -47,6 +60,9 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/applications/{application}', [ApplicationController::class, 'updateStatus'])->name('applications.update');
     Route::get('/my-applications', [ApplicationController::class, 'history'])->name('applications.history');
     Route::get('/certificate/{application}', [ApplicationController::class, 'generateCertificate'])->name('certificate.download');
+    
+    // Chat Message Route
+    Route::post('/applications/{application}/message', [ApplicationController::class, 'sendMessage'])->name('applications.message');
 
     // -- ADMIN DASHBOARD ---
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
@@ -59,13 +75,13 @@ Route::middleware(['auth'])->group(function () {
 
     // --- NOTIFICATION READ ---
     Route::get('/notifications/{id}', function ($id) {
-        /** @var \App\Models\User $user */ // <--- TAMBAHAN AJAIB BIAR EDITOR GAK MERAH
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $notification = $user->notifications()->findOrFail($id);
-        $notification->markAsRead(); 
-        
-        return redirect($notification->data['url']); 
+        $notification->markAsRead();
+
+        return redirect($notification->data['url']);
     })->name('notifications.read');
 });
 

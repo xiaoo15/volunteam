@@ -12,7 +12,7 @@ class EventController extends Controller
     public function index(Request $request)
     {
         // Mulai query, ambil event dengan relasi organizer
-        $query = Event::with('organizer')->latest();
+        $query = Event::with('organizer'); // Jangan pakai latest() disini dulu, nanti tabrakan sama sorting
 
         // 1. Logic Filter Search (Judul / Deskripsi)
         if ($request->filled('search')) {
@@ -28,14 +28,29 @@ class EventController extends Controller
             $query->where('location', 'like', '%' . $request->location . '%');
         }
 
-        // 3. Logic Filter Tipe/Kategori (Kita cari di deskripsi karena belum ada kolom khusus)
-        // Ini trik biar filter kategori tetep jalan tanpa ubah database!
+        // 3. Logic Filter Kategori
         if ($request->filled('category')) {
-            $category = $request->category; // Misal: 'Teknologi'
+            $category = $request->category;
             $query->where('description', 'like', '%' . $category . '%');
         }
 
-        $events = $query->get();
+        // 4. 🔥 LOGIC SORTING (BARU) 🔥
+        if ($request->filled('sort')) {
+            if ($request->sort == 'salary_desc') {
+                // Sorting berdasarkan Gaji (String based, simple approach)
+                $query->orderBy('salary', 'desc');
+            } elseif ($request->sort == 'oldest') {
+                $query->orderBy('created_at', 'asc');
+            } else {
+                $query->latest(); // Default: Terbaru
+            }
+        } else {
+            $query->latest(); // Default kalau gak milih sort
+        }
+
+        // 5. 🔥 PAGINATION (Ganti get() jadi paginate()) 🔥
+        // withQueryString() penting biar pas pindah halaman, filter gak ilang!
+        $events = $query->paginate(6)->withQueryString();
 
         return view('events.index', compact('events'));
     }
@@ -46,62 +61,56 @@ class EventController extends Controller
         return view('events.create');
     }
 
-    // Simpan event ke database
     // SIMPAN EVENT BARU
     public function store(Request $request)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'category' => 'required|string', // Validasi Kategori
-        'description' => 'required',
-        'requirements' => 'required', // Validasi Syarat
-        'responsibilities' => 'required', // Validasi Tugas
-        'event_date' => 'required|date',
-        'location' => 'required|string',
-        'salary' => 'nullable|string',
-    ]);
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'category' => 'required|string',
+            'description' => 'required',
+            'requirements' => 'required',
+            'responsibilities' => 'required',
+            'event_date' => 'required|date',
+            'location' => 'required|string',
+            'salary' => 'nullable|string',
+        ]);
 
-    $imagePath = null;
-    if ($request->hasFile('image')) {
-        // Simpan ke folder: storage/app/public/events
-        $imagePath = $request->file('image')->store('events', 'public');
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('events', 'public');
+        }
+
+        Event::create([
+            'organizer_id' => Auth::id(),
+            'title' => $request->title,
+            'image' => $imagePath,
+            'category' => $request->category,
+            'description' => $request->description,
+            'requirements' => $request->requirements,
+            'responsibilities' => $request->responsibilities,
+            'event_date' => $request->event_date,
+            'location' => $request->location,
+            'salary' => $request->salary ?? 'Unpaid',
+            'status' => 'open',
+        ]);
+
+        return redirect()->route('organizer.events')->with('success', 'Event berhasil dibuat! 🔥');
     }
-
-    Event::create([
-        'organizer_id' => Auth::id(),
-        'title' => $request->title,
-        'image' => $imagePath,
-        'category' => $request->category, // Simpan Kategori
-        'description' => $request->description,
-        'requirements' => $request->requirements, // Simpan Syarat
-        'responsibilities' => $request->responsibilities, // Simpan Tugas
-        'event_date' => $request->event_date,
-        'location' => $request->location,
-        'salary' => $request->salary ?? 'Unpaid',
-        'status' => 'open',
-    ]);
-
-    return redirect()->route('organizer.events')->with('success', 'Event berhasil dibuat! 🔥');
-}
     
     // Form edit event
     public function edit(Event $event)
     {
-        // Cek kepemilikan: Kalau bukan yang bikin, tendang!
         if ($event->organizer_id !== Auth::id()) {
             abort(403, 'Eits, ini bukan event kamu!');
         }
-
         return view('events.edit', compact('event'));
     }
 
     // Update event
     public function update(Request $request, Event $event)
     {
-        if ($event->organizer_id !== Auth::id()) {
-            abort(403);
-        }
+        if ($event->organizer_id !== Auth::id()) { abort(403); }
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -110,40 +119,41 @@ class EventController extends Controller
             'event_date' => 'required|date',
             'location' => 'required|string',
             'status' => 'required|in:open,closed,canceled',
-            'salary' => 'nullable|string', // <--- Validasi update
+            'salary' => 'nullable|string',
         ]);
 
-        // Update semua data termasuk salary
         $event->update($request->all());
-
         return redirect()->route('organizer.events')->with('success', 'Event berhasil diupdate!');
     }
-
 
     // Hapus event
     public function destroy(Event $event)
     {
-        if ($event->organizer_id !== Auth::id()) {
-            abort(403);
-        }
-
+        if ($event->organizer_id !== Auth::id()) { abort(403); }
         $event->delete();
         return redirect()->route('events.index')->with('success', 'Event dihapus.');
     }
 
-    // Lihat detail event & siapa aja pelamarnya (Khusus Organizer)
+    // Lihat detail event
     public function show(Event $event)
     {
-        // Load relasi applications beserta user-nya
         $event->load('applications.user');
-        return view('events.show', compact('event'));
+        
+        // Cek status lamaran user yang login (biar view bersih)
+        $userApplication = null;
+        if(Auth::check()) {
+            $userApplication = \App\Models\Application::where('user_id', Auth::id())
+                ->where('event_id', $event->id)
+                ->first();
+        }
+
+        return view('events.show', compact('event', 'userApplication'));
     }
 
     public function myEvents()
     {
-        // Ambil event milik user yang login + hitung jumlah pelamarnya
         $events = Event::where('organizer_id', Auth::id())
-            ->withCount('applications') // Ini magic-nya Laravel (hitung otomatis)
+            ->withCount('applications')
             ->latest()
             ->get();
 

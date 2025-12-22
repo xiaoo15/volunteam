@@ -13,8 +13,8 @@ class Application extends Model
         'user_id',
         'event_id',
         'status',
-        'cv_file',      // <--- TAMBAH INI
-        'message_note'  // <--- TAMBAH INI
+        'cv_file',
+        'message_note'
     ];
 
     // --- RELATIONSHIPS ---
@@ -29,5 +29,12 @@ class Application extends Model
     public function event()
     {
         return $this->belongsTo(Event::class);
+    }
+
+    // 🔥 INI YANG HILANG! JANGAN SAMPAI HILANG LAGI YAA 🔥
+    // Relasi ke tabel pesan (chat history)
+    public function messages()
+    {
+        return $this->hasMany(ApplicationMessage::class);
     }
 }
