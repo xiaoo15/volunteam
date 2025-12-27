@@ -4,65 +4,77 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Event;
+use App\Models\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    // Cek apakah user itu admin? Kalau bukan, tendang!
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            if (Auth::user()->role !== 'admin') {
-                abort(403, 'Anda bukan Admin!');
-            }
-            return $next($request);
-        });
-    }
-
     public function index()
     {
-        // 1. STATISTIK UTAMA
-        $totalUsers = User::count();
-        $totalEvents = Event::count();
-        $totalApplications = \App\Models\Application::count();
-        $totalOrganizations = User::where('role', 'organizer')->count();
+        // 1. Ambil Statistik Utama
+        $stats = [
+            'total_users' => User::count(),
+            'volunteers' => User::where('role', 'volunteer')->count(),
+            'organizers' => User::where('role', 'organizer')->count(),
+            'total_events' => Event::count(),
+            'active_events' => Event::where('status', 'open')->count(),
+            'total_applications' => Application::count(),
+        ];
 
-        // 2. DATA TABEL
-        // Ambil 5 User terbaru (selain admin)
-        $users = User::where('role', '!=', 'admin')->latest()->take(5)->get();
-        
-        // Ambil 5 Event terbaru
-        $events = Event::with('organizer')->withCount('applications')->latest()->take(5)->get();
+        // 2. Ambil Data Terbaru untuk Tabel (Limit 5 aja biar ringkas)
+        $latestUsers = User::latest()->take(5)->get();
 
-        // 3. RECENT ACTIVITY (Simulasi Log)
-        // Kita gabungin user baru & event baru jadi satu timeline sederhana
-        $recentUsers = User::latest()->take(3)->get()->map(function($u){
-            $u->type = 'User'; $u->desc = 'User baru mendaftar: ' . $u->name; return $u;
-        });
-        $recentEvents = Event::latest()->take(3)->get()->map(function($e){
-            $e->type = 'Event'; $e->desc = 'Event baru dibuat: ' . $e->title; return $e;
-        });
-        
-        $recentActivities = $recentUsers->merge($recentEvents)->sortByDesc('created_at');
+        $latestEvents = Event::with('organizer')
+            ->withCount('applications') // Hitung pelamar per event
+            ->latest()
+            ->take(5)
+            ->get();
 
-        return view('admin.dashboard', compact(
-            'totalUsers', 'totalEvents', 'totalApplications', 'totalOrganizations',
-            'users', 'events', 'recentActivities'
-        ));
+        return view('admin.dashboard', compact('stats', 'latestUsers', 'latestEvents'));
+    }
+    public function manageUsers()
+    {
+        // Ambil user dengan pagination (10 per halaman)
+        $users = User::latest()->paginate(10);
+        return view('admin.users', compact('users'));
     }
 
-    // Fitur Hapus User (Banned)
-    public function deleteUser(User $user)
+    public function deleteUser($id)
     {
+        $user = User::findOrFail($id);
+
+        // Validasi: Admin tidak boleh menghapus dirinya sendiri
+        if ($user->id === Auth::id()) {
+            return back()->with('error', 'Anda tidak dapat menghapus akun sendiri.');
+        }
+
         $user->delete();
-        return back()->with('success', 'User berhasil dihapus dari muka bumi.');
+        return back()->with('success', 'User berhasil dihapus.');
     }
 
-    // Fitur Hapus Event (Take down)
-    public function deleteEvent(Event $event)
+    // --- MANAGE EVENTS ---
+    public function manageEvents()
     {
+        // Ambil event + data organizer + hitung pelamar
+        $events = Event::with('organizer')
+            ->withCount('applications')
+            ->latest()
+            ->paginate(10);
+
+        return view('admin.events', compact('events'));
+    }
+
+    public function deleteEvent($id)
+    {
+        $event = Event::findOrFail($id);
+
+        // Hapus gambar jika ada (opsional, best practice clean up storage)
+        if ($event->image && \Illuminate\Support\Facades\Storage::exists('public/' . $event->image)) {
+            \Illuminate\Support\Facades\Storage::delete('public/' . $event->image);
+        }
+
         $event->delete();
-        return back()->with('success', 'Event berhasil di-takedown.');
+        return back()->with('success', 'Event berhasil dihapus.');
     }
 }

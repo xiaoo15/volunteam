@@ -3,422 +3,408 @@
 @section('content')
 
     <style>
-        /* Grid Layout untuk Kartu Statistik */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 24px;
-            margin-bottom: 24px;
-        }
+        /* --- DASHBOARD GRID & CARDS --- */
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 24px;
+                margin-bottom: 32px;
+            }
 
-        /* Kartu Statistik */
-        .stat-card {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-            transition: transform 0.2s;
-        }
+            .stat-card {
+                background: white;
+                border-radius: 20px;
+                padding: 24px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Shadow lebih lembut */
+                border: 1px solid rgba(226, 232, 240, 0.8);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
+            .stat-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            }
 
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            margin-bottom: 16px;
-        }
+            /* Hiasan background tipis di kartu */
+            .stat-card::before {
+                content: '';
+                position: absolute;
+                top: -20px;
+                right: -20px;
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                background: currentColor;
+                opacity: 0.05;
+                z-index: 0;
+            }
 
-        .stat-icon.users {
-            background: #eff6ff;
-            color: #3b82f6;
-        }
+            .stat-content {
+                position: relative;
+                z-index: 1;
+            }
 
-        .stat-icon.events {
-            background: #f0fdf4;
-            color: #22c55e;
-        }
+            .stat-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 16px;
+            }
 
-        .stat-icon.applications {
-            background: #fefce8;
-            color: #eab308;
-        }
+            .stat-icon {
+                width: 54px;
+                height: 54px;
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 22px;
+            }
 
-        .stat-icon.organizations {
-            background: #fef2f2;
-            color: #ef4444;
-        }
+            /* Warna-warni Icon */
+            .icon-purple { background: #eef2ff; color: #4f46e5; }
+            .icon-green { background: #f0fdf4; color: #16a34a; }
+            .icon-yellow { background: #fefce8; color: #ca8a04; }
+            .icon-blue { background: #eff6ff; color: #2563eb; }
 
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1e293b;
-            line-height: 1;
-            margin-bottom: 8px;
-        }
+            .stat-value {
+                font-size: 32px;
+                font-weight: 800;
+                color: #1e293b;
+                line-height: 1;
+                letter-spacing: -1px;
+            }
 
-        .stat-label {
-            color: #64748b;
-            font-size: 14px;
-            font-weight: 500;
-        }
+            .stat-label {
+                color: #64748b;
+                font-size: 14px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-top: 4px;
+            }
 
-        .stat-change {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            margin-top: 12px;
-        }
+            .stat-trend {
+                font-size: 12px;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 4px 10px;
+                border-radius: 50px;
+                margin-top: 12px;
+            }
 
-        .stat-change.positive {
-            color: #22c55e;
-        }
+            .trend-up { background: #dcfce7; color: #166534; }
 
-        .stat-change.negative {
-            color: #ef4444;
-        }
+            /* --- TABLE CARDS --- */
+            .data-card {
+                background: white;
+                border-radius: 20px;
+                border: 1px solid #e2e8f0;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                overflow: hidden;
+                margin-bottom: 32px;
+            }
 
-        /* Kartu Umum (Chart/Table) */
-        .chart-card,
-        .data-table-card {
-            background: white;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            margin-bottom: 24px;
-        }
+            .data-header {
+                padding: 24px;
+                border-bottom: 1px solid #f1f5f9;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: white;
+            }
 
-        .chart-header,
-        .table-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+            .data-header h5 {
+                font-weight: 700;
+                color: #0f172a;
+                margin: 0;
+                font-size: 1.1rem;
+            }
 
-        .chart-header h3,
-        .table-header h3 {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0;
-            color: #0f172a;
-        }
+            .table-responsive {
+                margin: 0;
+            }
 
-        .chart-placeholder {
-            padding: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 300px;
-            color: #94a3b8;
-        }
+            .table {
+                width: 100%;
+                margin-bottom: 0;
+                vertical-align: middle;
+            }
 
-        /* Table Styling */
-        .table-container {
-            overflow-x: auto;
-        }
+            .table th {
+                background: #f8fafc;
+                color: #64748b;
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.5px;
+                padding: 16px 24px;
+                border-bottom: 1px solid #e2e8f0;
+                border-top: none;
+            }
 
-        .table {
-            margin-bottom: 0;
-            width: 100%;
-            white-space: nowrap;
-        }
+            .table td {
+                padding: 16px 24px;
+                border-bottom: 1px solid #f1f5f9;
+                color: #334155;
+                font-size: 0.9rem;
+            }
 
-        .table th {
-            background: #f8fafc;
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #64748b;
-            padding: 16px 24px;
-            border-bottom: 1px solid #e2e8f0;
-        }
+            .table tr:last-child td {
+                border-bottom: none;
+            }
 
-        .table td {
-            padding: 16px 24px;
-            vertical-align: middle;
-            border-bottom: 1px solid #e2e8f0;
-        }
+            .table tr:hover td {
+                background-color: #f8fafc;
+            }
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 12px;
-        }
+            /* --- COMPONENTS --- */
+            .user-avatar-sm {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #fff;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
 
-        /* Badges */
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
+            .badge-soft {
+                padding: 6px 12px;
+                border-radius: 50px;
+                font-weight: 600;
+                font-size: 0.75rem;
+            }
 
-        .status-active {
-            background: #dcfce7;
-            color: #166534;
-        }
+            .bg-soft-primary { background: #e0e7ff; color: #4338ca; }
+            .bg-soft-success { background: #dcfce7; color: #15803d; }
+            .bg-soft-warning { background: #fef9c3; color: #a16207; }
+            .bg-soft-danger { background: #fee2e2; color: #b91c1c; }
+            .bg-soft-dark { background: #f1f5f9; color: #334155; }
 
-        /* Hijau */
-        .status-inactive {
-            background: #fee2e2;
-            color: #991b1b;
-        }
+            .btn-icon {
+                width: 34px;
+                height: 34px;
+                border-radius: 10px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+                border: none;
+                background: transparent;
+            }
 
-        /* Merah */
-        .status-pending {
-            background: #fef9c3;
-            color: #854d0e;
-        }
+            .btn-icon:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
 
-        /* Kuning */
-        .status-closed {
-            background: #f1f5f9;
-            color: #475569;
-        }
+            .btn-view { background: #e0f2fe; color: #0284c7; }
+            .btn-delete { background: #fee2e2; color: #dc2626; }
 
-        /* Abu */
+            /* Activity Feed */
+            .activity-item {
+                padding: 16px 24px;
+                border-bottom: 1px solid #f1f5f9;
+                display: flex;
+                align-items: flex-start;
+                gap: 16px;
+            }
 
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
+            .activity-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: #f1f5f9;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+        </style>
 
-        .btn-action {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-            cursor: pointer;
-        }
+        <div class="container py-5">
 
-        .btn-view {
-            background: #e0f2fe;
-            color: #0ea5e9;
-        }
-
-        .btn-view:hover {
-            background: #bae6fd;
-        }
-
-        .btn-edit {
-            background: #fef9c3;
-            color: #eab308;
-        }
-
-        .btn-edit:hover {
-            background: #fde047;
-        }
-
-        .btn-delete {
-            background: #fee2e2;
-            color: #ef4444;
-        }
-
-        .btn-delete:hover {
-            background: #fecaca;
-        }
-    </style>
-
-    <div class="mb-4">
-        <h2 class="fw-bold text-dark mb-4">Dashboard Overview</h2>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon users"><i class="fa-solid fa-users"></i></div>
-                <div class="stat-value">{{ $totalUsers }}</div>
-                <div class="stat-label">Total Pengguna</div>
-                <div class="stat-change positive">
-                    <i class="fa-solid fa-arrow-up"></i> <span>Aktif</span>
+            {{-- HEADER DASHBOARD --}}
+            <div class="d-flex justify-content-between align-items-end mb-5">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-bold ls-1 mb-1" style="font-size: 0.8rem; letter-spacing: 1px;">Admin Console</h6>
+                    <h2 class="fw-bold text-dark mb-0">Dashboard Overview</h2>
+                </div>
+                <div class="d-none d-md-block">
+                    <span class="bg-white border px-3 py-2 rounded-pill text-muted small shadow-sm">
+                        <i class="far fa-calendar me-2"></i> {{ now()->translatedFormat('l, d F Y') }}
+                    </span>
                 </div>
             </div>
 
-            <div class="stat-card">
-                <div class="stat-icon events"><i class="fa-solid fa-calendar-check"></i></div>
-                <div class="stat-value">{{ $totalEvents }}</div>
-                <div class="stat-label">Total Lowongan</div>
-                <div class="stat-change positive">
-                    <i class="fa-solid fa-arrow-up"></i> <span>{{ \App\Models\Event::where('status', 'open')->count() }}
-                        Open</span>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon applications"><i class="fa-solid fa-file-pen"></i></div>
-                <div class="stat-value">{{ $totalApplications }}</div>
-                <div class="stat-label">Total Lamaran</div>
-                <div class="stat-change positive">
-                    <i class="fa-solid fa-arrow-up"></i> <span>Masuk</span>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon organizations"><i class="fa-solid fa-building"></i></div>
-                <div class="stat-value">{{ $totalOrganizations }}</div>
-                <div class="stat-label">Perusahaan</div>
-                <div class="stat-change positive">
-                    <i class="fa-solid fa-check"></i> <span>Terdaftar</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mb-4">
-            <div class="col-lg-8">
-                <div class="data-table-card">
-                    <div class="table-header">
-                        <h3>Pengguna Terbaru</h3>
+            {{-- 1. STATS GRID --}}
+            <div class="stats-grid">
+                {{-- User Stat --}}
+                <div class="stat-card" style="color: #4f46e5;">
+                    <div class="stat-content">
+                        <div class="stat-header">
+                            <div class="stat-icon icon-purple"><i class="fa-solid fa-users"></i></div>
+                            <div class="stat-trend trend-up"><i class="fa-solid fa-arrow-trend-up"></i> Aktif</div>
+                        </div>
+                        <div class="stat-value">{{ $stats['total_users'] }}</div>
+                        <div class="stat-label">Total Pengguna</div>
                     </div>
-                    <div class="table-container">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Role</th>
-                                    <th>Joined</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($users as $user)
+                </div>
+
+                {{-- Event Stat --}}
+                <div class="stat-card" style="color: #16a34a;">
+                    <div class="stat-content">
+                        <div class="stat-header">
+                            <div class="stat-icon icon-green"><i class="fa-solid fa-calendar-check"></i></div>
+                            <div class="stat-trend trend-up"><i class="fa-solid fa-check"></i> {{ $stats['active_events'] }} Open</div>
+                        </div>
+                        <div class="stat-value">{{ $stats['total_events'] }}</div>
+                        <div class="stat-label">Total Event</div>
+                    </div>
+                </div>
+
+                {{-- Application Stat --}}
+                <div class="stat-card" style="color: #ca8a04;">
+                    <div class="stat-content">
+                        <div class="stat-header">
+                            <div class="stat-icon icon-yellow"><i class="fa-solid fa-file-contract"></i></div>
+                        </div>
+                        <div class="stat-value">{{ $stats['total_applications'] }}</div>
+                        <div class="stat-label">Total Lamaran</div>
+                    </div>
+                </div>
+
+                {{-- Organizer Stat --}}
+                <div class="stat-card" style="color: #2563eb;">
+                    <div class="stat-content">
+                        <div class="stat-header">
+                            <div class="stat-icon icon-blue"><i class="fa-solid fa-building"></i></div>
+                        </div>
+                        <div class="stat-value">{{ $stats['organizers'] }}</div>
+                        <div class="stat-label">Organizer</div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- 2. MAIN CONTENT (TABLES) --}}
+            <div class="row">
+
+                {{-- KOLOM KIRI: USER TERBARU --}}
+                <div class="col-lg-8">
+                    <div class="data-card h-100">
+                        <div class="data-header">
+                            <h5><i class="fa-solid fa-user-plus me-2 text-primary"></i>Pengguna Terbaru</h5>
+                            <button class="btn btn-sm btn-light rounded-pill px-3 fw-bold text-muted small">Lihat Semua</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
                                     <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://ui-avatars.com/api/?name={{ $user->name }}&background=random&color=fff"
-                                                    class="user-avatar">
-                                                <div>
-                                                    <div class="fw-bold text-dark">{{ $user->name }}</div>
-                                                    <small class="text-muted">{{ $user->email }}</small>
+                                        <th class="ps-4">User</th>
+                                        <th>Role</th>
+                                        <th>Tanggal Join</th>
+                                        <th class="text-end pe-4">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($latestUsers as $user)
+                                        <tr>
+                                            <td class="ps-4">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=random&color=fff" 
+                                                         class="user-avatar-sm me-3">
+                                                    <div>
+                                                        <div class="fw-bold text-dark" style="font-size: 0.9rem;">{{ $user->name }}</div>
+                                                        <div class="text-muted small" style="font-size: 0.75rem;">{{ $user->email }}</div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            @if($user->role == 'admin')
-                                                <span class="badge bg-dark">Admin</span>
-                                            @elseif($user->role == 'organizer')
-                                                <span class="badge bg-primary">Organizer</span>
+                                            </td>
+                                            <td>
+                                                @if($user->role == 'admin')
+                                                    <span class="badge-soft bg-soft-dark">Admin</span>
+                                                @elseif($user->role == 'organizer')
+                                                    <span class="badge-soft bg-soft-primary">Organizer</span>
+                                                @else
+                                                    <span class="badge-soft bg-soft-success">Volunteer</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <span class="text-muted small fw-medium">{{ $user->created_at->format('d M Y') }}</span>
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                @if($user->role != 'admin') {{-- Jangan hapus admin sendiri --}}
+                                                    <form action="{{ route('admin.user.delete', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus user ini?');">
+                                                        @csrf @method('DELETE')
+                                                        <button type="submit" class="btn-icon btn-delete" title="Hapus User">
+                                                            <i class="fa-solid fa-trash-can fa-sm"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- KOLOM KANAN: EVENT TERBARU --}}
+                <div class="col-lg-4">
+                    <div class="data-card h-100">
+                        <div class="data-header">
+                            <h5><i class="fa-solid fa-clock-rotate-left me-2 text-warning"></i>Event Baru</h5>
+                        </div>
+
+                        {{-- List Event (Card Style biar muat di kolom kecil) --}}
+                        <div>
+                            @foreach($latestEvents as $event)
+                                <div class="activity-item hover-bg-light transition-all">
+                                    <div class="activity-icon bg-primary bg-opacity-10 text-primary">
+                                        <i class="fa-regular fa-calendar"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <h6 class="fw-bold text-dark mb-0 text-truncate" style="max-width: 150px;">
+                                                <a href="{{ route('events.show', $event->id) }}" target="_blank" class="text-decoration-none text-dark">
+                                                    {{ $event->title }}
+                                                </a>
+                                            </h6>
+                                            @if($event->status == 'open')
+                                                <span class="badge bg-success rounded-circle p-1" style="width: 8px; height: 8px;"></span>
                                             @else
-                                                <span class="badge bg-secondary">Volunteer</span>
+                                                <span class="badge bg-secondary rounded-circle p-1" style="width: 8px; height: 8px;"></span>
                                             @endif
-                                        </td>
-                                        <td>{{ $user->created_at->format('d M Y') }}</td>
-                                        <td>
-                                            <form action="{{ route('admin.user.delete', $user->id) }}" method="POST"
-                                                onsubmit="return confirm('Hapus user ini?');">
+                                        </div>
+                                        <p class="mb-1 text-muted small">{{ $event->organizer->name }}</p>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <span class="badge-soft bg-soft-primary px-2 py-1" style="font-size: 0.65rem;">
+                                                {{ $event->applications_count }} Pelamar
+                                            </span>
+
+                                            <form action="{{ route('admin.event.delete', $event->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus event?');">
                                                 @csrf @method('DELETE')
-                                                <button class="btn-action btn-delete" type="submit" title="Delete">
-                                                    <i class="fa-solid fa-trash"></i>
+                                                <button type="submit" class="text-danger border-0 bg-transparent p-0 small" style="font-size: 0.75rem;">
+                                                    <i class="fa-solid fa-trash me-1"></i> Hapus
                                                 </button>
                                             </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3>Aktivitas Terbaru</h3>
-                    </div>
-                    <div class="p-3">
-                        @forelse($recentActivities as $activity)
-                            <div class="d-flex align-items-center py-3 border-bottom border-light">
-                                <div class="flex-shrink-0">
-                                    <div class="rounded-circle bg-light p-2 text-center" style="width: 40px; height: 40px;">
-                                        @if($activity->type == 'User')
-                                            <i class="fa-solid fa-user-plus text-primary"></i>
-                                        @else
-                                            <i class="fa-solid fa-calendar-plus text-success"></i>
-                                        @endif
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <div class="fw-bold text-dark small">{{ Str::limit($activity->desc, 30) }}</div>
-                                    <small class="text-muted"
-                                        style="font-size: 11px;">{{ $activity->created_at->diffForHumans() }}</small>
-                                </div>
-                            </div>
-                        @empty
-                            <p class="text-center text-muted py-3">Belum ada aktivitas.</p>
-                        @endforelse
+                            @endforeach
+                        </div>
+
+                        <div class="p-3 text-center border-top">
+                            <a href="{{ route('events.index') }}" class="text-decoration-none fw-bold small text-primary">Lihat Semua Event</a>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
-        <div class="data-table-card">
-            <div class="table-header">
-                <h3>Event / Lowongan Terbaru</h3>
-            </div>
-            <div class="table-container">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Judul Event</th>
-                            <th>Organizer</th>
-                            <th>Pelamar</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($events as $event)
-                            <tr>
-                                <td>
-                                    <div class="fw-bold text-dark">{{ $event->title }}</div>
-                                    <small class="text-muted">{{ $event->location }}</small>
-                                </td>
-                                <td>{{ $event->organizer->name }}</td>
-                                <td>
-                                    <span class="badge bg-light text-dark border">{{ $event->applications_count }} org</span>
-                                </td>
-                                <td>
-                                    @if($event->status == 'open')
-                                        <span class="status-badge status-active">Open</span>
-                                    @else
-                                        <span class="status-badge status-closed">{{ ucfirst($event->status) }}</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <a href="{{ route('events.show', $event->id) }}" target="_blank"
-                                            class="btn-action btn-view">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
-                                        <form action="{{ route('admin.event.delete', $event->id) }}" method="POST"
-                                            onsubmit="return confirm('Hapus event ini?');">
-                                            @csrf @method('DELETE')
-                                            <button class="btn-action btn-delete" type="submit">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 @endsection

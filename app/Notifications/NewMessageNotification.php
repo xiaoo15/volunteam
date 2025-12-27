@@ -3,8 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class NewMessageNotification extends Notification
@@ -12,38 +10,28 @@ class NewMessageNotification extends Notification
     use Queueable;
 
     public $message;
-    public $senderName;
-    public $applicationId;
+    public $sender;
+    public $application_id;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct($message, $senderName, $applicationId)
+    public function __construct($message, $sender, $application_id)
     {
         $this->message = $message;
-        $this->senderName = $senderName;
-        $this->applicationId = $applicationId;
+        $this->sender = $sender;
+        $this->application_id = $application_id;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     */
     public function via($notifiable)
     {
-        return ['database']; // Biar masuk ke Lonceng Notifikasi (Database)
+        return ['database']; // Kita simpan di database biar bisa dilist di navbar
     }
 
-    /**
-     * Get the array representation of the notification.
-     */
     public function toArray($notifiable)
     {
         return [
-            // Pesan yang muncul di dropdown notifikasi
-            'message' => 'Pesan baru dari ' . $this->senderName,
-            'url' => route('applications.history'), // Link kalau diklik
-            'application_id' => $this->applicationId,
-            'full_message' => $this->message // Simpan pesan lengkapnya juga
+            'message' => $this->message,
+            'sender_name' => $this->sender->name,
+            'application_id' => $this->application_id,
+            'type' => 'chat'
         ];
     }
 }

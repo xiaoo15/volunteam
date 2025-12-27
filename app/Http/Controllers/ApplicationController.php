@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Application;
-use App\Models\Message; // 🔥 Pastikan bikin Model Message nanti
+use App\Models\Message; // Pastikan Model Message sudah dibuat
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Notifications\NewMessageNotification;
 
 class ApplicationController extends Controller
 {
@@ -15,17 +17,15 @@ class ApplicationController extends Controller
     {
         $user = Auth::user();
 
-        // Security: Cuma Volunteer yang boleh daftar
+        // Security Check
         if ($user->role !== 'volunteer') {
             return back()->with('error', 'Hanya akun Volunteer yang bisa mendaftar event.');
         }
 
-        // Security: Cek apakah event masih buka
         if ($event->status !== 'open') {
             return back()->with('error', 'Maaf, pendaftaran event ini sudah ditutup.');
         }
 
-        // Security: Cek double submit
         $exists = Application::where('user_id', $user->id)
             ->where('event_id', $event->id)
             ->exists();
@@ -34,25 +34,22 @@ class ApplicationController extends Controller
             return back()->with('error', 'Kamu sudah melamar di event ini!');
         }
 
-        // Validasi Input
         $request->validate([
-            'cv' => 'required|mimes:pdf|max:2048', // Max 2MB, PDF only
+            'cv' => 'required|mimes:pdf|max:2048',
             'message' => 'nullable|string|max:1000',
         ]);
 
-        // Upload CV
         $cvPath = null;
         if ($request->hasFile('cv')) {
             $cvPath = $request->file('cv')->store('cv_files', 'public');
         }
 
-        // Simpan ke Database
         Application::create([
             'user_id' => $user->id,
             'event_id' => $event->id,
             'status' => 'pending',
             'cv' => $cvPath,
-            'message' => $request->message, // Pesan awal saat melamar
+            'message' => $request->message,
         ]);
 
         return back()->with('success', 'Lamaran berhasil dikirim! Tunggu kabar selanjutnya.');
@@ -61,7 +58,6 @@ class ApplicationController extends Controller
     // 2. UPDATE STATUS (ORGANIZER)
     public function update(Request $request, Application $application)
     {
-        // Security: Pastikan yang update adalah pemilik event
         if ($application->event->organizer_id !== Auth::id()) {
             abort(403, 'Anda tidak memiliki akses.');
         }
@@ -76,10 +72,9 @@ class ApplicationController extends Controller
     }
 
     // 3. KIRIM PESAN CHAT (ORGANIZER & VOLUNTEER)
-    // Ini untuk fitur chat di dalam detail aplikasi
     public function sendMessage(Request $request, Application $application)
     {
-        // Security: Pastikan yang kirim pesan cuma Pemilik Event ATAU Si Pelamar
+        // Validasi akses (Security)
         if (Auth::id() !== $application->user_id && Auth::id() !== $application->event->organizer_id) {
             abort(403);
         }
@@ -88,13 +83,47 @@ class ApplicationController extends Controller
             'message' => 'required|string|max:500',
         ]);
 
-        // Simpan Pesan (Butuh Model Message & Relasi)
-        // Kita asumsikan kamu bikin tabel 'messages' nanti
+        // 1. Simpan Pesan ke Database
         $application->messages()->create([
             'user_id' => Auth::id(),
             'message' => $request->message,
         ]);
 
+        // 2. LOGIKA NOTIFIKASI 🔥
+        // Tentukan siapa penerimanya (Lawan bicara)
+        if (Auth::id() == $application->user_id) {
+            // Kalau yg kirim Volunteer, penerimanya Organizer
+            $recipient = $application->event->organizer;
+        } else {
+            // Kalau yg kirim Organizer, penerimanya Volunteer
+            $recipient = $application->user;
+        }
+
+        // Kirim Notifikasi
+        $recipient->notify(new NewMessageNotification(
+            $request->message,
+            Auth::user(),
+            $application->id
+        ));
+
         return back()->with('success', 'Pesan terkirim.');
+    }
+
+    // 4. RIWAYAT LAMARAN (VOLUNTEER) 🔥 INI YANG TADI HILANG 🔥
+    public function history()
+    {
+        // Cek: Cuma Volunteer yang boleh akses
+        if (Auth::user()->role !== 'volunteer') {
+            return redirect()->route('home');
+        }
+
+        // Ambil semua lamaran user ini, urutkan dari terbaru
+        // Eager load 'event' dan 'event.organizer' biar loading cepat
+        $applications = Application::with('event.organizer')
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->paginate(10);
+
+        return view('applications.history', compact('applications'));
     }
 }

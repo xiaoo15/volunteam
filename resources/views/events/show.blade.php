@@ -50,6 +50,13 @@
         .badge-soft-warning { background-color: rgba(245, 158, 11, 0.1); color: #d97706; }
         .badge-soft-danger { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; }
         .badge-soft-primary { background-color: rgba(79, 70, 229, 0.1); color: #4f46e5; }
+        
+        /* Chat Styles */
+        .message-bubble { max-width: 80%; font-size: 0.85rem; line-height: 1.4; word-wrap: break-word;}
+        .message-sent { border-radius: 12px 12px 0 12px; }
+        .message-received { border-radius: 12px 12px 12px 0; }
+        .chat-container::-webkit-scrollbar { width: 5px; }
+        .chat-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 
     <div class="header-banner mb-5">
@@ -172,7 +179,7 @@
 
                 @if(Auth::check() && Auth::id() == $event->organizer_id)
                     {{-- 🔥 SIDEBAR ORGANIZER (CONTROL CENTER) 🔥 --}}
-                    <div class="card border-0 shadow rounded-4 mb-4 bg-primary text-white position-sticky" style="top: 100px;">
+                    <div class="card border-0 shadow rounded-4 mb-4 bg-primary text-white position-sticky" style="top: 100px; z-index: 1020;">
                         <div class="card-body p-4">
                             <h5 class="fw-bold mb-1"><i class="fa-solid fa-users-gear me-2"></i>Control Center</h5>
                             <p class="opacity-75 small mb-4">Kelola pelamar untuk event ini.</p>
@@ -199,7 +206,7 @@
                                                 <div class="lh-1">
                                                     <div class="fw-bold small">
                                                         {{ $app->user->name }}
-                                                        {{-- 🔥 LINK CV DIPERBAIKI ($app->cv) 🔥 --}}
+                                                        {{-- 🔥 LINK CV 🔥 --}}
                                                         @if($app->cv)
                                                             <a href="{{ asset('storage/' . $app->cv) }}" target="_blank" class="ms-1 text-danger" title="Lihat CV">
                                                                 <i class="fa-solid fa-file-pdf"></i>
@@ -213,8 +220,17 @@
                                                 </span>
                                             </div>
 
+                                            {{-- 🔥 TOMBOL DISKUSI ORGANIZER (Baru) 🔥 --}}
+                                            <button class="btn btn-sm btn-outline-primary w-100 mb-2 position-relative" style="font-size: 11px;" 
+                                                    data-bs-toggle="modal" data-bs-target="#chatModalOrganizer{{ $app->id }}">
+                                                <i class="far fa-comments me-1"></i> Diskusi
+                                                @if($app->messages->where('user_id', '!=', Auth::id())->count() > 0)
+                                                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                                                @endif
+                                            </button>
+
                                             {{-- TOMBOL AKSI ORGANIZER --}}
-                                            <div class="d-flex gap-1 mt-2">
+                                            <div class="d-flex gap-1">
                                                 @if($app->status == 'pending')
                                                     <form action="{{ route('applications.update', $app->id) }}" method="POST" class="flex-fill">
                                                         @csrf @method('PATCH')
@@ -234,31 +250,6 @@
                                                     </form>
                                                 @endif
                                             </div>
-
-                                            {{-- CHAT BOX ORGANIZER --}}
-                                            @if($app->status == 'accepted')
-                                                <div class="mt-2 pt-2 border-top border-light">
-                                                    @if($app->messages->count() > 0)
-                                                        <div class="bg-light p-2 rounded mb-2 border" style="max-height: 100px; overflow-y: auto; font-size: 10px;">
-                                                            @foreach($app->messages as $msg)
-                                                                <div class="mb-1 {{ $msg->user_id == Auth::id() ? 'text-end' : 'text-start' }}">
-                                                                    <span class="badge {{ $msg->user_id == Auth::id() ? 'bg-primary bg-opacity-75' : 'bg-secondary bg-opacity-75' }} fw-normal text-wrap text-start">
-                                                                        {{ $msg->message }}
-                                                                    </span>
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                    @endif
-                                                    <form action="{{ route('applications.message', $app->id) }}" method="POST">
-                                                        @csrf
-                                                        <div class="input-group input-group-sm">
-                                                            {{-- 🔥 NAME INPUT MESSAGE DIPERBAIKI 🔥 --}}
-                                                            <input type="text" name="message" class="form-control form-control-sm" placeholder="Kirim info..." required style="font-size: 11px;">
-                                                            <button class="btn btn-dark btn-sm"><i class="fa-solid fa-paper-plane"></i></button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            @endif
                                         </div>
                                     @empty
                                         <div class="p-4 text-center text-muted small">Belum ada pelamar.</div>
@@ -369,6 +360,76 @@
     </div>
     @endif
 
+    {{-- 🔥 MODAL CHAT KHUSUS ORGANIZER (DITARUH DISINI BIAR RAPI) 🔥 --}}
+    @if(Auth::check() && Auth::id() == $event->organizer_id)
+        @foreach($event->applications as $app)
+            <div class="modal fade" id="chatModalOrganizer{{ $app->id }}" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+                        {{-- Header Chat Organizer --}}
+                        <div class="modal-header border-0 p-4" style="background: linear-gradient(135deg, #4f46e5, #6366f1);">
+                            <div class="d-flex align-items-center text-white">
+                                <div class="position-relative me-3">
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($app->user->name) }}&background=fff&color=4f46e5" 
+                                         class="rounded-circle border border-2 border-white shadow-sm" width="45" height="45">
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0">{{ $app->user->name }}</h6>
+                                    <small class="opacity-75">Volunteer Candidate</small>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white opacity-75" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        {{-- Body Chat --}}
+                        <div class="modal-body p-0 bg-light-subtle">
+                            <div class="chat-container p-4" style="height: 400px; overflow-y: auto; background-image: radial-gradient(#e0e7ff 1px, transparent 1px); background-size: 20px 20px;">
+                                {{-- Cover Letter Pelamar --}}
+                                @if($app->message)
+                                    <div class="d-flex justify-content-start mb-4">
+                                        <div class="message-bubble message-received bg-white text-dark border p-3 shadow-sm position-relative">
+                                            <div class="d-flex align-items-center gap-2 mb-1 border-bottom pb-1">
+                                                <i class="fas fa-quote-left small text-primary opacity-75"></i>
+                                                <span class="x-small fw-bold text-uppercase text-muted">Cover Letter</span>
+                                            </div>
+                                            <p class="mb-1 text-break small">{{ $app->message }}</p>
+                                            <div class="text-end x-small text-muted">{{ $app->created_at->format('H:i') }}</div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- Loop Messages --}}
+                                @foreach($app->messages as $msg)
+                                    <div class="mb-3 d-flex {{ $msg->user_id == Auth::id() ? 'justify-content-end' : 'justify-content-start' }}">
+                                        <div class="message-bubble {{ $msg->user_id == Auth::id() ? 'message-sent bg-primary text-white' : 'message-received bg-white text-dark border' }} p-3 shadow-sm">
+                                            <p class="mb-1 text-break small">{{ $msg->message }}</p>
+                                            <div class="{{ $msg->user_id == Auth::id() ? 'text-end text-white-50' : 'text-end text-muted' }} x-small">
+                                                {{ $msg->created_at->format('H:i') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        {{-- Footer Chat --}}
+                        <div class="modal-footer border-0 p-3 bg-white shadow-lg-top">
+                            <form action="{{ route('applications.message', $app->id) }}" method="POST" class="w-100 position-relative">
+                                @csrf
+                                <div class="input-group">
+                                    <input type="text" name="message" class="form-control bg-light border-0 ps-3 rounded-pill" placeholder="Balas pesan volunteer..." required autocomplete="off">
+                                    <button type="submit" class="btn btn-primary rounded-circle position-absolute top-50 end-0 translate-middle-y me-1 shadow-sm d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; z-index: 5;">
+                                        <i class="fas fa-paper-plane fa-xs"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    @endif
+
     {{-- 🔥 MODAL FORMULIR LAMARAN (POPUP DAFTAR) - VERSI FIXED 🔥 --}}
     @auth
     <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
@@ -429,5 +490,24 @@
             100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
         }
         .pulse-animation { animation: pulse 2s infinite; }
+        
+        /* SCROLLBAR CHAT */
+        .chat-container::-webkit-scrollbar { width: 5px; }
+        .chat-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
+    
+    <script>
+        // Auto Scroll Chat Logic for Organizer
+        document.addEventListener('DOMContentLoaded', function () {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.addEventListener('shown.bs.modal', function () {
+                    const chatContainer = this.querySelector('.chat-container');
+                    const input = this.querySelector('input[name="message"]');
+                    if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+                    if (input) input.focus();
+                });
+            });
+        });
+    </script>
 @endsection

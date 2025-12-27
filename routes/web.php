@@ -8,6 +8,7 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,7 +69,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.user.delete');
     Route::delete('/admin/events/{event}', [AdminController::class, 'deleteEvent'])->name('admin.event.delete');
+    Route::prefix('admin')->name('admin.')->group(function () {
+        // Dashboard (Sudah ada)
+        Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'index'])->name('dashboard');
 
+        // Kelola Users
+        Route::get('/users', [App\Http\Controllers\AdminController::class, 'manageUsers'])->name('users');
+        Route::delete('/users/{id}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('user.delete');
+
+        // Kelola Events
+        Route::get('/events', [App\Http\Controllers\AdminController::class, 'manageEvents'])->name('events');
+        Route::delete('/events/{id}', [App\Http\Controllers\AdminController::class, 'deleteEvent'])->name('event.delete');
+    });
     // --- PROFILE SETTINGS ---
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -96,3 +108,14 @@ Route::get('/applications/{application}/message', function () {
 Route::post('/applications/{application}/message', [App\Http\Controllers\ApplicationController::class, 'sendMessage'])
     ->name('applications.message')
     ->middleware('auth');
+
+Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.readAll');
+Route::middleware(['auth'])->group(function () {
+    // Route untuk tombol "Tandai semua dibaca"
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])
+        ->name('notifications.readAll');
+
+    // Route untuk klik satu notifikasi (opsional, jika pakai link khusus)
+    Route::get('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.read');
+});
