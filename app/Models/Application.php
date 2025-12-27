@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Application extends Model
 {
@@ -13,8 +14,8 @@ class Application extends Model
         'user_id',
         'event_id',
         'status',
-        'cv_file',
-        'message_note'
+        'cv',      // 🔥 MUST BE HERE
+        'message',  // 🔥 MUST BE HERE
     ];
 
     // --- RELATIONSHIPS ---
@@ -35,6 +36,22 @@ class Application extends Model
     // Relasi ke tabel pesan (chat history)
     public function messages()
     {
-        return $this->hasMany(ApplicationMessage::class);
+        return $this->hasMany(Message::class);
     }
+
+    public function history()
+{
+    // Cek: Cuma Volunteer yang boleh akses
+    if (Auth::user()->role !== 'volunteer') {
+        return redirect()->route('home');
+    }
+
+    // Ambil semua lamaran user ini, urutkan dari terbaru
+    $applications = Application::with('event.organizer') // Eager load biar kenceng
+        ->where('user_id', Auth::id())
+        ->latest()
+        ->paginate(10); // Pakai pagination biar gak berat
+
+    return view('applications.history', compact('applications'));
+}
 }

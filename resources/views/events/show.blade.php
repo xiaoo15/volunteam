@@ -171,7 +171,7 @@
             <div class="col-lg-4">
 
                 @if(Auth::check() && Auth::id() == $event->organizer_id)
-                    {{-- SIDEBAR ORGANIZER --}}
+                    {{-- 🔥 SIDEBAR ORGANIZER (CONTROL CENTER) 🔥 --}}
                     <div class="card border-0 shadow rounded-4 mb-4 bg-primary text-white position-sticky" style="top: 100px;">
                         <div class="card-body p-4">
                             <h5 class="fw-bold mb-1"><i class="fa-solid fa-users-gear me-2"></i>Control Center</h5>
@@ -199,9 +199,9 @@
                                                 <div class="lh-1">
                                                     <div class="fw-bold small">
                                                         {{ $app->user->name }}
-                                                        {{-- LIHAT CV --}}
-                                                        @if($app->cv_file)
-                                                            <a href="{{ asset('storage/' . $app->cv_file) }}" target="_blank" class="ms-1 text-danger" title="Lihat CV">
+                                                        {{-- 🔥 LINK CV DIPERBAIKI ($app->cv) 🔥 --}}
+                                                        @if($app->cv)
+                                                            <a href="{{ asset('storage/' . $app->cv) }}" target="_blank" class="ms-1 text-danger" title="Lihat CV">
                                                                 <i class="fa-solid fa-file-pdf"></i>
                                                             </a>
                                                         @endif
@@ -235,14 +235,14 @@
                                                 @endif
                                             </div>
 
-                                            {{-- KIRIM PESAN KE VOLUNTEER --}}
+                                            {{-- CHAT BOX ORGANIZER --}}
                                             @if($app->status == 'accepted')
                                                 <div class="mt-2 pt-2 border-top border-light">
                                                     @if($app->messages->count() > 0)
                                                         <div class="bg-light p-2 rounded mb-2 border" style="max-height: 100px; overflow-y: auto; font-size: 10px;">
                                                             @foreach($app->messages as $msg)
-                                                                <div class="mb-1 {{ $msg->is_organizer ? 'text-end' : 'text-start' }}">
-                                                                    <span class="badge {{ $msg->is_organizer ? 'bg-primary bg-opacity-75' : 'bg-secondary bg-opacity-75' }} fw-normal text-wrap text-start">
+                                                                <div class="mb-1 {{ $msg->user_id == Auth::id() ? 'text-end' : 'text-start' }}">
+                                                                    <span class="badge {{ $msg->user_id == Auth::id() ? 'bg-primary bg-opacity-75' : 'bg-secondary bg-opacity-75' }} fw-normal text-wrap text-start">
                                                                         {{ $msg->message }}
                                                                     </span>
                                                                 </div>
@@ -252,6 +252,7 @@
                                                     <form action="{{ route('applications.message', $app->id) }}" method="POST">
                                                         @csrf
                                                         <div class="input-group input-group-sm">
+                                                            {{-- 🔥 NAME INPUT MESSAGE DIPERBAIKI 🔥 --}}
                                                             <input type="text" name="message" class="form-control form-control-sm" placeholder="Kirim info..." required style="font-size: 11px;">
                                                             <button class="btn btn-dark btn-sm"><i class="fa-solid fa-paper-plane"></i></button>
                                                         </div>
@@ -368,7 +369,7 @@
     </div>
     @endif
 
-    {{-- 🔥 MODAL FORMULIR LAMARAN (POPUP DAFTAR) 🔥 --}}
+    {{-- 🔥 MODAL FORMULIR LAMARAN (POPUP DAFTAR) - VERSI FIXED 🔥 --}}
     @auth
     <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -380,30 +381,32 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 
-                {{-- Form harus punya enctype="multipart/form-data" buat upload file --}}
+                {{-- Form punya enctype multipart buat upload PDF --}}
                 <form action="{{ route('applications.store', $event->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="alert alert-light border small text-muted mb-4">
-                            Kamu akan melamar untuk posisi <strong>{{ $event->title }}</strong>. Pastikan data profilmu sudah benar.
+                            Kamu akan melamar untuk posisi <strong>{{ $event->title }}</strong>.
                         </div>
 
-                        {{-- INPUT CV / PORTOFOLIO --}}
+                        {{-- INPUT CV (WAJIB & NAMA 'cv') --}}
                         <div class="mb-4">
-                            <label class="form-label fw-bold small text-secondary">UPLOAD CV / PORTOFOLIO (OPSIONAL)</label>
+                            <label class="form-label fw-bold small text-secondary">UPLOAD CV (PDF WAJIB)</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fa-solid fa-file-pdf text-danger"></i></span>
-                                <input type="file" name="cv_file" class="form-control" accept=".pdf,.jpg,.png">
+                                {{-- 🔥 NAME="CV" WAJIB SESUAI CONTROLLER --}}
+                                <input type="file" name="cv" class="form-control" accept=".pdf" required>
                             </div>
                             <small class="text-muted" style="font-size: 11px;">
-                                *Format PDF/JPG/PNG. Max 2MB. Sangat disarankan agar peluang diterima lebih besar.
+                                *Format PDF. Max 2MB. Wajib diisi agar Organizer bisa review profilmu.
                             </small>
                         </div>
 
-                        {{-- INPUT PESAN SINGKAT (Opsional) --}}
+                        {{-- INPUT PESAN (NAMA 'message') --}}
                         <div class="mb-3">
-                            <label class="form-label fw-bold small text-secondary">PESAN SINGKAT (OPSIONAL)</label>
-                            <textarea name="message_note" class="form-control bg-light border-0" rows="3" placeholder="Contoh: Saya sangat tertarik karena..."></textarea>
+                            <label class="form-label fw-bold small text-secondary">PESAN SINGKAT</label>
+                            {{-- 🔥 NAME="MESSAGE" WAJIB SESUAI CONTROLLER --}}
+                            <textarea name="message" class="form-control bg-light border-0" rows="3" placeholder="Contoh: Saya sangat tertarik karena..."></textarea>
                         </div>
                     </div>
                     

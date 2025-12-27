@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Event;
 use App\Models\Application;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -24,27 +25,53 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable|\Illuminate\Http\RedirectResponse
      */
-    public function index()
-    {
-        $user = Auth::user();
-        
-        // 1. Logic Khusus Organizer (Tampilkan Dashboard Statistik)
-        if ($user->role == 'organizer') {
-            
-            $totalEvents = Event::where('organizer_id', $user->id)->count();
-            
-            $totalApplicants = Application::whereHas('event', function($q) use ($user) {
-                $q->where('organizer_id', $user->id);
-            })->count();
-            
-            $pendingApplicants = Application::whereHas('event', function($q) use ($user) {
-                $q->where('organizer_id', $user->id);
-            })->where('status', 'pending')->count();
-            
-            return view('home', compact('totalEvents', 'totalApplicants', 'pendingApplicants'));
-        }
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    // app/Http/Controllers/HomeController.php
 
-        // 2. Logic Khusus Volunteer (Langsung arahkan ke halaman Lowongan)
-        return redirect()->route('events.index');
+public function index()
+{
+    $user = Auth::user();
+
+    if ($user->role == 'organizer') {
+        
+        // 1. Total Events
+        $totalEvents = Event::where('organizer_id', $user->id)->count();
+        
+        // 2. Base Query for Applications
+        $applications = Application::whereHas('event', function($q) use ($user) {
+            $q->where('organizer_id', $user->id);
+        });
+
+        // 3. Application Stats
+        $totalApplicants = (clone $applications)->count();
+        $pendingApplicants = (clone $applications)->where('status', 'pending')->count();
+        
+        // 🔥 THESE TWO WERE MISSING IN COMPACT
+        $acceptedApplicants = (clone $applications)->where('status', 'accepted')->count(); 
+        $rejectedApplicants = (clone $applications)->where('status', 'rejected')->count(); 
+
+        // 4. Recent Events
+        $recentEvents = Event::where('organizer_id', $user->id)
+            ->withCount('applications')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // 🔥 ADD THEM HERE IN COMPACT()
+        return view('home', compact(
+            'totalEvents', 
+            'totalApplicants', 
+            'pendingApplicants', 
+            'acceptedApplicants', // <--- Add this
+            'rejectedApplicants', // <--- Add this
+            'recentEvents'
+        ));
     }
+    // Logic untuk Volunteer...
+    return redirect()->route('events.index');
+}
 }

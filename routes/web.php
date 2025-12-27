@@ -60,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/applications/{application}', [ApplicationController::class, 'updateStatus'])->name('applications.update');
     Route::get('/my-applications', [ApplicationController::class, 'history'])->name('applications.history');
     Route::get('/certificate/{application}', [ApplicationController::class, 'generateCertificate'])->name('certificate.download');
-    
+
     // Chat Message Route
     Route::post('/applications/{application}/message', [ApplicationController::class, 'sendMessage'])->name('applications.message');
 
@@ -86,5 +86,13 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // 5. PUBLIC DETAIL EVENT (WILDCARD)
-// Taruh PALING BAWAH biar gak "makan" route lain (kayak /create atau /edit)
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+
+Route::get('/applications/{application}/message', function () {
+    return back()->with('warning', 'Eits, jangan refresh halaman saat kirim pesan ya!');
+});
+// Pesan udah dikirim di belakang kok :) Silakan lanjutkan chatting.
+
+Route::post('/applications/{application}/message', [App\Http\Controllers\ApplicationController::class, 'sendMessage'])
+    ->name('applications.message')
+    ->middleware('auth');
