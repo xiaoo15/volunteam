@@ -2,568 +2,294 @@
 
 @section('content')
 
-    {{-- 1. MODERN HERO SECTION --}}
-    <section class="position-relative overflow-hidden" style="
-        background: linear-gradient(135deg, 
-            rgba(79, 70, 229, 1) 0%, 
-            rgba(99, 102, 241, 1) 50%, 
-            rgba(129, 140, 248, 1) 100%);
-        padding-top: 6rem;
-        padding-bottom: 6rem;
-    ">
-        {{-- Background Particles --}}
-        <div class="position-absolute top-0 start-0 w-100 h-100 overflow-hidden">
-            <div class="position-absolute top-0 start-0 w-100 h-100" style="
-                background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwMCAxMDAwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InJnYmEoMjU1LCAyNTUsIDI1NSwgMC4wNCkiPjwvcmVjdD48L3N2Zz4=');
-                opacity: 0.3;
-            "></div>
-
-            {{-- Floating Elements --}}
-            <div class="position-absolute"
-                style="top: 20%; left: 10%; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; animation: float 20s infinite linear;">
-            </div>
-            <div class="position-absolute"
-                style="top: 60%; right: 15%; width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 50%; animation: float 25s infinite linear reverse;">
-            </div>
-            <div class="position-absolute"
-                style="top: 40%; left: 20%; width: 30px; height: 30px; background: rgba(255,255,255,0.08); border-radius: 50%; animation: float 15s infinite linear;">
-            </div>
-        </div>
-
-        <div class="container position-relative z-2">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-5 mb-lg-0">
-                    <div class="mb-4">
-                        <span
-                            class="badge bg-white bg-opacity-25 border border-white border-opacity-25 rounded-pill px-4 py-2 mb-3 fw-bold d-inline-flex align-items-center">
-                            <i class="fa-solid fa-bolt me-2"></i> Platform Pengembangan Karir #1
-                        </span>
-                        <h1 class="display-4 fw-bold text-white mb-4"
-                            style="line-height: 1.2; text-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                            Bangun <span class="text-warning">Pengalaman</span> yang Bermakna
-                        </h1>
-                        <p class="lead text-white mb-5 opacity-75" style="font-size: 1.25rem;">
-                            Temukan kesempatan magang, volunteer, dan proyek kolaborasi untuk mengasah skill dan memperluas
-                            jaringan profesionalmu.
-                        </p>
-
-                        <div class="d-flex flex-wrap gap-3 mb-5">
-                            <a href="{{ route('events.index') }}"
-                                class="btn btn-light btn-lg rounded-pill px-5 fw-bold shadow-lg hover-lift">
-                                <i class="fa-solid fa-magnifying-glass me-2"></i> Jelajahi Lowongan
-                            </a>
-                            @guest
-                                <a href="{{ route('register') }}"
-                                    class="btn btn-outline-light btn-lg rounded-pill px-5 fw-bold border-2 hover-lift">
-                                    <i class="fa-solid fa-user-plus me-2"></i> Gabung Gratis
-                                </a>
-                            @endguest
-                        </div>
-
-                        <div class="d-flex align-items-center text-white">
-                            <div class="d-flex align-items-center me-4">
-                                <div class="rounded-circle bg-white bg-opacity-25 p-2 me-2">
-                                    <i class="fa-solid fa-check fa-sm"></i>
-                                </div>
-                                <small>100% Gratis</small>
-                            </div>
-                            <div class="d-flex align-items-center me-4">
-                                <div class="rounded-circle bg-white bg-opacity-25 p-2 me-2">
-                                    <i class="fa-solid fa-check fa-sm"></i>
-                                </div>
-                                <small>Sertifikat Resmi</small>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <div class="rounded-circle bg-white bg-opacity-25 p-2 me-2">
-                                    <i class="fa-solid fa-check fa-sm"></i>
-                                </div>
-                                <small>Jaringan Profesional</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-6">
-                    <div class="position-relative">
-                        <div class="position-absolute top-50 start-50 translate-middle"
-                            style="width: 500px; height: 500px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%); border-radius: 50%;">
-                        </div>
-
-                        <div class="position-relative">
-                            {{-- Hero Illustration --}}
-                            <div class="bg-white bg-opacity-10 border border-white border-opacity-20 rounded-4 p-4 shadow-lg"
-                                style="backdrop-filter: blur(10px);">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <div class="bg-white rounded-3 p-3 shadow-sm">
-                                            <div class="d-flex align-items-center mb-2">
-                                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
-                                                    <i class="fa-solid fa-calendar-check text-primary"></i>
-                                                </div>
-                                                <span class="fw-bold">Event Aktif</span>
-                                            </div>
-                                            <h4 class="fw-bold text-dark mb-0">{{ $stats['events'] }}+</h4>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="bg-white rounded-3 p-3 shadow-sm">
-                                            <div class="d-flex align-items-center mb-2">
-                                                <div class="bg-success bg-opacity-10 rounded-circle p-2 me-2">
-                                                    <i class="fa-solid fa-users text-success"></i>
-                                                </div>
-                                                <span class="fw-bold">Volunteer</span>
-                                            </div>
-                                            <h4 class="fw-bold text-dark mb-0">{{ $stats['volunteers'] }}+</h4>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="bg-white rounded-3 p-4 shadow-sm">
-                                            <div class="d-flex align-items-start">
-                                                <div class="flex-shrink-0">
-                                                    <img src="https://ui-avatars.com/api/?name=User+Test&background=4f46e5&color=fff&size=50"
-                                                        class="rounded-circle" alt="User">
-                                                </div>
-                                                <div class="flex-grow-1 ms-3">
-                                                    <p class="mb-1 fw-bold">"Bergabung di VolunTeam membuka banyak
-                                                        kesempatan untuk berkembang!"</p>
-                                                    <small class="text-muted">— Sarah, Mahasiswa Teknik</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Wave Divider --}}
-        <div class="position-absolute bottom-0 start-0 w-100" style="overflow: hidden;">
-            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" style="fill: #ffffff; width: 100%; height: 70px;">
-                <path
-                    d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z">
-                </path>
-            </svg>
-        </div>
-    </section>
-
-    {{-- 2. ENHANCED STATISTICS SECTION --}}
-    <section class="py-5 bg-white">
-        <div class="container">
-            <div class="row g-4">
-                @php
-                    $statsItems = [
-                        ['count' => $stats['events'], 'label' => 'Lowongan Aktif', 'icon' => 'calendar-check', 'color' => 'primary'],
-                        ['count' => $stats['volunteers'], 'label' => 'Talent Bergabung', 'icon' => 'users', 'color' => 'success'],
-                        ['count' => $stats['organizers'], 'label' => 'Mitra Organizer', 'icon' => 'building', 'color' => 'warning'],
-                        ['count' => '100%', 'label' => 'Gratis Selamanya', 'icon' => 'gem', 'color' => 'info']
-                    ];
-                @endphp
-
-                @foreach($statsItems as $item)
-                    <div class="col-md-3 col-6">
-                        <div class="text-center p-4 hover-scale" style="transition: transform 0.3s ease;">
-                            <div class="icon-wrapper mx-auto mb-3">
-                                <div class="rounded-circle bg-{{ $item['color'] }} bg-opacity-10 p-3 d-inline-flex align-items-center justify-content-center"
-                                    style="width: 80px; height: 80px;">
-                                    <i class="fa-solid fa-{{ $item['icon'] }} fa-2x text-{{ $item['color'] }}"></i>
-                                </div>
-                            </div>
-                            <h3 class="fw-bold text-dark mb-2 display-6">{{ $item['count'] }}</h3>
-                            <p class="text-muted mb-0 fw-medium">{{ $item['label'] }}</p>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-
-    {{-- 3. PREMIUM FEATURES SECTION --}}
-    <section class="py-6 bg-light position-relative">
-        <div class="container position-relative z-1">
-            <div class="text-center mb-6">
-                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 mb-3 fw-bold">
-                    <i class="fa-solid fa-star me-1"></i> KEUNGGULAN KAMI
-                </span>
-                <h2 class="fw-bold text-dark mb-3 display-5">Mengapa Memilih VolunTeam?</h2>
-                <p class="text-muted lead mx-auto" style="max-width: 700px;">Platform yang dirancang khusus untuk membantu
-                    generasi muda membangun karir yang gemilang.</p>
-            </div>
-
-            <div class="row g-4">
-                @php
-                    $features = [
-                        [
-                            'icon' => 'certificate',
-                            'title' => 'Sertifikat Digital Terverifikasi',
-                            'desc' => 'Dapatkan sertifikat resmi dengan sistem verifikasi yang bisa diverifikasi oleh perusahaan.',
-                            'color' => 'primary',
-                            'points' => ['Valid secara nasional', 'Bisa di-share ke LinkedIn', 'Kode verifikasi unik']
-                        ],
-                        [
-                            'icon' => 'users',
-                            'title' => 'Jejaring Profesional',
-                            'desc' => 'Bangun jaringan dengan mentor, rekan, dan profesional di berbagai bidang industri.',
-                            'color' => 'success',
-                            'points' => ['Komunitas eksklusif', 'Networking events', 'Mentor berpengalaman']
-                        ],
-                        [
-                            'icon' => 'briefcase',
-                            'title' => 'Persiapan Karir Lengkap',
-                            'desc' => 'Dapatkan pengalaman nyata yang dicari perusahaan dan tingkatkan portofoliomu.',
-                            'color' => 'warning',
-                            'points' => ['Skill-based learning', 'Portofolio digital', 'Career guidance']
-                        ],
-                        [
-                            'icon' => 'bolt',
-                            'title' => 'Fleksibel & Terjangkau',
-                            'desc' => 'Ikuti program sesuai jadwalmu tanpa biaya pendaftaran atau biaya tersembunyi.',
-                            'color' => 'info',
-                            'points' => ['Waktu fleksibel', '100% gratis', 'Akses seumur hidup']
-                        ],
-                        [
-                            'icon' => 'chart-line',
-                            'title' => 'Tracking Progress',
-                            'desc' => 'Pantau perkembangan skill dan pencapaianmu dengan dashboard yang interaktif.',
-                            'color' => 'danger',
-                            'points' => ['Progress tracker', 'Skill assessment', 'Achievement badges']
-                        ],
-                        [
-                            'icon' => 'handshake',
-                            'title' => 'Partner Terpercaya',
-                            'desc' => 'Berkolaborasi dengan organisasi dan perusahaan terkemuka di Indonesia.',
-                            'color' => 'purple',
-                            'points' => ['Perusahaan ternama', 'Organisasi nirlaba', 'Startup inovatif']
-                        ]
-                    ];
-                @endphp
-
-                @foreach($features as $feature)
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden hover-lift feature-card">
-                            <div class="card-body p-4">
-                                <div class="d-flex align-items-start mb-3">
-                                    <div class="flex-shrink-0">
-                                        <div class="rounded-3 bg-{{ $feature['color'] }} bg-opacity-10 p-3">
-                                            <i
-                                                class="fa-solid fa-{{ $feature['icon'] }} fa-xl text-{{ $feature['color'] }}"></i>
-                                        </div>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <h5 class="fw-bold text-dark mb-1">{{ $feature['title'] }}</h5>
-                                        <p class="text-muted small mb-0">{{ $feature['desc'] }}</p>
-                                    </div>
-                                </div>
-
-                                <ul class="list-unstyled mb-0">
-                                    @foreach($feature['points'] as $point)
-                                        <li class="d-flex align-items-center mb-2">
-                                            <i class="fa-solid fa-check-circle text-{{ $feature['color'] }} me-2 fa-sm"></i>
-                                            <small class="text-muted">{{ $point }}</small>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                            <div class="card-footer bg-transparent border-0 pt-0">
-                                <div class="progress" style="height: 4px;">
-                                    <div class="progress-bar bg-{{ $feature['color'] }}" style="width: {{ rand(80, 100) }}%">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-
-    {{-- 4. PREMIUM EVENT CARDS SECTION --}}
-    <section class="py-6 bg-white">
-        <div class="container">
-            <div class="row align-items-end mb-5">
-                <div class="col-md-8">
-                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 mb-2 fw-bold">
-                        <i class="fa-solid fa-fire me-1"></i> LOWONGAN POPULER
-                    </span>
-                    <h2 class="fw-bold text-dark mb-2 display-5">Kesempatan Terbaru</h2>
-                    <p class="text-muted mb-0">Temukan lowongan yang sesuai dengan passion dan kemampuanmu</p>
-                </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="{{ route('events.index') }}"
-                        class="btn btn-outline-primary btn-lg rounded-pill px-4 fw-bold d-inline-flex align-items-center">
-                        Lihat Semua
-                        <i class="fa-solid fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                @foreach($latestEvents as $event)
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-lg rounded-4 overflow-hidden h-100 event-card">
-                            <div class="position-relative">
-                                @if($event->image)
-                                    <img src="{{ asset('storage/' . $event->image) }}" class="card-img-top object-fit-cover"
-                                        style="height: 220px;" alt="{{ $event->title }}">
-                                @else
-                                    <div class="bg-gradient-primary d-flex align-items-center justify-content-center text-white"
-                                        style="height: 220px; background: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);">
-                                        <div class="text-center p-4">
-                                            <i class="fa-solid fa-calendar-star fa-3x mb-3"></i>
-                                            <h6 class="fw-bold mb-0">{{ $event->category }}</h6>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                <div class="position-absolute top-0 end-0 m-3">
-                                    <span class="badge bg-white text-dark shadow-sm px-3 py-2 rounded-pill">
-                                        <i class="fa-solid fa-clock me-1"></i>
-                                        {{ $event->created_at->diffForHumans() }}
-                                    </span>
-                                </div>
-
-                                <div class="position-absolute top-0 start-0 m-3">
-                                    <span class="badge bg-dark bg-opacity-75 text-white px-3 py-2 rounded-pill">
-                                        {{ $event->category }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="card-body p-4">
-                                <div class="mb-3">
-                                    <h5 class="card-title fw-bold text-dark mb-2" style="line-height: 1.4;">
-                                        {{ Str::limit($event->title, 50) }}
-                                    </h5>
-                                    <div class="d-flex align-items-center text-muted mb-3">
-                                        <i class="fa-solid fa-building me-2 fa-sm"></i>
-                                        <small class="fw-medium">{{ $event->organizer->name }}</small>
-                                    </div>
-                                </div>
-
-                                <div class="row g-2 mb-4">
-                                    <div class="col-6">
-                                        <div class="d-flex align-items-center text-muted">
-                                            <div class="rounded-circle bg-light p-2 me-2">
-                                                <i class="fa-solid fa-location-dot fa-xs"></i>
-                                            </div>
-                                            <small>{{ $event->location }}</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="d-flex align-items-center text-muted">
-                                            <div class="rounded-circle bg-light p-2 me-2">
-                                                <i class="fa-solid fa-calendar fa-xs"></i>
-                                            </div>
-                                            <small>{{ $event->event_date->format('d M') }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
-                                            <i class="fa-solid fa-users me-1"></i>
-                                            {{ $event->applications_count ?? 0 }} Pendaftar
-                                        </span>
-                                    </div>
-                                    <a href="{{ route('events.show', $event->id) }}"
-                                        class="btn btn-primary rounded-pill px-4 fw-bold">
-                                        Detail
-                                        <i class="fa-solid fa-arrow-right ms-2"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-
-    {{-- 5. PREMIUM CTA SECTION --}}
-    <section class="py-6 position-relative overflow-hidden"
-        style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%);">
-        <div class="position-absolute top-0 start-0 w-100 h-100 overflow-hidden">
-            <div class="position-absolute" style="
-                top: -100px; right: -100px; 
-                width: 300px; height: 300px;
-                background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%);
-                border-radius: 50%;
-            "></div>
-            <div class="position-absolute" style="
-                bottom: -150px; left: -150px; 
-                width: 400px; height: 400px;
-                background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 70%);
-                border-radius: 50%;
-            "></div>
-        </div>
-
-        <div class="container position-relative z-2">
-            <div class="row justify-content-center text-center">
-                <div class="col-lg-8">
-                    <div class="bg-white bg-opacity-10 border border-white border-opacity-10 rounded-4 p-5 shadow-lg"
-                        style="backdrop-filter: blur(10px);">
-                        <span class="badge bg-white bg-opacity-25 text-white rounded-pill px-3 py-2 mb-4 fw-bold">
-                            <i class="fa-solid fa-gem me-2"></i> LIMITED SPOTS AVAILABLE
-                        </span>
-
-                        <h2 class="text-white fw-bold display-5 mb-4">Mulai Perjalanan Karirmu Hari Ini!</h2>
-
-                        <p class="text-white-50 lead mb-5" style="font-size: 1.25rem;">
-                            Bergabung dengan <span class="fw-bold text-warning">ribuan talenta muda</span> yang sudah meraih
-                            pengalaman berharga dan sertifikat profesional.
-                        </p>
-
-                        <div class="row g-4 justify-content-center">
-                            <div class="col-md-6">
-                                <div class="bg-white rounded-4 p-4 shadow">
-                                    <h4 class="fw-bold text-dark mb-3">Untuk Talent</h4>
-                                    <ul class="list-unstyled mb-4">
-                                        <li class="d-flex align-items-center mb-2">
-                                            <i class="fa-solid fa-check-circle text-success me-2"></i>
-                                            <span class="text-muted">Akses ke semua event</span>
-                                        </li>
-                                        <li class="d-flex align-items-center mb-2">
-                                            <i class="fa-solid fa-check-circle text-success me-2"></i>
-                                            <span class="text-muted">Sertifikat digital</span>
-                                        </li>
-                                        <li class="d-flex align-items-center">
-                                            <i class="fa-solid fa-check-circle text-success me-2"></i>
-                                            <span class="text-muted">Networking eksklusif</span>
-                                        </li>
-                                    </ul>
-                                    <a href="{{ route('register') }}"
-                                        class="btn btn-primary w-100 rounded-pill fw-bold py-3">
-                                        Daftar sebagai Talent
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="bg-white rounded-4 p-4 shadow">
-                                    <h4 class="fw-bold text-dark mb-3">Untuk Organizer</h4>
-                                    <ul class="list-unstyled mb-4">
-                                        <li class="d-flex align-items-center mb-2">
-                                            <i class="fa-solid fa-check-circle text-success me-2"></i>
-                                            <span class="text-muted">Publikasi event</span>
-                                        </li>
-                                        <li class="d-flex align-items-center mb-2">
-                                            <i class="fa-solid fa-check-circle text-success me-2"></i>
-                                            <span class="text-muted">Manajemen peserta</span>
-                                        </li>
-                                        <li class="d-flex align-items-center">
-                                            <i class="fa-solid fa-check-circle text-success me-2"></i>
-                                            <span class="text-muted">Sistem sertifikat otomatis</span>
-                                        </li>
-                                    </ul>
-                                    <a href="{{ route('register') }}?type=organizer"
-                                        class="btn btn-outline-primary w-100 rounded-pill fw-bold py-3">
-                                        Daftar sebagai Organizer
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <p class="text-white-50 small mt-5 mb-0">
-                            <i class="fa-solid fa-lock me-1"></i> Data Anda aman dengan kami • Tidak ada biaya pendaftaran
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <style>
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0) rotate(0deg);
-            }
-
-            50% {
-                transform: translateY(-20px) rotate(180deg);
-            }
+        /* HERO SECTION */
+        .hero-wrapper {
+            background: linear-gradient(120deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #1e293b, #334155);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-blob {
+            position: absolute;
+            width: 600px; height: 600px;
+            background: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
+            opacity: 0.1;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
         }
 
-        .hover-lift {
-            transition: all 0.3s ease;
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        .hover-scale {
+        /* IMPACT CARDS */
+        .impact-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
             transition: transform 0.3s ease;
         }
-
-        .hover-scale:hover {
-            transform: scale(1.05);
+        .impact-card:hover { transform: translateY(-10px); border-color: #cbd5e1; }
+        .impact-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #4f46e5;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        .feature-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* TESTIMONIAL */
+        .testi-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
         }
-
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.15) !important;
-        }
-
-        .event-card {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .event-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
-        }
-
-        .event-card:hover .card-title {
-            color: #4f46e5 !important;
-        }
-
-        .bg-gradient-primary {
-            background: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
-        }
-
-        .text-purple {
-            color: #8b5cf6 !important;
-        }
-
-        .text-purple {
-            color: #8b5cf6 !important;
-        }
-
-        .bg-purple {
-            background-color: #8b5cf6 !important;
-        }
-
-        /* Ganti class aneh tadi jadi ini: */
-        .bg-purple.bg-opacity-10 {
-            background-color: rgba(139, 92, 246, 0.1) !important;
-        }
-
-        .bg-purple-bg-opacity-10 {
-            background-color: rgba(139, 92, 246, 0.1) !important;
-        }
-
-        .py-6 {
-            padding-top: 5rem !important;
-            padding-bottom: 5rem !important;
-        }
-
-        .progress-bar {
-            transition: width 1.5s ease-in-out;
-        }
-
-        .feature-card:hover .progress-bar {
-            width: 100% !important;
+        .quote-icon {
+            position: absolute; top: 20px; left: 20px;
+            font-size: 3rem; color: #e2e8f0;
         }
     </style>
 
+    {{-- HERO SECTION --}}
+    <div class="hero-wrapper">
+        <div class="hero-blob" style="top: -200px; right: -100px;"></div>
+        <div class="hero-blob" style="bottom: -200px; left: -100px; background: #fbbf24; opacity: 0.15;"></div>
+
+        <div class="container position-relative" style="z-index: 2;">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <span class="badge bg-white text-primary border px-3 py-2 rounded-pill shadow-sm mb-4 fw-bold">
+                        👋 Halo, Generasi Perubahan!
+                    </span>
+                    <h1 class="hero-title mb-4">
+                        Kebaikan Kecil,<br>
+                        <span class="text-primary" style="-webkit-text-fill-color: #4f46e5;">Dampak Besar.</span>
+                    </h1>
+                    <p class="lead text-secondary mb-5" style="line-height: 1.8;">
+                        VolunTeam bukan sekadar platform cari kegiatan. Ini adalah ekosistem bagi kamu yang ingin 
+                        mengubah dunia, satu aksi dalam satu waktu. Temukan misimu sekarang.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="{{ route('events.index') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg">
+                            <i class="fa-solid fa-rocket me-2"></i> Mulai Aksi
+                        </a>
+                        <a href="#impact" class="btn btn-white border btn-lg rounded-pill px-5 py-3 fw-bold text-dark hover-bg-light">
+                            Pelajari Dampak
+                        </a>
+                    </div>
+
+                    {{-- Trusted By --}}
+                    <div class="mt-5 pt-4 border-top border-secondary-subtle">
+                        <small class="text-uppercase fw-bold text-muted mb-3 d-block" style="font-size: 0.7rem; letter-spacing: 2px;">Dipercaya Oleh Komunitas:</small>
+                        <div class="d-flex gap-4 opacity-50 grayscale-hover">
+                            <i class="fa-brands fa-google fa-2x"></i>
+                            <i class="fa-brands fa-aws fa-2x"></i>
+                            <i class="fa-brands fa-spotify fa-2x"></i>
+                            <i class="fa-brands fa-microsoft fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Hero Image / Illustration --}}
+                <div class="col-lg-6 text-center">
+                    <div class="position-relative d-inline-block">
+                        <div class="position-absolute top-50 start-50 translate-middle bg-primary rounded-circle" 
+                             style="width: 400px; height: 400px; opacity: 0.1; filter: blur(40px);"></div>
+
+                        {{-- Ganti image ini dengan ilustrasi 3D kalau ada, kalau gak pake Icon FontAwesome aja --}}
+                        <i class="fa-solid fa-earth-americas text-primary" 
+                           style="font-size: 20rem; transform: rotate(-15deg); filter: drop-shadow(0 20px 50px rgba(79, 70, 229, 0.4));"></i>
+
+                        {{-- Floating Card 1 --}}
+                        <div class="card position-absolute top-0 start-0 border-0 shadow-lg p-3 rounded-4 floating-anim" style="width: 180px;">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-green-100 text-green-600 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: #dcfce7;">
+                                    <i class="fa-solid fa-tree text-success"></i>
+                                </div>
+                                <div class="text-start">
+                                    <div class="fw-bold small">1.2k Pohon</div>
+                                    <div class="x-small text-muted">Ditanam</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Floating Card 2 --}}
+                        <div class="card position-absolute bottom-0 end-0 border-0 shadow-lg p-3 rounded-4 floating-anim-delayed" style="width: 200px;">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-blue-100 text-blue-600 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: #dbeafe;">
+                                    <i class="fa-solid fa-graduation-cap text-primary"></i>
+                                </div>
+                                <div class="text-start">
+                                    <div class="fw-bold small">500+ Anak</div>
+                                    <div class="x-small text-muted">Terbantu Sekolah</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- IMPACT SECTION --}}
+    <div class="py-5 bg-white" id="impact">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h6 class="text-primary fw-bold text-uppercase letter-spacing-2">Impact Meter</h6>
+                <h2 class="fw-bold display-6">Jejak Kebaikan Kita Bersama</h2>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="impact-card text-center">
+                        <div class="mb-3">
+                            <i class="fa-solid fa-hand-holding-heart fa-3x text-danger opacity-75"></i>
+                        </div>
+                        <div class="impact-number counter" data-target="{{ \App\Models\Event::count() + 150 }}">0</div>
+                        <h5 class="fw-bold text-dark">Misi Terlaksana</h5>
+                        <p class="text-muted small px-4">Program sosial yang telah berhasil dijalankan di seluruh Indonesia.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="impact-card text-center">
+                        <div class="mb-3">
+                            <i class="fa-solid fa-users fa-3x text-primary opacity-75"></i>
+                        </div>
+                        <div class="impact-number counter" data-target="{{ \App\Models\User::count() + 1200 }}">0</div>
+                        <h5 class="fw-bold text-dark">Relawan Bergabung</h5>
+                        <p class="text-muted small px-4">Anak muda yang memilih untuk peduli dan turun tangan langsung.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="impact-card text-center">
+                        <div class="mb-3">
+                            <i class="fa-solid fa-clock fa-3x text-warning opacity-75"></i>
+                        </div>
+                        <div class="impact-number counter" data-target="8500">0</div>
+                        <h5 class="fw-bold text-dark">Jam Kontribusi</h5>
+                        <p class="text-muted small px-4">Total waktu yang didonasikan untuk kegiatan sosial dan kemanusiaan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- TESTIMONIAL SECTION --}}
+    <div class="py-5 bg-light position-relative">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-5 mb-5 mb-lg-0">
+                    <h2 class="fw-bold display-6 mb-4">Kata Mereka Tentang <span class="text-primary">VolunTeam</span></h2>
+                    <p class="text-muted mb-4 lead">
+                        "Platform ini mengubah cara saya melihat dunia. Dari sekadar mengisi waktu luang, menjadi sebuah panggilan hati."
+                    </p>
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="https://ui-avatars.com/api/?name=Sarah+Putri&background=random" class="rounded-circle shadow-sm" width="60">
+                        <div>
+                            <h6 class="fw-bold mb-0">Sarah Putri</h6>
+                            <small class="text-primary fw-bold">Mahasiswi UI & Relawan Pendidikan</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="row g-4">
+                        {{-- Testi 1 --}}
+                        <div class="col-md-6">
+                            <div class="testi-card h-100 bg-white shadow-sm border-0">
+                                <i class="fa-solid fa-quote-left text-primary opacity-25 fs-1 mb-3"></i>
+                                <p class="text-dark small mb-0">"Sertifikatnya sangat membantu untuk portofolio beasiswa saya. Valid dan desainnya profesional!"</p>
+                                <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top">
+                                    <small class="fw-bold">Rizky (SMK 1 Jakarta)</small>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Testi 2 --}}
+                        <div class="col-md-6">
+                            <div class="testi-card h-100 bg-white shadow-sm border-0">
+                                <i class="fa-solid fa-quote-left text-primary opacity-25 fs-1 mb-3"></i>
+                                <p class="text-dark small mb-0">"Fitur chat dengan organizer bikin komunikasi lancar. Gak bingung lagi kalau mau tanya detail acara."</p>
+                                <div class="d-flex align-items-center gap-2 mt-3 pt-3 border-top">
+                                    <small class="fw-bold">Budi (Relawan Lingkungan)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- CTA SECTION --}}
+    <div class="py-5" style="background: #1e293b;">
+        <div class="container text-center py-5">
+            <h2 class="text-white fw-bold mb-4">Siap Menjadi Bagian dari Perubahan?</h2>
+            <p class="text-white-50 mb-5 col-lg-6 mx-auto">
+                Jangan tunggu nanti. Ribuan komunitas membutuhkan uluran tangan dan keahlianmu sekarang juga.
+            </p>
+            @guest
+                <a href="{{ route('register') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg glow-effect">
+                    Buat Akun Sekarang
+                </a>
+            @else
+                <a href="{{ route('events.index') }}" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg glow-effect">
+                    Cari Misi Baru
+                </a>
+            @endguest
+        </div>
+    </div>
+
+    <style>
+        /* ANIMATION UTILS */
+        .floating-anim { animation: float 3s ease-in-out infinite; }
+        .floating-anim-delayed { animation: float 3s ease-in-out infinite 1.5s; }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .glow-effect {
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(79, 70, 229, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+        }
+    </style>
+
+    <script>
+        // Simple Counter Animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const duration = 2000; // ms
+                const increment = target / (duration / 16); // 60fps
+
+                let current = 0;
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.innerText = Math.ceil(current).toLocaleString();
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.innerText = target.toLocaleString() + "+";
+                    }
+                };
+                updateCounter();
+            });
+        });
+    </script>
 @endsection

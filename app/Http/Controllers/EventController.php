@@ -48,7 +48,6 @@ class EventController extends Controller
                     $query->oldest();
                     break;
                 case 'salary_desc':
-                    // Note: Ideally salary should be numeric/decimal column for correct sorting
                     $query->orderBy('salary', 'desc');
                     break;
                 default:
@@ -71,7 +70,9 @@ class EventController extends Controller
         if (Auth::user()->role !== 'organizer') {
             abort(403, 'Hanya organizer yang bisa membuat event.');
         }
-        return view('events.create');
+
+        $user = Auth::user();
+        return view('events.create', compact('user'));
     }
 
     // 3. SIMPAN EVENT
@@ -112,7 +113,10 @@ class EventController extends Controller
         if ($event->organizer_id !== Auth::id()) {
             abort(403, 'Akses ditolak.');
         }
-        return view('events.edit', compact('event'));
+
+        // 🔥 FIX: Kirim variabel $user ke view edit juga
+$user = Auth::user();
+        return view('events.edit', compact('event', 'user'));
     }
 
     // 5. UPDATE EVENT
@@ -130,7 +134,6 @@ class EventController extends Controller
             'location' => 'required|string',
             'status' => 'required|in:open,closed,canceled',
             'salary' => 'nullable|string',
-            // Add other fields validation if editable
         ]);
 
         // Handle Image Update
@@ -170,7 +173,6 @@ class EventController extends Controller
 
         $userApplication = null;
         if (Auth::check()) {
-            // Check existing application for current user
             $userApplication = Application::where('user_id', Auth::id())
                 ->where('event_id', $event->id)
                 ->first();

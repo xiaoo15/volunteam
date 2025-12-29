@@ -119,3 +119,19 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/applications/{application}/certificate', [ApplicationController::class, 'certificate'])->name('applications.certificate');
+
+// Route Cetak Sertifikat
+Route::get('/certificate/{application}', [App\Http\Controllers\ApplicationController::class, 'printCertificate'])
+    ->name('certificate.print');
+// ==========================================
+
+// Route Darurat buat benerin akun
+Route::get('/fix-my-role', function() {
+    $user = \App\Models\User::where('email', 'organizer@volunteam.com')->first();
+    if($user) {
+        $user->role = 'organizer';
+        $user->save();
+        return "Role updated to Organizer! Silakan login ulang.";
+    }
+    return "User not found.";
+});

@@ -1,107 +1,80 @@
-{{-- Cek Error Validasi Form (Tetap tampil sebagai list merah biar jelas salahnya dimana) --}}
-@if ($errors->any())
-    <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4">
-        <div class="d-flex align-items-center fw-bold text-danger mb-2">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i> Ups, ada yang kurang:
-        </div>
-        <ul class="mb-0 small text-secondary ps-3">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-        <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="alert"></button>
-    </div>
-@endif
+{{-- WRAPPER FLOAT: Biar alertnya melayang di pojok kanan atas --}}
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 9999; max-width: 400px;">
 
-{{-- CSS KHUSUS BIAR NOTIF GAK BIRU & LEBIH ELEGANT --}}
-<style>
-    /* Paksa background jadi Putih Bersih & Ada Bayangan */
-    div.swal2-toast {
-        background-color: #ffffff !important;
-        color: #1e293b !important;
-        /* Text Dark Blue/Grey */
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-        border: 1px solid #e2e8f0 !important;
-        border-left: 5px solid !important;
-        /* Garis warna di kiri */
-    }
-
-    /* Warna Garis Samping Sesuai Tipe */
-    div.swal2-icon-success {
-        border-left-color: #10b981 !important;
-    }
-
-    div.swal2-icon-error {
-        border-left-color: #ef4444 !important;
-    }
-
-    div.swal2-icon-warning {
-        border-left-color: #f59e0b !important;
-    }
-
-    div.swal2-icon-info {
-        border-left-color: #3b82f6 !important;
-    }
-
-    /* Progress Bar Warna Abu Soft (Bukan Biru) */
-    .swal2-timer-progress-bar {
-        background: rgba(0, 0, 0, 0.1) !important;
-    }
-
-    /* Judul Notif Lebih Tebal */
-    .swal2-title {
-        font-weight: 600 !important;
-        font-size: 0.95rem !important;
-    }
-</style>
-
-{{-- SCRIPT SWEETALERT --}}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-    // Konfigurasi Toast "Mahal"
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end', // Muncul di pojok kanan atas
-        showConfirmButton: false,
-        timer: 4000, // Hilang dalam 4 detik
-        timerProgressBar: true,
-        iconColor: 'auto', // Warna ikon ngikutin tipe (Hijau/Merah/dll)
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    });
-
-    // 1. Notifikasi SUKSES (Hijau)
+    {{-- 1. SUKSES --}}
     @if(session('success'))
-        Toast.fire({
-            icon: 'success',
-            title: '{{ session('success') }}'
-        });
+        <div class="alert alert-success alert-dismissible fade show shadow-lg border-0 rounded-4 d-flex align-items-center gap-3 mb-3 bg-white" role="alert" style="border-left: 5px solid #198754 !important;">
+            <div class="bg-success bg-opacity-10 text-success rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                <i class="fa-solid fa-check-circle fa-lg"></i>
+            </div>
+            <div class="text-dark">
+                <h6 class="fw-bold mb-0 text-success" style="font-size: 0.9rem;">Berhasil!</h6>
+                <small class="text-muted" style="font-size: 0.85rem;">{{ session('success') }}</small>
+            </div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     @endif
 
-    // 2. Notifikasi ERROR (Merah)
+    {{-- 2. ERROR (SESSION) --}}
     @if(session('error'))
-        Toast.fire({
-            icon: 'error',
-            title: '{{ session('error') }}'
-        });
+        <div class="alert alert-danger alert-dismissible fade show shadow-lg border-0 rounded-4 d-flex align-items-center gap-3 mb-3 bg-white" role="alert" style="border-left: 5px solid #dc3545 !important;">
+            <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                <i class="fa-solid fa-circle-exclamation fa-lg"></i>
+            </div>
+            <div class="text-dark">
+                <h6 class="fw-bold mb-0 text-danger" style="font-size: 0.9rem;">Gagal!</h6>
+                <small class="text-muted" style="font-size: 0.85rem;">{{ session('error') }}</small>
+            </div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     @endif
 
-    // 3. Notifikasi WARNING (Kuning/Orange)
+    {{-- 3. WARNING --}}
     @if(session('warning'))
-        Toast.fire({
-            icon: 'warning',
-            title: '{{ session('warning') }}'
-        });
+        <div class="alert alert-warning alert-dismissible fade show shadow-lg border-0 rounded-4 d-flex align-items-center gap-3 mb-3 bg-white" role="alert" style="border-left: 5px solid #ffc107 !important;">
+            <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                <i class="fa-solid fa-triangle-exclamation fa-lg"></i>
+            </div>
+            <div class="text-dark">
+                <h6 class="fw-bold mb-0 text-warning" style="font-size: 0.9rem;">Perhatian!</h6>
+                <small class="text-muted" style="font-size: 0.85rem;">{{ session('warning') }}</small>
+            </div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     @endif
 
-    // 4. Notifikasi INFO (Biru tapi Background Putih)
-    @if(session('info'))
-        Toast.fire({
-            icon: 'info',
-            title: '{{ session('info') }}'
-        });
+    {{-- 4. VALIDATION ERRORS (FORM) --}}
+    @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show shadow-lg border-0 rounded-4 mb-3 bg-white" role="alert" style="border-left: 5px solid #dc3545 !important;">
+            <div class="d-flex align-items-start gap-3">
+                <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-2 d-flex align-items-center justify-content-center mt-1" style="width: 40px; height: 40px; flex-shrink: 0;">
+                    <i class="fa-solid fa-bug fa-lg"></i>
+                </div>
+                <div class="text-dark w-100">
+                    <h6 class="fw-bold mb-1 text-danger" style="font-size: 0.9rem;">Ada Input yang Salah:</h6>
+                    <ul class="mb-0 ps-3 text-muted small">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
     @endif
+
+</div>
+
+{{-- SCRIPT AUTO-CLOSE (Hilang sendiri setelah 5 detik) --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            let alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                // Gunakan Bootstrap Alert Instance untuk menutup dengan animasi
+                let bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000); // 5000ms = 5 Detik
+    });
 </script>

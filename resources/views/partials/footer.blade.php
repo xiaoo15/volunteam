@@ -6,6 +6,7 @@
             <div class="col-md-4">
                 {{-- Logo Konsisten dengan Navbar --}}
                 <a href="{{ url('/') }}" class="d-flex align-items-center gap-2 text-decoration-none mb-3">
+                    {{-- Pastikan file gambar ini ada di public/images/ --}}
                     <img src="{{ asset('images/logo_volunteam.png') }}" alt="VolunTeam" style="height: 36px; width: auto;">
                     <span class="logo-text">VolunTeam</span>
                 </a>

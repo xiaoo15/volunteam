@@ -72,7 +72,7 @@ class ApplicationController extends Controller
     }
 
     // 2. UPDATE STATUS (ORGANIZER)
-    public function update(Request $request, Application $application)
+    public function updateStatus(Request $request, Application $application)
     {
         // Validasi Kepemilikan Event
         if ($application->event->organizer_id !== Auth::id()) {
@@ -188,7 +188,7 @@ class ApplicationController extends Controller
         }
 
         // Update Status Event
-        $event->status = 'cancelled';
+        $event->status = 'canceled';
         $event->save();
 
         // Notifikasi ke semua pelamar
@@ -197,5 +197,19 @@ class ApplicationController extends Controller
         }
 
         return back()->with('success', 'Event berhasil dibatalkan dan semua pelamar telah diberitahu.');
+    }
+    public function printCertificate(\App\Models\Application $application)
+    {
+        // Validasi: Harus milik user login
+        if ($application->user_id !== \Illuminate\Support\Facades\Auth::id()) {
+            abort(403, 'Bukan milik Anda.');
+        }
+
+        // Validasi: Status harus completed
+        if ($application->status !== 'completed') {
+            abort(403, 'Misi belum selesai, sertifikat belum terbit.');
+        }
+
+        return view('applications.certificate', compact('application'));
     }
 }

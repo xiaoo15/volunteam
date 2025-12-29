@@ -12,28 +12,28 @@ class Event extends Model
     protected $fillable = [
         'organizer_id',
         'title',
-        'image',
-        'category', // <--- BARU
+        'category',
         'description',
-        'requirements', // <--- BARU
-        'responsibilities', // <--- BARU
+        'requirements',
+        'responsibilities',
         'event_date',
         'location',
+        'salary', // Benefit
         'status',
-        'salary',
+        'image',
     ];
 
     protected $casts = [
         'event_date' => 'date',
     ];
 
-    // --- RELATIONSHIPS ---
-
+    // Relasi ke Pembuat Event (Organizer)
     public function organizer()
     {
         return $this->belongsTo(User::class, 'organizer_id');
     }
 
+    // 🔥 INI YANG KURANG: Relasi ke Pelamar (Applications) 🔥
     public function applications()
     {
         return $this->hasMany(Application::class);

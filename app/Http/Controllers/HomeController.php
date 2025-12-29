@@ -3,75 +3,72 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Event;
 use App\Models\Application;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable|\Illuminate\Http\RedirectResponse
-     */
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    // app/Http/Controllers/HomeController.php
+    public function index()
+    {
+        $user = Auth::user();
 
-public function index()
-{
-    $user = Auth::user();
-
-    if ($user->role == 'organizer') {
+        // 🔥 FIX 1: CEK ROLE DULU SEBELUM JALANIN LOGIKA AI 🔥
         
-        // 1. Total Events
-        $totalEvents = Event::where('organizer_id', $user->id)->count();
-        
-        // 2. Base Query for Applications
-        $applications = Application::whereHas('event', function($q) use ($user) {
-            $q->where('organizer_id', $user->id);
-        });
+        // Kalau Admin, lempar ke Dashboard Admin
+        if ($user->role == 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
 
-        // 3. Application Stats
-        $totalApplicants = (clone $applications)->count();
-        $pendingApplicants = (clone $applications)->where('status', 'pending')->count();
-        
-        // 🔥 THESE TWO WERE MISSING IN COMPACT
-        $acceptedApplicants = (clone $applications)->where('status', 'accepted')->count(); 
-        $rejectedApplicants = (clone $applications)->where('status', 'rejected')->count(); 
+        // Kalau Organizer, lempar ke Halaman "My Events" (Mission Control)
+        if ($user->role == 'organizer') {
+            return redirect()->route('organizer.events');
+        }
 
-        // 4. Recent Events
-        $recentEvents = Event::where('organizer_id', $user->id)
-            ->withCount('applications')
-            ->latest()
-            ->take(5)
-            ->get();
+        // ==========================================
+        // DARI SINI KE BAWAH KHUSUS VOLUNTEER (AI)
+        // ==========================================
 
-        // 🔥 ADD THEM HERE IN COMPACT()
-        return view('home', compact(
-            'totalEvents', 
-            'totalApplicants', 
-            'pendingApplicants', 
-            'acceptedApplicants', // <--- Add this
-            'rejectedApplicants', // <--- Add this
-            'recentEvents'
-        ));
+        // 1. Cek Kategori Favorit User
+        $favoriteCategory = Application::where('user_id', $user->id)
+            ->join('events', 'applications.event_id', '=', 'events.id')
+            ->select('events.category', DB::raw('count(*) as total'))
+            ->groupBy('events.category')
+            ->orderByDesc('total')
+            ->value('events.category');
+
+        // 2. Query Rekomendasi
+        if ($favoriteCategory) {
+            $recommendations = Event::where('category', $favoriteCategory)
+                ->where('status', 'open')
+                ->whereDoesntHave('applications', function($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                })
+                ->inRandomOrder()
+                ->take(3)
+                ->get();
+            
+            $aiMessage = "Berdasarkan minatmu di bidang " . $favoriteCategory;
+        } else {
+            $recommendations = Event::withCount('applications')
+                ->where('status', 'open')
+                ->orderByDesc('applications_count')
+                ->take(3)
+                ->get();
+            
+            $aiMessage = "Misi paling diminati relawan saat ini";
+        }
+
+        // Data statistik dashboard
+        $totalApplications = Application::where('user_id', $user->id)->count();
+        $totalHours = Application::where('user_id', $user->id)->where('status', 'completed')->count() * 5;
+
+        return view('home', compact('recommendations', 'aiMessage', 'totalApplications', 'totalHours'));
     }
-    // Logic untuk Volunteer...
-    return redirect()->route('events.index');
-}
 }

@@ -17,24 +17,23 @@
     <div class="container position-relative py-5" style="z-index: 1; margin-top: 0px;">
 
         {{-- 2. TITLE --}}
-        {{-- 2. TITLE & STATS SECTION (COLORFUL VERSION) --}}
         <div class="row align-items-end mb-5">
             <div class="col-lg-8">
                 <div class="mb-4">
-                    {{-- Badge: Background Putih, Teks Ungu (High Contrast) --}}
+                    {{-- Badge: Background Putih, Teks Ungu --}}
                     <span class="badge bg-white text-primary px-3 py-2 rounded-pill mb-3 shadow-sm fw-bold">
-                        <i class="fas fa-history me-2"></i>Volunteer Journey
+                        <i class="fas fa-history me-2"></i>Jejak Kebaikanmu
                     </span>
 
-                    {{-- Judul: Tetap Putih biar terbaca di atas Gradient --}}
+                    {{-- Judul --}}
                     <h1 class="display-5 fw-bold mb-3 tracking-tight text-black"
                         style="text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                        Riwayat Lamaran
+                        Riwayat Misi Sosial
                     </h1>
 
-                    {{-- Deskripsi: Putih agak pudar --}}
+                    {{-- Deskripsi --}}
                     <p class="text-black text-opacity-75 mb-0 lead" style="max-width: 600px; font-weight: 300;">
-                        Pantau status seleksi dan diskusi dengan organizer.
+                        Lihat progres kontribusimu dan diskusi dengan penyelenggara di sini.
                     </p>
                 </div>
             </div>
@@ -42,13 +41,13 @@
             <div class="col-lg-4 mt-4 mt-lg-0">
                 <div class="d-flex gap-3 justify-content-lg-end">
 
-                    {{-- Stat 1: Card Putih, Angka Ungu --}}
+                    {{-- Stat 1 --}}
                     <div class="stat-box p-3 rounded-4 text-center w-100 shadow-lg" style="background: white;">
                         <h3 class="fw-bold mb-0 text-primary">{{ $applications->total() }}</h3>
-                        <small class="text-uppercase x-small text-muted fw-bold ls-1">Total</small>
+                        <small class="text-uppercase x-small text-muted fw-bold ls-1">Misi Diikuti</small>
                     </div>
 
-                    {{-- Stat 2: Card Putih, Angka Hijau --}}
+                    {{-- Stat 2 --}}
                     <div class="stat-box p-3 rounded-4 text-center w-100 shadow-lg" style="background: white;">
                         <h3 class="fw-bold mb-0 text-success">{{ $applications->where('status', 'accepted')->count() }}</h3>
                         <small class="text-uppercase x-small text-muted fw-bold ls-1">Diterima</small>
@@ -78,12 +77,12 @@
 
                         <button class="nav-link rounded-pill px-4 py-2 fw-bold x-small d-flex align-items-center gap-2"
                             data-filter="accepted">
-                            <i class="fas fa-check-circle"></i> Diterima
+                            <i class="fas fa-check-circle"></i> Terpilih
                         </button>
 
                         <button class="nav-link rounded-pill px-4 py-2 fw-bold x-small d-flex align-items-center gap-2"
                             data-filter="rejected">
-                            <i class="fas fa-times-circle"></i> Ditolak
+                            <i class="fas fa-times-circle"></i> Belum Rezeki
                         </button>
                     </div>
 
@@ -91,7 +90,7 @@
                     <a href="{{ route('events.index') }}"
                         class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2 hover-scale transition-all">
                         <i class="fas fa-search"></i>
-                        <span>Cari Event</span>
+                        <span>Cari Misi Baru</span>
                     </a>
                 </div>
             </div>
@@ -100,11 +99,11 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light-subtle">
                         <tr>
-                            <th class="ps-5 py-4 text-uppercase text-muted x-small fw-bold letter-spacing-1 border-0">Event
+                            <th class="ps-5 py-4 text-uppercase text-muted x-small fw-bold letter-spacing-1 border-0">Nama Kegiatan
                             </th>
-                            <th class="py-4 text-uppercase text-muted x-small fw-bold letter-spacing-1 border-0">Tanggal
+                            <th class="py-4 text-uppercase text-muted x-small fw-bold letter-spacing-1 border-0">Tanggal Daftar
                             </th>
-                            <th class="py-4 text-uppercase text-muted x-small fw-bold letter-spacing-1 border-0">Status</th>
+                            <th class="py-4 text-uppercase text-muted x-small fw-bold letter-spacing-1 border-0">Status Seleksi</th>
                             <th
                                 class="pe-5 py-4 text-uppercase text-muted x-small fw-bold letter-spacing-1 border-0 text-end">
                                 Aksi</th>
@@ -140,10 +139,10 @@
                                 <td>
                                     @php
                                         $badges = [
-                                            'pending' => ['bg' => 'bg-warning-subtle', 'text' => 'text-warning', 'icon' => 'far fa-clock', 'label' => 'Menunggu'],
+                                            'pending' => ['bg' => 'bg-warning-subtle', 'text' => 'text-warning', 'icon' => 'far fa-clock', 'label' => 'Direview'],
                                             'accepted' => ['bg' => 'bg-success-subtle', 'text' => 'text-success', 'icon' => 'fas fa-check-circle', 'label' => 'Diterima'],
                                             'rejected' => ['bg' => 'bg-danger-subtle', 'text' => 'text-danger', 'icon' => 'fas fa-times-circle', 'label' => 'Ditolak'],
-                                            'completed' => ['bg' => 'bg-primary-subtle', 'text' => 'text-primary', 'icon' => 'fas fa-medal', 'label' => 'Selesai'],
+                                            'completed' => ['bg' => 'bg-primary-subtle', 'text' => 'text-primary', 'icon' => 'fas fa-medal', 'label' => 'Tuntas'],
                                         ];
                                         $status = $badges[$app->status] ?? $badges['pending'];
                                     @endphp
@@ -168,8 +167,8 @@
                                             @endif
                                         </button>
 
-                                        @if($app->status == 'completed' || $app->status == 'accepted')
-                                            <a href="{{ route('applications.certificate', $app->id) }}" target="_blank"
+                                        @if($app->status == 'completed')
+                                            <a href="{{ route('certificate.print', $app->id) }}" target="_blank"
                                                 class="btn btn-success btn-sm rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-2 hover-scale transition-all shadow-sm text-white position-relative" style="z-index: 2;">
                                                 <i class="fas fa-download"></i>
                                                 <span>Sertifikat</span>
@@ -183,7 +182,7 @@
                                 <td colspan="4" class="text-center py-5">
                                     <div class="py-5 opacity-50">
                                         <i class="fas fa-inbox fa-3x mb-3"></i>
-                                        <p>Belum ada riwayat lamaran.</p>
+                                        <p>Belum ada riwayat partisipasi.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -218,7 +217,7 @@
                             <div>
                                 <h6 class="fw-bold mb-0 fs-5">{{ $app->event->organizer->name }}</h6>
                                 <div class="opacity-75 small d-flex align-items-center gap-1">
-                                    <i class="fas fa-briefcase fa-xs"></i> Organizer • {{ Str::limit($app->event->title, 30) }}
+                                    <i class="fas fa-briefcase fa-xs"></i> Penyelenggara • {{ Str::limit($app->event->title, 30) }}
                                 </div>
                             </div>
                         </div>
@@ -243,7 +242,7 @@
                                         <div
                                             class="d-flex align-items-center gap-2 mb-1 border-bottom border-white border-opacity-25 pb-1">
                                             <i class="fas fa-quote-left small opacity-75"></i>
-                                            <span class="x-small fw-bold text-uppercase opacity-90">Cover Letter</span>
+                                            <span class="x-small fw-bold text-uppercase opacity-90">Pesan Pengantar</span>
                                         </div>
                                         <p class="mb-1 text-break">{{ $app->message }}</p>
                                         <div class="text-end x-small opacity-75">{{ $app->created_at->format('H:i') }}</div>
@@ -259,8 +258,6 @@
                                         <img src="https://ui-avatars.com/api/?name={{ urlencode($app->event->organizer->name) }}&background=fff&color=4f46e5"
                                             class="rounded-circle me-2 align-self-end shadow-sm border border-white" width="32"
                                             height="32">
-
-
                                     @endif
 
                                     <div
@@ -285,7 +282,7 @@
                             <div class="input-group">
                                 <input type="text" name="message"
                                     class="form-control form-control-lg bg-light border-0 ps-4 rounded-pill"
-                                    placeholder="Tulis pesan balasan..." required autocomplete="off">
+                                    placeholder="Balas pesan penyelenggara..." required autocomplete="off">
                                 <button type="submit"
                                     class="btn btn-primary rounded-circle position-absolute top-50 end-0 translate-middle-y me-2 shadow-md hover-scale d-flex align-items-center justify-content-center"
                                     style="width: 42px; height: 42px; z-index: 5;">

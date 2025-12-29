@@ -1,167 +1,107 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container d-flex flex-column justify-content-center align-items-center min-vh-100 py-5">
+    <div class="container-fluid p-0 overflow-hidden bg-white" style="height: calc(100vh - 80px);">
+        <div class="row h-100 g-0">
 
-        {{-- Brand / Logo Section (Optional but recommended) --}}
-        <div class="text-center mb-4">
-            {{-- <img src="{{ asset('images/logo.png') }}" alt="Logo" height="50" class="mb-3"> --}}
-            <h2 class="fw-bold text-primary">{{ config('app.name', 'VolunTeam') }}</h2>
-        </div>
+            {{-- BAGIAN KIRI: FORM --}}
+            <div class="col-lg-5 d-flex flex-column justify-content-center align-items-center p-5 position-relative">
+                <div class="w-100" style="max-width: 420px;">
+                    <div class="text-center mb-5">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                            style="width: 60px; height: 60px;">
+                            <i class="fa-solid fa-right-to-bracket fa-xl"></i>
+                        </div>
+                        <h2 class="fw-bold text-dark">Selamat Datang Kembali</h2>
+                        <p class="text-muted">Lanjutkan misi kebaikanmu hari ini.</p>
+                    </div>
 
-        <div class="card shadow-lg border-0 rounded-4 w-100 position-relative overflow-hidden" style="max-width: 480px;">
-            {{-- Decorative Header Line --}}
-            <div class="position-absolute top-0 start-0 w-100 h-1 bg-primary"></div>
+                    <form method="POST" action="{{ route('login') }}">
+                        @csrf
 
-            <div class="card-body p-4 p-md-5">
-                <div class="text-center mb-5">
-                    <h4 class="fw-bold text-dark">{{ __('Welcome Back!') }} 👋</h4>
-                    <p class="text-muted small mb-0">{{ __('Please sign in to continue your mission.') }}</p>
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-secondary">EMAIL ADDRESS</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i
+                                        class="fa-regular fa-envelope text-muted"></i></span>
+                                <input type="email" name="email"
+                                    class="form-control bg-light border-start-0 ps-0 @error('email') is-invalid @enderror"
+                                    placeholder="name@example.com" value="{{ old('email') }}" required autofocus>
+                            </div>
+                            @error('email')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-secondary">PASSWORD</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i
+                                        class="fa-solid fa-lock text-muted"></i></span>
+                                <input type="password" name="password"
+                                    class="form-control bg-light border-start-0 ps-0 @error('password') is-invalid @enderror"
+                                    placeholder="••••••••" required>
+                            </div>
+                            @error('password')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                                <label class="form-check-label small text-muted" for="remember">Ingat Saya</label>
+                            </div>
+                            @if (Route::has('password.request'))
+                                <a href="{{ route('password.request') }}" class="small text-decoration-none fw-bold">Lupa
+                                    Password?</a>
+                            @endif
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm mb-4">
+                            Masuk Sekarang <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </button>
+
+                        <div class="text-center">
+                            <p class="small text-muted mb-0">Belum punya akun? <a href="{{ route('register') }}"
+                                    class="fw-bold text-decoration-none">Daftar sebagai Relawan</a></p>
+                        </div>
+                    </form>
                 </div>
 
-                <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate>
-                    @csrf
+                {{-- Footer Kecil --}}
+                <div class="position-absolute bottom-0 mb-4 text-center w-100">
+                    <small class="text-muted opacity-50">&copy; {{ date('Y') }} VolunTeam Indonesia</small>
+                </div>
+            </div>
 
-                    {{-- Email Input with Floating Label --}}
-                    <div class="form-floating mb-3">
-                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                            name="email" value="{{ old('email') }}" required autocomplete="email" autofocus
-                            placeholder="name@example.com">
-                        <label for="email">{{ __('Email Address') }}</label>
+            {{-- BAGIAN KANAN: GAMBAR & QUOTE (Hidden di HP) --}}
+            <div class="col-lg-7 d-none d-lg-block position-relative bg-dark">
+                {{-- Background Image Overlay --}}
+                <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
+                    class="w-100 h-100 object-fit-cover opacity-50" alt="Login Cover">
 
-                        @error('email')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+                <div class="position-absolute top-0 start-0 w-100 h-100"
+                    style="background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.8) 100%);"></div>
+
+                <div class="position-absolute bottom-0 start-0 p-5 text-white mb-5">
+                    <div class="mb-3">
+                        <i class="fa-solid fa-quote-left fa-2x text-warning opacity-75"></i>
                     </div>
-
-                    {{-- Password Input with Toggle Visibility --}}
-                    <div class="form-floating mb-3 position-relative">
-                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
-                            name="password" required autocomplete="current-password" placeholder="Password">
-                        <label for="password">{{ __('Password') }}</label>
-
-                        {{-- Toggle Password Icon --}}
-                        <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer"
-                            onclick="togglePasswordVisibility()" style="cursor: pointer; z-index: 10;">
-                            <i class="fa-regular fa-eye text-muted" id="toggleIcon"></i>
-                        </span>
-
-                        @error('password')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-
-                    {{-- Remember Me & Forgot Password --}}
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                            <label class="form-check-label small text-muted" for="remember">
-                                {{ __('Remember Me') }}
-                            </label>
+                    <h2 class="fw-bold display-6 mb-3">"Satu-satunya cara untuk melakukan pekerjaan hebat adalah dengan
+                        mencintai apa yang Anda lakukan."</h2>
+                    <div class="d-flex align-items-center gap-3 mt-4">
+                        <div class="bg-white text-dark rounded-circle p-1 d-flex align-items-center justify-content-center"
+                            style="width: 40px; height: 40px;">
+                            <i class="fa-solid fa-user-check"></i>
                         </div>
-                        @if (Route::has('password.request'))
-                            <a class="small text-decoration-none fw-bold" href="{{ route('password.request') }}">
-                                {{ __('Forgot Password?') }}
-                            </a>
-                        @endif
+                        <div>
+                            <h6 class="mb-0 fw-bold">Steve Jobs</h6>
+                            <small class="text-white-50">Visionary</small>
+                        </div>
                     </div>
-
-                    {{-- Submit Button --}}
-                    <div class="d-grid gap-2 mb-4">
-                        <button type="submit" class="btn btn-lg rounded-pill fw-bold shadow-sm py-3 btn-gradient">
-                            {{ __('Sign In') }}
-                            <i class="text-white fa-solid fa-arrow-right ms-2 icon"></i>
-                        </button>
-                    </div>
-
-                    {{-- Register Link --}}
-                    <div class="text-center">
-                        <p class="small text-muted mb-0">
-                            {{ __("Don't have an account?") }}
-                            <a href="{{ route('register') }}" class="fw-bold text-primary text-decoration-none">
-                                {{ __('Create Account') }}
-                            </a>
-                        </p>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-
-        {{-- Footer Copyright --}}
-        <div class="mt-4 text-center">
-            <small class="text-muted opacity-50">&copy; {{ date('Y') }} {{ config('app.name') }}. All rights
-                reserved.</small>
-        </div>
     </div>
-
-    {{-- Scripts untuk Interaktivitas --}}
-    <script>
-        function togglePasswordVisibility() {
-            const passwordInput = document.getElementById('password');
-            const toggleIcon = document.getElementById('toggleIcon');
-
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
-            }
-        }
-    </script>
-
-    {{-- Custom CSS untuk mempercantik (opsional jika belum ada di app.css) --}}
-    <style>
-        .cursor-pointer {
-            cursor: pointer;
-        }
-
-        .transition-all {
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3) !important;
-        }
-
-        .form-control:focus {
-            box-shadow: none;
-            border-color: #4f46e5;
-            background-color: #f8fafc;
-        }
-
-        .form-floating>label {
-            color: #94a3b8;
-        }
-
-        .btn-gradient {
-            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%);
-            color: white;
-            border: none;
-            transition:
-                transform 0.25s ease,
-                box-shadow 0.25s ease,
-                background-position 0.4s ease;
-            background-size: 200% 200%;
-        }
-
-        .btn-gradient:hover {
-            transform: translateY(-2px);
-            color: white;
-            box-shadow: 0 12px 25px rgba(79, 70, 229, 0.35);
-            background-position: right center;
-        }
-
-        .btn-gradient:active {
-            transform: translateY(0);
-            box-shadow: 0 6px 12px rgba(79, 70, 229, 0.25);
-        }
-    </style>
 @endsection

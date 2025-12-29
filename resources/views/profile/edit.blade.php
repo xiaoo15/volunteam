@@ -1,187 +1,219 @@
 @extends('layouts.app')
 
 @section('content')
-{{-- BACKGROUND HEADER --}}
-<div class="profile-header-bg position-absolute top-0 start-0 w-100" style="height: 250px; z-index: 0; background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%);"></div>
-
-<div class="container position-relative py-5" style="z-index: 1; margin-top: 50px;">
-    {{-- 🔥 TAMBAHAN: ENCTYPE MULTIPART WAJIB BUAT UPLOAD --}}
-    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
-        @csrf @method('PUT')
-
-        <div class="row g-4 justify-content-center">
-            
-            {{-- 1. LEFT SIDEBAR (AVATAR UPLOAD) --}}
-            <div class="col-lg-4">
-                <div class="card border-0 shadow-lg rounded-4 overflow-hidden text-center h-100 bg-white">
-                    <div class="card-body p-0">
-                        {{-- Cover Mini --}}
-                        <div class="bg-light" style="height: 120px;"></div>
-                        
-                        {{-- 🔥 AVATAR UPLOADER AREA --}}
-                        <div class="px-4 mt-n5 position-relative">
-                            <div class="avatar-upload-wrapper d-inline-block position-relative">
-                                {{-- Preview Image --}}
-                                <img id="avatarPreview" 
-                                     src="{{ $user->avatar ? asset('storage/' . $user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=ffffff&color=4f46e5&size=128&bold=true' }}" 
-                                     class="rounded-circle shadow-lg border border-4 border-white bg-white object-fit-cover" 
-                                     style="width: 130px; height: 130px;"
-                                     alt="Profile">
-                                
-                                {{-- Tombol Kamera (Overlay) --}}
-                                <label for="avatarInput" class="avatar-overlay position-absolute top-0 start-0 w-100 h-100 rounded-circle d-flex align-items-center justify-content-center cursor-pointer">
-                                    <i class="fa-solid fa-camera text-white fa-2x opacity-0 icon-camera"></i>
-                                </label>
-
-                                {{-- Input File Tersembunyi --}}
-                                <input type="file" name="avatar" id="avatarInput" class="d-none" accept="image/*" onchange="previewImage(this)">
-                            </div>
-                        </div>
-
-                        <div class="p-4">
-                            <h4 class="fw-bold text-dark mb-1">{{ $user->name }}</h4>
-                            <span class="badge bg-indigo-subtle text-indigo rounded-pill px-3 py-1 text-uppercase x-small fw-bold ls-1">
-                                {{ $user->role }}
-                            </span>
-                            <p class="text-muted small px-2 mt-3 mb-0">
-                                Klik foto di atas untuk mengganti avatar.
-                            </p>
-                        </div>
-                    </div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        
+        {{-- BAGIAN KIRI: PROFIL, LEVEL, & BADGES --}}
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 text-center p-4 h-100 position-relative overflow-hidden">
+                {{-- Background Hiasan Abstrak --}}
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-light opacity-50" style="z-index: 0;"></div>
+                <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                    <i class="fa-solid fa-trophy fa-6x text-warning"></i>
                 </div>
-            </div>
-
-            {{-- 2. RIGHT CONTENT: FORM --}}
-            <div class="col-lg-8">
-                <div class="card border-0 shadow-lg rounded-4">
-                    <div class="card-header bg-white border-0 py-4 px-4 border-bottom">
-                        <h5 class="fw-bold text-dark mb-0">Edit Profil</h5>
-                        <p class="text-muted small mb-0">Update info pribadimu.</p>
+                
+                <div class="position-relative" style="z-index: 1;">
+                    {{-- Avatar --}}
+                    <div class="position-relative d-inline-block mb-3 mx-auto">
+                        <img src="{{ $user->avatar_url }}" class="rounded-circle shadow-lg border border-4 border-white" width="120" height="120">
+                        <label for="avatarInput" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-2 shadow-sm cursor-pointer hover-scale" style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-camera"></i>
+                        </label>
                     </div>
 
-                    <div class="card-body p-4 p-lg-5">
-                        {{-- Info Dasar --}}
-                        <div class="mb-5">
-                            <h6 class="text-uppercase text-indigo fw-bold x-small ls-1 mb-3">Informasi Dasar</h6>
-                            <div class="row g-4">
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" name="name" class="form-control" id="name" value="{{ $user->name }}" required>
-                                        <label for="name">Nama Lengkap</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" name="email" class="form-control" id="email" value="{{ $user->email }}" required>
-                                        <label for="email">Alamat Email</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea name="bio" class="form-control" id="bio" style="height: 100px">{{ $user->bio }}</textarea>
-                                        <label for="bio">Bio Singkat</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <h5 class="fw-bold text-dark mb-1">{{ $user->name }}</h5>
+                    <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 mb-3">{{ ucfirst($user->role) }}</span>
 
-                        {{-- Skills --}}
-                        @if($user->role == 'volunteer')
-                            <div class="mb-5">
-                                <h6 class="text-uppercase text-indigo fw-bold x-small ls-1 mb-3">Skills</h6>
-                                <div class="form-floating">
-                                    <input type="text" name="skills" class="form-control" id="skills" value="{{ $user->skills }}">
-                                    <label for="skills">Skills (Pisahkan koma)</label>
-                                </div>
-                            </div>
-                        @endif
-
-                        {{-- Password --}}
-                        <div class="bg-warning-subtle p-4 rounded-3 border border-warning-subtle mb-4">
-                            <div class="d-flex align-items-center gap-2 mb-3">
-                                <i class="fa-solid fa-lock text-warning"></i>
-                                <h6 class="fw-bold text-dark mb-0">Ganti Password</h6>
-                            </div>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="password" name="password" class="form-control bg-white" id="new_password" placeholder="Pass">
-                                        <label>Password Baru</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="password" name="password_confirmation" class="form-control bg-white" id="conf_password" placeholder="Konfirm">
-                                        <label>Ulangi Password</label>
-                                    </div>
-                                </div>
-                            </div>
+                    {{-- 🔥 FITUR GAMIFIKASI: LEVEL SYSTEM (HARDCODE) 🔥 --}}
+                    <div class="mb-4 px-3 mt-2">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small fw-bold text-dark"><i class="fa-solid fa-bolt text-warning me-1"></i> Level 5</span>
+                            <span class="small fw-bold text-primary">Guardian</span>
                         </div>
-
-                        {{-- Tombol --}}
-                        <div class="d-flex justify-content-end gap-3">
-                            <button type="reset" class="btn btn-light rounded-pill px-4 fw-bold text-muted">Reset</button>
-                            <button type="submit" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-lg hover-scale">
-                                Simpan Perubahan
-                            </button>
+                        <div class="progress shadow-sm" style="height: 10px; border-radius: 10px; background-color: #e2e8f0;">
+                            <div class="progress-bar bg-gradient-primary" role="progressbar" style="width: 75%"></div>
                         </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small class="text-muted" style="font-size: 0.65rem;">2.450 XP</small>
+                            <small class="text-muted" style="font-size: 0.65rem;">Target: 3.000 XP</small>
+                        </div>
+                    </div>
+
+                    {{-- 🔥 FITUR GAMIFIKASI: KOLEKSI BADGES (HARDCODE) 🔥 --}}
+                    <div class="bg-white rounded-4 p-3 shadow-sm border mb-4 text-start position-relative">
+                        <h6 class="fw-bold small text-muted mb-3 text-uppercase d-flex align-items-center justify-content-between">
+                            <span>Koleksi Lencana</span>
+                            <i class="fa-solid fa-circle-info text-muted opacity-50" data-bs-toggle="tooltip" title="Lencana didapat dari partisipasi aktif"></i>
+                        </h6>
+                        
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
+                            
+                            {{-- Badge 1: Early Adopter (Emas) --}}
+                            <div class="badge-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Perintis: Bergabung di Bulan Pertama Rilis">
+                                <div class="badge-icon bg-warning bg-opacity-10 text-warning border-warning">
+                                    <i class="fa-solid fa-crown"></i>
+                                </div>
+                            </div>
+
+                            {{-- Badge 2: Verified (Biru) --}}
+                            <div class="badge-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Terverifikasi: Identitas & Dokumen Asli">
+                                <div class="badge-icon bg-info bg-opacity-10 text-info border-info">
+                                    <i class="fa-solid fa-user-shield"></i>
+                                </div>
+                            </div>
+
+                            {{-- Badge 3: Dedication (Merah) --}}
+                            <div class="badge-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Dedikasi: 50+ Jam Mengabdi">
+                                <div class="badge-icon bg-danger bg-opacity-10 text-danger border-danger">
+                                    <i class="fa-solid fa-fire"></i>
+                                </div>
+                            </div>
+
+                            {{-- Badge 4: Social (Ungu) --}}
+                            <div class="badge-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Connector: Membawa 5 Teman Baru">
+                                <div class="badge-icon bg-primary bg-opacity-10 text-primary border-primary">
+                                    <i class="fa-solid fa-users"></i>
+                                </div>
+                            </div>
+
+                            {{-- Badge 5: Locked (Hitam Putih) --}}
+                            <div class="badge-item grayscale" data-bs-toggle="tooltip" data-bs-placement="top" title="LOCKED: Ikuti 5 Event Lingkungan untuk membuka">
+                                <div class="badge-icon bg-light text-muted border-light">
+                                    <i class="fa-solid fa-leaf"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <p class="text-muted small mb-4 fst-italic px-2">
+                        "Misi hidup saya adalah memberi dampak positif, sekecil apapun itu."
+                    </p>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-danger btn-sm rounded-pill py-2 fw-bold" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fa-solid fa-right-from-bracket me-2"></i> Keluar
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-    </form>
+
+        {{-- BAGIAN KANAN: FORM EDIT (Tetap Sama) --}}
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-bottom p-4">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-user-gear me-2 text-primary"></i>Pengaturan Akun</h5>
+                </div>
+                <div class="card-body p-4">
+                    
+                    @if (session('success'))
+                        <div class="alert alert-success border-0 rounded-3 mb-4 d-flex align-items-center shadow-sm">
+                            <i class="fa-solid fa-circle-check me-2 fa-lg"></i> 
+                            <div>{{ session('success') }}</div>
+                        </div>
+                    @endif
+
+                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+
+                        {{-- Hidden File Input --}}
+                        <input type="file" name="avatar" id="avatarInput" class="d-none" accept="image/*" onchange="this.form.submit()">
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label class="form-label fw-bold small text-secondary">NAMA LENGKAP</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0"><i class="fa-solid fa-user text-muted"></i></span>
+                                    <input type="text" name="name" class="form-control bg-light border-0 py-2" value="{{ old('name', $user->name) }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-secondary">EMAIL</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0"><i class="fa-solid fa-envelope text-muted"></i></span>
+                                    <input type="email" name="email" class="form-control bg-light border-0 py-2" value="{{ old('email', $user->email) }}" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-secondary">BIO SINGKAT (Tampil di Profil Publik)</label>
+                            <textarea class="form-control bg-light border-0" rows="3" placeholder="Ceritakan passion dan keahlianmu..."></textarea>
+                        </div>
+
+                        <hr class="my-4 opacity-10">
+                        <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-lock me-2 text-warning"></i>Keamanan</h6>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold small text-secondary">PASSWORD BARU</label>
+                                <input type="password" name="password" class="form-control bg-light border-0 py-2" placeholder="••••••">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-secondary">ULANGI PASSWORD</label>
+                                <input type="password" name="password_confirmation" class="form-control bg-light border-0 py-2" placeholder="••••••">
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ route('home') }}" class="btn btn-light rounded-pill px-4 fw-bold me-2">Batal</a>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow hover-scale">
+                                <i class="fa-solid fa-save me-2"></i> Simpan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+{{-- CSS KHUSUS BADGES & ANIMASI --}}
 <style>
-    .ls-1 { letter-spacing: 1px; }
-    .x-small { font-size: 0.75rem; }
-    
-    /* INPUT STYLING */
-    .form-control {
-        border: 1px solid #e2e8f0;
-        background-color: #f8fafc;
-        border-radius: 12px;
-        color: #1e293b;
-    }
-    .form-control:focus {
-        background-color: #fff;
-        border-color: #6366f1;
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-    }
-    .form-floating > label { color: #64748b; }
-
-    /* AVATAR HOVER EFFECT */
-    .avatar-overlay {
-        background-color: rgba(0, 0, 0, 0.5);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    .avatar-upload-wrapper:hover .avatar-overlay {
-        opacity: 1;
-    }
-    .avatar-upload-wrapper:hover .icon-camera {
-        opacity: 1 !important;
-    }
-    .cursor-pointer { cursor: pointer; }
-
-    /* UTILS */
-    .bg-indigo-subtle { background-color: #e0e7ff; }
-    .text-indigo { color: #4338ca; }
-    .bg-warning-subtle { background-color: #fffbeb; }
     .hover-scale { transition: transform 0.2s; }
-    .hover-scale:hover { transform: scale(1.02); }
+    .hover-scale:hover { transform: scale(1.05); }
+
+    .badge-item {
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .badge-item:hover {
+        transform: translateY(-5px) scale(1.1);
+    }
+    
+    .badge-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        border: 2px solid transparent; /* Border default */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .grayscale {
+        filter: grayscale(100%);
+        opacity: 0.5;
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(90deg, #4f46e5 0%, #818cf8 100%);
+        box-shadow: 0 2px 10px rgba(79, 70, 229, 0.3);
+    }
 </style>
 
+{{-- SCRIPT TOOLTIP (Biar pas di-hover muncul teksnya) --}}
 <script>
-    // Script buat Preview Gambar sebelum diupload
-    function previewImage(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('avatarPreview').src = e.target.result;
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
 </script>
 @endsection

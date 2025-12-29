@@ -116,7 +116,7 @@
                                                         class="badge bg-success-subtle text-success rounded-pill px-3 py-2 border border-success border-opacity-10">
                                                         <i class="fa-solid fa-circle me-1 x-small text-success"></i> Open
                                                     </span>
-                                                @elseif($event->status == 'cancelled')
+                                                @elseif($event->status == 'canceled')
                                                     <span
                                                         class="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 border border-danger border-opacity-10">
                                                         <i class="fa-solid fa-ban me-1 x-small text-danger"></i> Cancelled

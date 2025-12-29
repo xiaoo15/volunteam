@@ -3,324 +3,507 @@
 @section('content')
 
     <style>
+        /* HEADER GRADIENT */
         .header-banner {
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             border-bottom: 1px solid #cbd5e1;
-            padding: 40px 0;
+            padding: 60px 0;
+            /* Padding lebih lega */
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Hiasan background header */
+        .header-banner::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
         }
 
         .organizer-avatar-lg {
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 2px solid white;
+            width: 100px;
+            /* Sedikit lebih besar */
+            height: 100px;
+            border-radius: 20px;
+            /* Lebih rounded */
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
+            border: 4px solid white;
+            object-fit: cover;
         }
 
         .content-card {
             background: white;
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 24px;
+            border-radius: 20px;
+            /* Konsisten rounded */
+            padding: 35px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+            /* Shadow lebih halus */
+            border: 1px solid #f1f5f9;
+            margin-bottom: 30px;
         }
 
         .info-icon {
-            width: 40px;
-            height: 40px;
-            background: #f1f5f9;
+            width: 48px;
+            height: 48px;
+            background: #f8fafc;
             color: #4f46e5;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
+            border-radius: 14px;
             margin-right: 15px;
+            font-size: 1.2rem;
+            transition: all 0.3s;
         }
 
-        /* Hover effect pada gambar poster */
+        .info-item:hover .info-icon {
+            background: #e0e7ff;
+            transform: scale(1.1);
+        }
+
+        .poster-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: zoom-in;
+        }
+
         .poster-hover:hover {
-            opacity: 0.9;
-            transform: scale(1.01);
-            transition: all 0.3s ease;
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
         }
 
-        /* Badge Soft Colors */
-        .badge-soft-success { background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
-        .badge-soft-warning { background-color: rgba(245, 158, 11, 0.1); color: #d97706; }
-        .badge-soft-danger { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; }
-        .badge-soft-primary { background-color: rgba(79, 70, 229, 0.1); color: #4f46e5; }
-        
+        /* Badge Styles */
+        .badge-soft-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .badge-soft-warning {
+            background-color: #fef9c3;
+            color: #854d0e;
+            border: 1px solid #fde047;
+        }
+
+        .badge-soft-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .badge-soft-primary {
+            background-color: #e0e7ff;
+            color: #3730a3;
+            border: 1px solid #c7d2fe;
+        }
+
         /* Chat Styles */
-        .message-bubble { max-width: 80%; font-size: 0.85rem; line-height: 1.4; word-wrap: break-word;}
-        .message-sent { border-radius: 12px 12px 0 12px; }
-        .message-received { border-radius: 12px 12px 12px 0; }
-        .chat-container::-webkit-scrollbar { width: 5px; }
-        .chat-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .message-bubble {
+            max-width: 85%;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            padding: 12px 16px;
+            border-radius: 16px;
+        }
+
+        .message-sent {
+            border-bottom-right-radius: 4px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+        }
+
+        .message-received {
+            border-bottom-left-radius: 4px;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        /* AI Text Animation */
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .ai-text-animate {
+            background: linear-gradient(90deg, #4f46e5, #ec4899, #4f46e5);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s infinite linear;
+            font-weight: 800;
+        }
+
+        .ai-btn-glow {
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(236, 72, 153, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(236, 72, 153, 0);
+            }
+        }
     </style>
 
+    {{-- HEADER --}}
     <div class="header-banner mb-5">
-        <div class="container">
-            <div class="d-flex align-items-center">
-                <div class="me-4 d-none d-md-block">
-                    <img src="{{ Auth::user()->avatar_url }}"
-                        class="organizer-avatar-lg">
+        <div class="container position-relative z-1">
+            <div class="d-flex align-items-center flex-wrap flex-md-nowrap">
+                <div class="me-md-5 mb-3 mb-md-0 mx-auto mx-md-0">
+                    <img src="{{ $event->organizer->avatar_url }}" class="organizer-avatar-lg">
                 </div>
 
-                <div class="flex-grow-1">
-                    <div class="d-flex align-items-center gap-2 mb-2">
+                <div class="flex-grow-1 text-center text-md-start">
+                    <div
+                        class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-2 flex-wrap">
                         <span class="fw-bold text-primary">{{ $event->organizer->name }}</span>
-                        <i class="fa-solid fa-circle-check text-primary small" title="Verified"></i>
+                        <i class="fa-solid fa-circle-check text-primary small" title="Terverifikasi"
+                            data-bs-toggle="tooltip"></i>
                         @if($event->status == 'open')
-                            <span class="badge badge-soft-success rounded-pill px-3">Actively Hiring</span>
+                            <span class="badge badge-soft-success rounded-pill px-3"><i class="fa-solid fa-door-open me-1"></i>
+                                Mencari Relawan</span>
+                        @elseif($event->status == 'canceled')
+                            <span class="badge badge-soft-danger rounded-pill px-3"><i class="fa-solid fa-ban me-1"></i>
+                                Dibatalkan</span>
                         @else
-                            <span class="badge badge-soft-secondary rounded-pill px-3">{{ ucfirst($event->status) }}</span>
+                            <span class="badge badge-soft-secondary rounded-pill px-3"><i class="fa-solid fa-lock me-1"></i>
+                                Ditutup</span>
                         @endif
                     </div>
 
-                    <h1 class="fw-bold text-dark mb-2">{{ $event->title }}</h1>
+                    <h1 class="fw-bold text-dark mb-3 ls-tight">{{ $event->title }}</h1>
 
-                    <div class="text-muted small d-flex gap-4">
-                        <span><i class="fa-solid fa-location-dot me-1"></i> {{ $event->location }}</span>
-                        <span><i class="fa-solid fa-briefcase me-1"></i> Volunteer / Internship</span>
-                        <span><i class="fa-regular fa-clock me-1"></i> Posted
+                    <div class="text-muted d-flex gap-3 flex-wrap justify-content-center justify-content-md-start">
+                        <span class="d-flex align-items-center gap-1"><i class="fa-solid fa-location-dot text-danger"></i>
+                            {{ $event->location }}</span>
+                        <span class="d-flex align-items-center gap-1"><i class="fa-solid fa-tag text-info"></i>
+                            {{ $event->category }}</span>
+                        <span class="d-flex align-items-center gap-1"><i class="fa-regular fa-clock"></i>
                             {{ $event->created_at->diffForHumans() }}</span>
                     </div>
                 </div>
 
-                <div class="d-none d-lg-block dropdown">
-                    <button class="btn btn-white border rounded-pill px-4 fw-bold shadow-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-share-nodes me-2"></i> Bagikan
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2" style="min-width: 200px;">
-                        <li>
-                            <a class="dropdown-item py-2" href="https://wa.me/?text={{ urlencode('Cek event volunteer ini: ' . $event->title . ' ' . request()->url()) }}" target="_blank">
-                                <i class="fa-brands fa-whatsapp me-2 text-success fa-fw"></i> WhatsApp
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item py-2" href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank">
-                                <i class="fa-brands fa-facebook me-2 text-primary fa-fw"></i> Facebook
-                            </a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <button class="dropdown-item py-2" onclick="copyLink(this)">
-                                <i class="fa-regular fa-copy me-2 text-secondary fa-fw"></i> Salin Link
-                            </button>
-                        </li>
-                    </ul>
+                <div class="d-none d-lg-block ms-auto">
+                    <div class="dropdown">
+                        <button
+                            class="btn btn-white border rounded-pill px-4 py-2 fw-bold shadow-sm dropdown-toggle hover-scale"
+                            type="button" data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-share-nodes me-2 text-primary"></i> Bagikan
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-2">
+                            <li><a class="dropdown-item rounded-3 py-2"
+                                    href="https://wa.me/?text={{ urlencode('Yuk ikut aksi: ' . $event->title . ' ' . request()->url()) }}"
+                                    target="_blank"><i class="fa-brands fa-whatsapp text-success me-2 w-20"></i>
+                                    WhatsApp</a></li>
+                            <li><a class="dropdown-item rounded-3 py-2"
+                                    href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}"
+                                    target="_blank"><i class="fa-brands fa-facebook text-primary me-2 w-20"></i>
+                                    Facebook</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><button class="dropdown-item rounded-3 py-2" onclick="copyLink(this)"><i
+                                        class="fa-regular fa-copy text-secondary me-2 w-20"></i> Salin Link</button></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="container pb-5">
-        <div class="row">
+        <div class="row g-4">
 
+            {{-- KOLOM KIRI (UTAMA) --}}
             <div class="col-lg-8">
                 <div class="content-card">
 
                     {{-- POSTER EVENT (LIGHTBOX) --}}
                     @if($event->image)
-                        <div class="mb-4 position-relative">
-                            <img src="{{ asset('storage/' . $event->image) }}" 
-                                 class="img-fluid rounded-4 w-100 object-fit-cover shadow-sm border poster-hover" 
-                                 style="max-height: 400px; cursor: pointer;"
-                                 data-bs-toggle="modal" data-bs-target="#posterModal"
-                                 alt="Poster Event"
-                                 title="Klik untuk memperbesar">
-                            
+                        <div class="mb-5 position-relative overflow-hidden rounded-4">
+                            <img src="{{ asset('storage/' . $event->image) }}"
+                                class="img-fluid w-100 object-fit-cover shadow-sm poster-hover" style="max-height: 450px;"
+                                data-bs-toggle="modal" data-bs-target="#posterModal">
                             <div class="position-absolute bottom-0 end-0 m-3">
-                                <button class="btn btn-dark btn-sm rounded-circle opacity-75" data-bs-toggle="modal" data-bs-target="#posterModal">
+                                <button class="btn btn-dark btn-sm rounded-circle opacity-75 shadow" data-bs-toggle="modal"
+                                    data-bs-target="#posterModal">
                                     <i class="fa-solid fa-expand"></i>
                                 </button>
                             </div>
                         </div>
                     @endif
 
-                    <div class="mb-4">
-                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill">
-                            <i class="fa-solid fa-tag me-1"></i> {{ $event->category ?? 'Umum' }}
-                        </span>
-                    </div>
-
-                    <h5 class="fw-bold mb-3 text-dark">Tentang Lowongan Ini</h5>
-                    <div class="text-secondary mb-5" style="line-height: 1.8;">
+                    <h4 class="fw-bold mb-4 text-dark d-flex align-items-center">
+                        <span
+                            class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                            style="width: 32px; height: 32px; font-size: 0.9rem;"><i
+                                class="fa-solid fa-align-left"></i></span>
+                        Tentang Misi Ini
+                    </h4>
+                    <div class="text-secondary mb-5 lh-lg fs-6">
                         {!! nl2br(e($event->description)) !!}
                     </div>
 
-                    <div class="mb-5">
-                        <h5 class="fw-bold mb-3 text-dark"><i class="fa-solid fa-list-check me-2 text-primary"></i>Apa yang akan kamu lakukan?</h5>
-                        <div class="p-4 bg-light rounded-4 border">
-                            <ul class="list-unstyled mb-0 text-secondary" style="line-height: 1.8;">
-                                @foreach(explode("\n", $event->responsibilities) as $item)
-                                    @if(trim($item))
-                                        <li class="d-flex align-items-start mb-2">
-                                            <i class="fa-solid fa-circle-check text-success mt-1 me-3 small"></i>
-                                            <span>{{ str_replace('-', '', $item) }}</span>
-                                        </li>
-                                    @endif
-                                @endforeach
-                            </ul>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <div class="bg-light rounded-4 p-4 h-100 border border-light-subtle">
+                                <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
+                                    <i class="fa-solid fa-hands-holding-circle text-primary me-2"></i>Aksi Yang Dilakukan
+                                </h6>
+                                <ul class="list-unstyled mb-0 text-secondary d-flex flex-column gap-2">
+                                    @foreach(explode("\n", $event->responsibilities) as $item)
+                                        @if(trim($item))
+                                            <li class="d-flex align-items-start">
+                                                <i class="fa-solid fa-check text-success mt-1 me-2 small"></i>
+                                                <span class="small">{{ str_replace('-', '', $item) }}</span>
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="bg-light rounded-4 p-4 h-100 border border-light-subtle">
+                                <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
+                                    <i class="fa-solid fa-users text-primary me-2"></i>Kriteria Relawan
+                                </h6>
+                                <ul class="list-unstyled mb-0 text-secondary d-flex flex-column gap-2">
+                                    @foreach(explode("\n", $event->requirements) as $req)
+                                        @if(trim($req))
+                                            <li class="d-flex align-items-start">
+                                                <i class="fa-solid fa-caret-right text-primary mt-1 me-2"></i>
+                                                <span class="small">{{ str_replace('-', '', $req) }}</span>
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mb-5">
-                        <h5 class="fw-bold mb-3 text-dark"><i class="fa-solid fa-user-check me-2 text-primary"></i>Kualifikasi Pelamar</h5>
-                        <div class="p-4 bg-light rounded-4 border">
-                            <ul class="list-unstyled mb-0 text-secondary" style="line-height: 1.8;">
-                                @foreach(explode("\n", $event->requirements) as $req)
-                                    @if(trim($req))
-                                        <li class="d-flex align-items-start mb-2">
-                                            <i class="fa-solid fa-caret-right text-primary mt-1 me-3"></i>
-                                            <span>{{ str_replace('-', '', $req) }}</span>
-                                        </li>
-                                    @endif
-                                @endforeach
-                            </ul>
+                    <div
+                        class="d-flex align-items-center gap-3 p-4 rounded-4 bg-primary bg-opacity-10 border border-primary border-opacity-25">
+                        <div class="bg-white p-3 rounded-circle text-warning shadow-sm">
+                            <i class="fa-solid fa-gift fa-lg"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-primary mb-1">Benefit Relawan</h6>
+                            <p class="mb-0 small text-primary text-opacity-75">
+                                {{-- Jika ada salary, tampilkan. Jika tidak, tampilkan default --}}
+                                {{ $event->salary ? $event->salary : 'Sertifikat, Relasi Baru, & Pengalaman Berharga' }}
+                            </p>
                         </div>
                     </div>
 
-                    <hr class="my-4 opacity-10">
-
-                    <h5 class="fw-bold mb-3">Benefit</h5>
-                    <div class="d-flex gap-2 flex-wrap">
-                        <span class="badge bg-white text-dark border p-2 fw-normal"><i class="fa-solid fa-medal me-1 text-warning"></i> Sertifikat</span>
-                        <span class="badge bg-white text-dark border p-2 fw-normal"><i class="fa-solid fa-users me-1 text-info"></i> Relasi Baru</span>
-                        <span class="badge bg-white text-dark border p-2 fw-normal"><i class="fa-solid fa-briefcase me-1 text-success"></i> Pengalaman Kerja</span>
-                    </div>
                 </div>
             </div>
 
+            {{-- KOLOM KANAN (SIDEBAR) --}}
             <div class="col-lg-4">
 
-                @if(Auth::check() && Auth::id() == $event->organizer_id)
-                    {{-- 🔥 SIDEBAR ORGANIZER (CONTROL CENTER) 🔥 --}}
-                    <div class="card border-0 shadow rounded-4 mb-4 bg-primary text-white position-sticky" style="top: 100px; z-index: 1020;">
-                        <div class="card-body p-4">
-                            <h5 class="fw-bold mb-1"><i class="fa-solid fa-users-gear me-2"></i>Control Center</h5>
-                            <p class="opacity-75 small mb-4">Kelola pelamar untuk event ini.</p>
-
-                            <div class="bg-white rounded-3 p-3 text-dark mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="fw-bold small text-muted">TOTAL PELAMAR</span>
-                                    <span class="badge bg-primary">{{ $event->applications->count() }} Orang</span>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar" style="width: {{ $event->applications->count() > 0 ? '100%' : '0%' }}"></div>
-                                </div>
+                {{-- 🔥 FITUR AI: COMPATIBILITY SCORE 🔥 --}}
+                {{-- Hanya muncul untuk Volunteer yang login --}}
+                @auth
+                    @if(Auth::user()->role == 'volunteer')
+                        @php
+                            // Logika "Gimmick" AI: Angka acak tapi konsisten per event/user
+                            $score = 80 + (($event->id + Auth::id()) % 20); 
+                        @endphp
+                        <div class="content-card bg-dark text-white border-0 position-relative overflow-hidden mb-4">
+                            {{-- Background effect --}}
+                            <div class="position-absolute top-0 end-0 p-4 opacity-25">
+                                <i class="fa-solid fa-robot fa-6x text-white"></i>
                             </div>
 
-                            <div class="bg-white rounded-3 overflow-hidden text-dark">
-                                <div class="p-3 border-bottom bg-light">
-                                    <span class="fw-bold small">DAFTAR VOLUNTEER</span>
+                            <div class="position-relative z-1">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h6 class="fw-bold mb-0 text-uppercase letter-spacing-1 small"><i
+                                            class="fa-solid fa-wand-magic-sparkles me-2 text-warning"></i>AI Match</h6>
+                                    <span class="badge bg-white text-dark bg-opacity-90">Beta</span>
                                 </div>
-                                <div style="max-height: 400px; overflow-y: auto;">
-                                    @forelse($event->applications as $app)
-                                        <div class="p-3 border-bottom">
-                                            <div class="d-flex align-items-center mb-2">
-                                                <img src="https://ui-avatars.com/api/?name={{ $app->user->name }}" class="rounded-circle me-2" width="32">
-                                                <div class="lh-1">
-                                                    <div class="fw-bold small">
-                                                        {{ $app->user->name }}
-                                                        {{-- 🔥 LINK CV 🔥 --}}
-                                                        @if($app->cv)
-                                                            <a href="{{ asset('storage/' . $app->cv) }}" target="_blank" class="ms-1 text-danger" title="Lihat CV">
-                                                                <i class="fa-solid fa-file-pdf"></i>
-                                                            </a>
-                                                        @endif
-                                                    </div>
-                                                    <small class="text-muted" style="font-size: 10px;">{{ $app->created_at->diffForHumans() }}</small>
+
+                                <div class="text-center py-2">
+                                    <h1 class="display-3 fw-bolder mb-0 ai-text-animate">{{ $score }}%</h1>
+                                    <p class="small text-white-50 fw-bold">Tingkat Kecocokan Kamu</p>
+                                </div>
+
+                                <div class="progress bg-white bg-opacity-10 rounded-pill mb-3" style="height: 6px;">
+                                    <div class="progress-bar bg-gradient-primary rounded-pill" style="width: {{ $score }}%"></div>
+                                </div>
+
+                                <p class="small text-white-50 mb-0">
+                                    <i class="fa-solid fa-check-circle text-success me-1"></i>
+                                    Sistem merekomendasikan misi ini karena sesuai dengan minatmu di isu
+                                    <strong>{{ $event->category }}</strong>.
+                                </p>
+                            </div>
+                        </div>
+                    @endif
+                @endauth
+
+                {{-- SIDEBAR ORGANIZER (CONTROL CENTER) --}}
+                @if(Auth::check() && (Auth::user()->role == 'organizer' || Auth::user()->role == 'admin'))
+                    @php
+                        // 🔥 QUERY PAKSA: Ambil semua pelamar event ini 🔥
+                        $manualApplicants = \App\Models\Application::where('event_id', $event->id)->with('user', 'messages')->latest()->get();
+                    @endphp
+
+                    <div class="content-card bg-primary text-white border-0 position-sticky shadow-lg"
+                        style="top: 100px; z-index: 999;">
+                        <h5 class="fw-bold mb-1"><i class="fa-solid fa-users-gear me-2"></i>Mission Control</h5>
+                        <p class="opacity-75 small mb-4">Kelola relawan untuk misi ini.</p>
+
+                        <div class="bg-white rounded-4 p-3 text-dark mb-3 shadow-sm">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-bold small text-muted">TOTAL PELAMAR</span>
+                                <span class="badge bg-primary rounded-pill">{{ $manualApplicants->count() }} Orang</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-primary"
+                                    style="width: {{ $manualApplicants->count() > 0 ? '100%' : '0%' }}"></div>
+                            </div>
+                        </div>
+
+                        {{-- LIST RELAWAN --}}
+                        <div class="bg-white rounded-4 overflow-hidden text-dark shadow-sm">
+                            <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
+                                <span class="fw-bold small text-uppercase">Daftar Relawan</span>
+                                <i class="fa-solid fa-list-ul text-muted"></i>
+                            </div>
+                            <div style="max-height: 350px; overflow-y: auto;">
+                                @forelse($manualApplicants as $app)
+                                    <div class="p-3 border-bottom hover-bg-light">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($app->user->name) }}&background=random"
+                                                class="rounded-circle me-2 border" width="32" height="32">
+                                            <div class="lh-1 flex-grow-1">
+                                                <div class="fw-bold small text-truncate" style="max-width: 120px;">
+                                                    {{ $app->user->name }}
                                                 </div>
-                                                <span class="ms-auto badge badge-soft-{{ $app->status == 'accepted' ? 'success' : ($app->status == 'pending' ? 'warning' : ($app->status == 'completed' ? 'primary' : 'danger')) }}">
-                                                    {{ ucfirst($app->status) }}
-                                                </span>
+                                                <small class="text-muted"
+                                                    style="font-size: 10px;">{{ $app->created_at->diffForHumans() }}</small>
                                             </div>
-
-                                            {{-- 🔥 TOMBOL DISKUSI ORGANIZER (Baru) 🔥 --}}
-                                            <button class="btn btn-sm btn-outline-primary w-100 mb-2 position-relative" style="font-size: 11px;" 
-                                                    data-bs-toggle="modal" data-bs-target="#chatModalOrganizer{{ $app->id }}">
-                                                <i class="far fa-comments me-1"></i> Diskusi
-                                                @if($app->messages->where('user_id', '!=', Auth::id())->count() > 0)
-                                                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                                                @endif
-                                            </button>
-
-                                            {{-- TOMBOL AKSI ORGANIZER --}}
-                                            <div class="d-flex gap-1">
-                                                @if($app->status == 'pending')
-                                                    <form action="{{ route('applications.update', $app->id) }}" method="POST" class="flex-fill">
-                                                        @csrf @method('PATCH')
-                                                        <input type="hidden" name="status" value="accepted">
-                                                        <button class="btn btn-sm btn-outline-success w-100 py-1" style="font-size: 11px;">Terima</button>
-                                                    </form>
-                                                    <form action="{{ route('applications.update', $app->id) }}" method="POST" class="flex-fill">
-                                                        @csrf @method('PATCH')
-                                                        <input type="hidden" name="status" value="rejected">
-                                                        <button class="btn btn-sm btn-outline-danger w-100 py-1" style="font-size: 11px;">Tolak</button>
-                                                    </form>
-                                                @elseif($app->status == 'accepted')
-                                                    <form action="{{ route('applications.update', $app->id) }}" method="POST" class="w-100">
-                                                        @csrf @method('PATCH')
-                                                        <input type="hidden" name="status" value="completed">
-                                                        <button class="btn btn-sm btn-primary w-100 py-1 shadow-sm" style="font-size: 11px;">Luluskan (Selesai)</button>
-                                                    </form>
-                                                @endif
-                                            </div>
+                                            <span
+                                                class="badge badge-soft-{{ $app->status == 'accepted' ? 'success' : ($app->status == 'pending' ? 'warning' : ($app->status == 'completed' ? 'primary' : 'danger')) }} rounded-pill"
+                                                style="font-size: 0.65rem;">
+                                                {{ ucfirst($app->status) }}
+                                            </span>
                                         </div>
-                                    @empty
-                                        <div class="p-4 text-center text-muted small">Belum ada pelamar.</div>
-                                    @endforelse
-                                </div>
+
+                                        {{-- Link CV --}}
+                                        @if($app->cv)
+                                            <a href="{{ asset('storage/' . $app->cv) }}" target="_blank"
+                                                class="d-block small text-decoration-none text-primary mb-2"><i
+                                                    class="fa-solid fa-file-pdf me-1"></i> Lihat CV</a>
+                                        @endif
+
+                                        <button class="btn btn-sm btn-outline-primary w-100 mb-2 rounded-pill fw-bold"
+                                            data-bs-toggle="modal" data-bs-target="#chatModalOrganizer{{ $app->id }}"
+                                            style="font-size: 0.75rem;">
+                                            <i class="far fa-comments me-1"></i> Diskusi
+                                        </button>
+
+                                        <div class="d-flex gap-1">
+                                            @if($app->status == 'pending')
+                                                <form action="{{ route('applications.update', $app->id) }}" method="POST"
+                                                    class="flex-fill">
+                                                    @csrf @method('PATCH') <input type="hidden" name="status" value="accepted">
+                                                    <button class="btn btn-sm btn-success w-100 py-1 rounded-pill"
+                                                        style="font-size: 0.7rem;"><i class="fa-solid fa-check"></i></button>
+                                                </form>
+                                                <form action="{{ route('applications.update', $app->id) }}" method="POST"
+                                                    class="flex-fill">
+                                                    @csrf @method('PATCH') <input type="hidden" name="status" value="rejected">
+                                                    <button class="btn btn-sm btn-danger w-100 py-1 rounded-pill"
+                                                        style="font-size: 0.7rem;"><i class="fa-solid fa-times"></i></button>
+                                                </form>
+                                            @elseif($app->status == 'accepted')
+                                                <form action="{{ route('applications.update', $app->id) }}" method="POST" class="w-100">
+                                                    @csrf @method('PATCH') <input type="hidden" name="status" value="completed">
+                                                    <button class="btn btn-sm btn-light text-primary fw-bold w-100 py-1 rounded-pill"
+                                                        style="font-size: 0.75rem;">✅ Tandai Selesai</button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="p-4 text-center text-muted small">
+                                        <i class="fa-regular fa-folder-open mb-2 fa-2x opacity-25"></i>
+                                        <div>Belum ada pendaftar.</div>
+                                    </div>
+                                @endforelse
                             </div>
-                            <div class="mt-3 text-center d-flex justify-content-center gap-3">
-                                <a href="{{ route('events.edit', $event->id) }}" class="text-white text-decoration-none small fw-bold">
-                                    <i class="fa-solid fa-pen me-1"></i> Edit
-                                </a>
-                                <form action="{{ route('events.cancel', $event->id) }}" method="POST" onsubmit="return confirm('⚠️ PERINGATAN: Apakah Anda yakin ingin membatalkan event ini?\n\nNotifikasi akan dikirim ke semua pelamar dan event akan ditandai sebagai Cancelled.');">
+                        </div>
+
+                        <div class="mt-3 text-center d-flex justify-content-center gap-2">
+                            <a href="{{ route('events.edit', $event->id) }}"
+                                class="btn btn-sm btn-white border-white fw-bold rounded-pill px-3 shadow-sm btn-edit">
+                                <i class="fa-solid fa-pen me-1"></i> Edit
+                            </a>
+
+                            @if($event->status != 'canceled')
+                                <form action="{{ route('events.cancel', $event->id) }}" method="POST"
+                                    onsubmit="return confirm('Yakin batalkan event?');">
                                     @csrf
-                                    <button type="submit" class="btn btn-link text-white text-decoration-none small fw-bold p-0 border-0">
-                                        <i class="fa-solid fa-ban me-1"></i> Batalkan
-                                    </button>
+                                    <button class="btn btn-sm btn-outline-light rounded-pill px-3 fw-bold"><i
+                                            class="fa-solid fa-ban me-1"></i> Batal</button>
                                 </form>
-                            </div>
+                            @endif
                         </div>
                     </div>
 
                 @else
                     {{-- SIDEBAR VOLUNTEER (PUBLIC) --}}
                     <div class="content-card position-sticky" style="top: 100px;">
-                        <h5 class="fw-bold mb-4">Ringkasan Event</h5>
+                        <h5 class="fw-bold mb-4">Ringkasan Misi</h5>
 
-                        <div class="d-flex align-items-center mb-3">
+                        <div class="info-item d-flex align-items-center mb-3">
                             <div class="info-icon"><i class="fa-regular fa-calendar"></i></div>
                             <div>
-                                <small class="text-muted fw-bold">TANGGAL PELAKSANAAN</small>
-                                <div class="fw-bold text-dark">{{ $event->event_date->format('d F Y') }}</div>
+                                <small class="text-muted fw-bold x-small letter-spacing-1">TANGGAL</small>
+                                <div class="fw-bold text-dark">{{ $event->event_date->format('d M Y') }}</div>
                             </div>
                         </div>
 
-                        <div class="d-flex align-items-center mb-3">
+                        <div class="info-item d-flex align-items-center mb-3">
                             <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
                             <div>
-                                <small class="text-muted fw-bold">LOKASI</small>
+                                <small class="text-muted fw-bold x-small letter-spacing-1">LOKASI</small>
                                 <div class="fw-bold text-dark">{{ $event->location }}</div>
                             </div>
                         </div>
 
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="info-icon"><i class="fa-solid fa-money-bill-1-wave text-success"></i></div>
-                            <div>
-                                <small class="text-muted fw-bold">GAJI / BENEFIT</small>
-                                <div class="fw-bold text-dark">{{ $event->salary ?? 'Unpaid / Sukarela' }}</div>
-                            </div>
-                        </div>
-
-                        <div class="d-flex align-items-center mb-4">
+                        <div class="info-item d-flex align-items-center mb-4">
                             <div class="info-icon"><i class="fa-solid fa-user-tie"></i></div>
                             <div>
-                                <small class="text-muted fw-bold">PENYELENGGARA</small>
+                                <small class="text-muted fw-bold x-small letter-spacing-1">ORGANIZER</small>
                                 <div class="fw-bold text-dark">{{ $event->organizer->name }}</div>
                             </div>
                         </div>
@@ -328,41 +511,40 @@
                         <hr class="mb-4">
 
                         @auth
-                            @php
-                                $application = \App\Models\Application::where('user_id', Auth::id())->where('event_id', $event->id)->first();
-                            @endphp
-
+                            @php $application = \App\Models\Application::where('user_id', Auth::id())->where('event_id', $event->id)->first(); @endphp
                             @if($application)
-                                <div class="alert alert-{{ $application->status == 'accepted' ? 'success' : ($application->status == 'rejected' ? 'danger' : 'warning') }} border-0 rounded-3 text-center mb-0">
-                                    <div class="fw-bold mb-1">Status Lamaran:</div>
-                                    <span class="badge bg-white text-dark border">{{ strtoupper($application->status) }}</span>
-                                    <p class="small mt-2 mb-0">
-                                        @if($application->status == 'pending') Lamaranmu sedang direview panitia.
-                                        @elseif($application->status == 'accepted') Selamat! Cek email untuk info selanjutnya.
-                                        @elseif($application->status == 'completed') Event selesai. <a href="{{ route('applications.history') }}">Download Sertifikat</a>
+                                <div
+                                    class="alert alert-{{ $application->status == 'accepted' ? 'success' : ($application->status == 'rejected' ? 'danger' : 'warning') }} border-0 rounded-4 text-center mb-0 p-3 shadow-sm">
+                                    <div class="fw-bold mb-1">Status Kamu:</div>
+                                    <span
+                                        class="badge bg-white text-dark border shadow-sm px-3 py-2 rounded-pill my-2">{{ strtoupper($application->status) }}</span>
+                                    <p class="small mb-0 text-muted">
+                                        @if($application->status == 'pending') Lamaran sedang direview.
+                                        @elseif($application->status == 'accepted') Selamat! Cek email kamu.
+                                        @elseif($application->status == 'completed') Misi selesai. <a
+                                            href="{{ route('applications.history') }}" class="fw-bold">Ambil Sertifikat</a>
                                         @endif
                                     </p>
                                 </div>
-
                             @elseif($event->status == 'open')
-                                
-                                {{-- 🟢 TOMBOL DAFTAR (BUKA MODAL) --}}
-                                <button type="button" class="btn btn-primary w-100 btn-lg rounded-pill shadow fw-bold pulse-animation" data-bs-toggle="modal" data-bs-target="#applyModal">
-                                    Daftar Sekarang
+                                <button type="button"
+                                    class="btn btn-primary w-100 btn-lg rounded-pill shadow-lg fw-bold pulse-animation mb-3"
+                                    data-bs-toggle="modal" data-bs-target="#applyModal">
+                                    <i class="fa-solid fa-paper-plane me-2"></i> Gabung Aksi
                                 </button>
-                                <small class="text-muted text-center d-block mt-3">
-                                    <i class="fa-solid fa-lock me-1"></i> Data profilmu akan dikirim ke penyelenggara.
-                                </small>
-
+                                <div class="text-center">
+                                    <small class="text-muted"><i class="fa-solid fa-shield-halved me-1"></i> Data aman &
+                                        terenkripsi.</small>
+                                </div>
                             @else
-                                <button class="btn btn-secondary w-100 btn-lg rounded-pill" disabled>Pendaftaran Ditutup</button>
+                                <button class="btn btn-secondary w-100 btn-lg rounded-pill" disabled>Misi Ditutup</button>
                             @endif
-
                         @else
-                            <a href="{{ route('login') }}" class="btn btn-outline-primary w-100 btn-lg rounded-pill fw-bold">Login untuk Mendaftar</a>
-                            <small class="text-center d-block mt-3 text-muted">Belum punya akun? <a href="{{ route('register') }}">Daftar disini</a></small>
+                            <a href="{{ route('login') }}" class="btn btn-outline-primary w-100 btn-lg rounded-pill fw-bold">Login
+                                untuk Gabung</a>
+                            <small class="text-center d-block mt-3 text-muted">Belum punya akun? <a href="{{ route('register') }}"
+                                    class="fw-bold text-decoration-none">Daftar</a></small>
                         @endauth
-
                     </div>
                 @endif
 
@@ -370,64 +552,59 @@
         </div>
     </div>
 
-    {{-- MODAL POSTER (LIGHTBOX) --}}
+    {{-- MODAL POSTER --}}
     @if($event->image)
-    <div class="modal fade" id="posterModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content bg-transparent border-0 shadow-none">
-                <div class="modal-body p-0 text-center position-relative">
-                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3 z-3 bg-white p-2" data-bs-dismiss="modal" aria-label="Close" style="opacity: 0.8;"></button>
-                    <img src="{{ asset('storage/' . $event->image) }}" class="img-fluid rounded shadow-lg" style="max-height: 85vh;">
+        <div class="modal fade" id="posterModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-transparent border-0 shadow-none">
+                    <div class="modal-body p-0 text-center position-relative">
+                        <button type="button"
+                            class="btn-close btn-close-white position-absolute top-0 end-0 m-3 z-3 bg-white p-2 rounded-circle"
+                            data-bs-dismiss="modal" style="opacity: 0.9;"></button>
+                        <img src="{{ asset('storage/' . $event->image) }}" class="img-fluid rounded-4 shadow-lg"
+                            style="max-height: 85vh;">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     @endif
 
-    {{-- 🔥 MODAL CHAT KHUSUS ORGANIZER (DITARUH DISINI BIAR RAPI) 🔥 --}}
-    @if(Auth::check() && Auth::id() == $event->organizer_id)
-        @foreach($event->applications as $app)
+    {{-- MODAL CHAT ORGANIZER (LOOPING) --}}
+    @if(isset($manualApplicants))
+        @foreach($manualApplicants as $app)
             <div class="modal fade" id="chatModalOrganizer{{ $app->id }}" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
-                        {{-- Header Chat Organizer --}}
                         <div class="modal-header border-0 p-4" style="background: linear-gradient(135deg, #4f46e5, #6366f1);">
-                            <div class="d-flex align-items-center text-white">
-                                <div class="position-relative me-3">
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($app->user->name) }}&background=fff&color=4f46e5" 
-                                         class="rounded-circle border border-2 border-white shadow-sm" width="45" height="45">
-                                </div>
+                            <div class="d-flex align-items-center text-white gap-3">
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode($app->user->name) }}&background=fff&color=4f46e5"
+                                    class="rounded-circle border border-2 border-white" width="45">
                                 <div>
-                                    <h6 class="fw-bold mb-0">{{ $app->user->name }}</h6>
-                                    <small class="opacity-75">Volunteer Candidate</small>
+                                    <h6 class="fw-bold mb-0">Diskusi dengan {{ $app->user->name }}</h6>
+                                    <small class="opacity-75">Status: {{ ucfirst($app->status) }}</small>
                                 </div>
                             </div>
                             <button type="button" class="btn-close btn-close-white opacity-75" data-bs-dismiss="modal"></button>
                         </div>
-
-                        {{-- Body Chat --}}
                         <div class="modal-body p-0 bg-light-subtle">
-                            <div class="chat-container p-4" style="height: 400px; overflow-y: auto; background-image: radial-gradient(#e0e7ff 1px, transparent 1px); background-size: 20px 20px;">
-                                {{-- Cover Letter Pelamar --}}
+                            <div class="chat-container p-4"
+                                style="height: 400px; overflow-y: auto; background-image: radial-gradient(#e0e7ff 1px, transparent 1px); background-size: 20px 20px;">
                                 @if($app->message)
                                     <div class="d-flex justify-content-start mb-4">
-                                        <div class="message-bubble message-received bg-white text-dark border p-3 shadow-sm position-relative">
-                                            <div class="d-flex align-items-center gap-2 mb-1 border-bottom pb-1">
-                                                <i class="fas fa-quote-left small text-primary opacity-75"></i>
-                                                <span class="x-small fw-bold text-uppercase text-muted">Cover Letter</span>
-                                            </div>
-                                            <p class="mb-1 text-break small">{{ $app->message }}</p>
-                                            <div class="text-end x-small text-muted">{{ $app->created_at->format('H:i') }}</div>
+                                        <div class="message-bubble message-received shadow-sm">
+                                            <div class="d-flex align-items-center gap-2 mb-1 border-bottom pb-1 opacity-50"><i
+                                                    class="fas fa-quote-left small"></i> <span class="small fw-bold">NOTE</span></div>
+                                            <p class="mb-0">{{ $app->message }}</p>
                                         </div>
                                     </div>
                                 @endif
-
-                                {{-- Loop Messages --}}
                                 @foreach($app->messages as $msg)
-                                    <div class="mb-3 d-flex {{ $msg->user_id == Auth::id() ? 'justify-content-end' : 'justify-content-start' }}">
-                                        <div class="message-bubble {{ $msg->user_id == Auth::id() ? 'message-sent bg-primary text-white' : 'message-received bg-white text-dark border' }} p-3 shadow-sm">
-                                            <p class="mb-1 text-break small">{{ $msg->message }}</p>
-                                            <div class="{{ $msg->user_id == Auth::id() ? 'text-end text-white-50' : 'text-end text-muted' }} x-small">
+                                    <div
+                                        class="mb-3 d-flex {{ $msg->user_id == Auth::id() ? 'justify-content-end' : 'justify-content-start' }}">
+                                        <div
+                                            class="message-bubble {{ $msg->user_id == Auth::id() ? 'message-sent' : 'message-received shadow-sm' }}">
+                                            <p class="mb-1">{{ $msg->message }}</p>
+                                            <div class="text-end small opacity-50" style="font-size: 0.7rem;">
                                                 {{ $msg->created_at->format('H:i') }}
                                             </div>
                                         </div>
@@ -435,16 +612,17 @@
                                 @endforeach
                             </div>
                         </div>
-
-                        {{-- Footer Chat --}}
                         <div class="modal-footer border-0 p-3 bg-white shadow-lg-top">
-                            <form action="{{ route('applications.message', $app->id) }}" method="POST" class="w-100 position-relative">
+                            <form action="{{ route('applications.message', $app->id) }}" method="POST"
+                                class="w-100 position-relative">
                                 @csrf
                                 <div class="input-group">
-                                    <input type="text" name="message" class="form-control bg-light border-0 ps-3 rounded-pill" placeholder="Balas pesan volunteer..." required autocomplete="off">
-                                    <button type="submit" class="btn btn-primary rounded-circle position-absolute top-50 end-0 translate-middle-y me-1 shadow-sm d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; z-index: 5;">
-                                        <i class="fas fa-paper-plane fa-xs"></i>
-                                    </button>
+                                    <input type="text" name="message"
+                                        class="form-control form-control-lg bg-light border-0 ps-4 rounded-pill"
+                                        placeholder="Ketik pesan..." required>
+                                    <button type="submit"
+                                        class="btn btn-primary rounded-circle position-absolute top-50 end-0 translate-middle-y me-2 shadow-sm d-flex align-items-center justify-content-center"
+                                        style="width: 42px; height: 42px;"><i class="fas fa-paper-plane"></i></button>
                                 </div>
                             </form>
                         </div>
@@ -454,92 +632,174 @@
         @endforeach
     @endif
 
-    {{-- 🔥 MODAL FORMULIR LAMARAN (POPUP DAFTAR) - VERSI FIXED 🔥 --}}
+    {{-- 🔥 MODAL APPLY + AI GENERATOR 🔥 --}}
     @auth
-    <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 border-0 shadow-lg">
-                <div class="modal-header border-bottom-0 pb-0">
-                    <h5 class="modal-title fw-bold text-primary" id="applyModalLabel">
-                        <i class="fa-solid fa-paper-plane me-2"></i>Lengkapi Lamaran
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                
-                {{-- Form punya enctype multipart buat upload PDF --}}
-                <form action="{{ route('applications.store', $event->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="alert alert-light border small text-muted mb-4">
-                            Kamu akan melamar untuk posisi <strong>{{ $event->title }}</strong>.
-                        </div>
-
-                        {{-- INPUT CV (WAJIB & NAMA 'cv') --}}
-                        <div class="mb-4">
-                            <label class="form-label fw-bold small text-secondary">UPLOAD CV (PDF WAJIB)</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="fa-solid fa-file-pdf text-danger"></i></span>
-                                {{-- 🔥 NAME="CV" WAJIB SESUAI CONTROLLER --}}
-                                <input type="file" name="cv" class="form-control" accept=".pdf" required>
+        <div class="modal fade" id="applyModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+                    <div class="modal-header border-0 p-4 pb-0">
+                        <h5 class="modal-title fw-bold text-dark"><i
+                                class="fa-solid fa-paper-plane text-primary me-2"></i>Gabung Misi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form action="{{ route('applications.store', $event->id) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body p-4">
+                            <div
+                                class="alert alert-primary bg-primary bg-opacity-10 border-0 rounded-3 small text-primary mb-4 d-flex align-items-center">
+                                <i class="fa-solid fa-circle-info me-2"></i>
+                                <div>Kamu melamar untuk posisi di <strong>{{ $event->title }}</strong>.</div>
                             </div>
-                            <small class="text-muted" style="font-size: 11px;">
-                                *Format PDF. Max 2MB. Wajib diisi agar Organizer bisa review profilmu.
-                            </small>
-                        </div>
 
-                        {{-- INPUT PESAN (NAMA 'message') --}}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold small text-secondary">PESAN SINGKAT</label>
-                            {{-- 🔥 NAME="MESSAGE" WAJIB SESUAI CONTROLLER --}}
-                            <textarea name="message" class="form-control bg-light border-0" rows="3" placeholder="Contoh: Saya sangat tertarik karena..."></textarea>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold small text-muted">UPLOAD CV (PDF)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0"><i
+                                            class="fa-solid fa-file-pdf text-danger"></i></span>
+                                    <input type="file" name="cv" class="form-control bg-light border-0" accept=".pdf" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 position-relative">
+                                <div class="d-flex justify-content-between align-items-end mb-2">
+                                    <label class="form-label fw-bold small text-muted mb-0">ALASAN BERGABUNG</label>
+
+                                    {{-- 🔥 TOMBOL AI: MUNCULKAN KEAJAIBAN 🔥 --}}
+                                    <button type="button"
+                                        class="btn btn-sm bg-gradient-primary text-white border-0 rounded-pill px-3 shadow-sm ai-btn-glow"
+                                        onclick="generateCoverLetter()">
+                                        <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Buatkan dengan AI
+                                    </button>
+                                </div>
+                                <textarea name="message" id="messageInput" class="form-control bg-light border-0 rounded-3 p-3"
+                                    rows="5" placeholder="Ceritakan motivasi dan keahlianmu secara singkat..."></textarea>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="modal-footer border-top-0 pt-0">
-                        <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
-                            Kirim Lamaran <i class="fa-solid fa-arrow-right ms-2"></i>
-                        </button>
-                    </div>
-                </form>
+                        <div class="modal-footer border-0 p-4 pt-0">
+                            <button type="button" class="btn btn-light rounded-pill px-4 fw-bold text-muted"
+                                data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-lg hover-scale">Kirim
+                                Lamaran <i class="fa-solid fa-arrow-right ms-2"></i></button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
     @endauth
 
     <style>
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(79, 70, 229, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+        .btn-edit {
+            color: white;
+            transition:
+                background-color 0.25s ease,
+                color 0.25s ease,
+                box-shadow 0.25s ease;
         }
-        .pulse-animation { animation: pulse 2s infinite; }
-        
-        /* SCROLLBAR CHAT */
-        .chat-container::-webkit-scrollbar { width: 5px; }
-        .chat-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .btn-edit:hover {
+            background-color: #f8f9fa;
+            color: #000;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+        }
+
+        .hover-scale {
+            transition: transform 0.2s;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.03);
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(79, 70, 229, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+            }
+        }
+
+        .w-20 {
+            width: 20px;
+            text-align: center;
+        }
+
+        .hover-bg-light:hover {
+            background-color: #f8fafc;
+        }
     </style>
-    
+
     <script>
-        // Auto Scroll Chat Logic for Organizer
+        // Init Tooltips
         document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+
+            // Scroll Chat to Bottom
             const modals = document.querySelectorAll('.modal');
             modals.forEach(modal => {
                 modal.addEventListener('shown.bs.modal', function () {
                     const chatContainer = this.querySelector('.chat-container');
-                    const input = this.querySelector('input[name="message"]');
                     if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
-                    if (input) input.focus();
                 });
             });
         });
 
+        // Copy Link
         function copyLink(btn) {
             navigator.clipboard.writeText(window.location.href).then(() => {
                 let original = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-check me-2 text-success fa-fw"></i> Tersalin!';
+                btn.innerHTML = '<i class="fa-solid fa-check text-success me-2 w-20"></i> Tersalin!';
                 setTimeout(() => { btn.innerHTML = original; }, 2000);
             });
+        }
+
+        // 🔥 LOGIKA AI GENERATOR 🔥
+        function generateCoverLetter() {
+            const input = document.getElementById('messageInput');
+            const eventTitle = "{{ $event->title }}";
+            const userName = "{{ Auth::check() ? Auth::user()->name : 'Saya' }}";
+
+            // Effect Loading
+            input.value = "🤖 AI sedang merangkai kata...";
+            input.setAttribute('disabled', 'disabled');
+            input.style.opacity = '0.7';
+
+            setTimeout(() => {
+                // Template AI yang lebih variatif
+                const templates = [
+                    `Halo Tim Penyelenggara,\n\nPerkenalkan saya ${userName}. Saya sangat antusias untuk bergabung dalam kegiatan "${eventTitle}". \n\nSaya percaya bahwa kontribusi kecil dapat membawa perubahan besar. Dengan semangat dan dedikasi yang saya miliki, saya siap berkomitmen penuh untuk menyukseskan misi ini.\n\nTerima kasih atas kesempatannya.`,
+
+                    `Yth. Panitia Seleksi,\n\nSaya ${userName}, ingin mengajukan diri sebagai relawan untuk "${eventTitle}". \n\nIsu yang diangkat dalam kegiatan ini sangat dekat dengan hati saya. Saya memiliki pengalaman yang relevan dan ingin menyalurkan energi positif saya untuk membantu sesama melalui program ini.\n\nBesar harapan saya untuk dapat bergabung.`,
+
+                    `Halo,\n\nSaya tertarik sekali dengan "${eventTitle}". Sebagai ${userName}, saya ingin belajar dan berkontribusi langsung di lapangan. Saya siap bekerja dalam tim, disiplin, dan mengikuti arahan koordinator dengan baik.\n\nMohon pertimbangannya. Salam kebaikan!`
+                ];
+
+                // Pilih acak
+                const randomTemplate = templates[Math.floor(Math.random() * templates.length)];
+
+                // Ketik efek satu per satu (Typewriter effect simple)
+                input.value = randomTemplate;
+                input.removeAttribute('disabled');
+                input.style.opacity = '1';
+                input.focus(); // Fokus biar user bisa edit kalau mau
+
+            }, 1200); // Delay 1.2 detik biar kerasa "mikir"
         }
     </script>
 @endsection

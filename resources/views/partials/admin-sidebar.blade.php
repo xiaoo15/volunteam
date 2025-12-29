@@ -76,11 +76,14 @@
                 <hr class="dropdown-divider border-secondary opacity-25">
             </li>
             <li>
+                {{-- GANTI ID-NYA JADI 'admin-logout-form' BIAR GAK BENTROK SAMA NAVBAR --}}
                 <a class="dropdown-item text-danger fw-bold" href="{{ route('logout') }}"
-                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    onclick="event.preventDefault(); document.getElementById('admin-logout-form').submit();">
                     <i class="fa-solid fa-right-from-bracket me-2"></i> Sign out
                 </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+
+                {{-- ID FORM JUGA DIGANTI --}}
+                <form id="admin-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                     @csrf
                 </form>
             </li>
