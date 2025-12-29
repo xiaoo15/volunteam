@@ -52,6 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/organizer/events', [EventController::class, 'myEvents'])->name('organizer.events');
 
     // Edit & Update & Delete
+    Route::post('/events/{event}/cancel', [ApplicationController::class, 'cancelEvent'])->name('events.cancel');
     Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
     Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
@@ -60,7 +61,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/events/{id}/apply', [ApplicationController::class, 'store'])->name('applications.store');
     Route::patch('/applications/{application}', [ApplicationController::class, 'updateStatus'])->name('applications.update');
     Route::get('/my-applications', [ApplicationController::class, 'history'])->name('applications.history');
-    Route::get('/certificate/{application}', [ApplicationController::class, 'generateCertificate'])->name('certificate.download');
 
     // Chat Message Route
     Route::post('/applications/{application}/message', [ApplicationController::class, 'sendMessage'])->name('applications.message');
@@ -105,10 +105,6 @@ Route::get('/applications/{application}/message', function () {
 });
 // Pesan udah dikirim di belakang kok :) Silakan lanjutkan chatting.
 
-Route::post('/applications/{application}/message', [App\Http\Controllers\ApplicationController::class, 'sendMessage'])
-    ->name('applications.message')
-    ->middleware('auth');
-
 Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.readAll');
 Route::middleware(['auth'])->group(function () {
     // Route untuk tombol "Tandai semua dibaca"
@@ -118,4 +114,8 @@ Route::middleware(['auth'])->group(function () {
     // Route untuk klik satu notifikasi (opsional, jika pakai link khusus)
     Route::get('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])
         ->name('notifications.read');
+    // Route untuk tandai chat sudah dibaca
+    Route::post('/applications/{application}/mark-read', [App\Http\Controllers\ApplicationController::class, 'markChatRead'])->name('applications.markRead');
 });
+
+Route::get('/applications/{application}/certificate', [ApplicationController::class, 'certificate'])->name('applications.certificate');

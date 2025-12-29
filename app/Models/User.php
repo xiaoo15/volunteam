@@ -6,7 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; // Pastikan package ini terinstall
+use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\HasApiTokens; 
 
 class User extends Authenticatable
 {
@@ -37,13 +38,28 @@ class User extends Authenticatable
     // Jika user adalah ORGANIZER, dia punya banyak event
     public function events()
     {
-        // Karena Event ada di namespace yang sama (App\Models), bisa langsung panggil
         return $this->hasMany(Event::class, 'organizer_id');
     }
 
-    // Jika user adalah VOLUNTEER, dia punya banyak aplikasi lamaran
     public function applications()
     {
         return $this->hasMany(Application::class);
+    }
+
+    public function getAvatarUrlAttribute()
+    {
+        // 1. Cek apakah user punya file avatar kustom di database DAN filenya ada di storage
+        if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
+            // Jika ada, kembalikan URL file tersebut
+            return asset('storage/' . $this->avatar);
+        }
+
+        // 2. Jika tidak ada, gunakan API UI-Avatars.com
+        // Kita standarkan style-nya di sini (Warna Ungu VolunTeam, Teks Putih, Bold)
+        $name = urlencode($this->name); // Encode nama biar aman di URL
+        $background = '6366f1'; // Warna Ungu VolunTeam (bisa diganti 'random' kalau mau)
+        $color = 'ffffff'; // Warna Teks Putih
+
+        return "https://ui-avatars.com/api/?name={$name}&background={$background}&color={$color}&bold=true&size=256";
     }
 }

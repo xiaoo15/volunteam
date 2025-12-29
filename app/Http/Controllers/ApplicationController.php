@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Application;
-use App\Models\Message; // Pastikan Model Message sudah dibuat
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -13,26 +13,42 @@ use App\Notifications\NewMessageNotification;
 class ApplicationController extends Controller
 {
     // 1. KIRIM LAMARAN (VOLUNTEER)
-    public function store(Request $request, Event $event)
+    // Perhatikan parameternya: ganti (Event $event) jadi ($id)
+    public function store(Request $request, $id)
     {
+        // 1. CARI MANUAL (Biar Pasti Dapat Datanya)
+        $event = Event::findOrFail($id);
+
         $user = Auth::user();
 
-        // Security Check
+        // --- VALIDASI (Sama seperti sebelumnya) ---
+
+        // Cek Role
         if ($user->role !== 'volunteer') {
             return back()->with('error', 'Hanya akun Volunteer yang bisa mendaftar event.');
         }
 
-        if ($event->status !== 'open') {
-            return back()->with('error', 'Maaf, pendaftaran event ini sudah ditutup.');
+        // Cek Status (Sekarang datanya pasti ada isinya)
+        // Kita pakai trim dan strtolower biar aman dari spasi/huruf besar
+        if (trim(strtolower($event->status)) !== 'open') {
+            return back()->with('error', 'Gagal Daftar! Status event saat ini: ' . $event->status);
         }
 
+        // Cek Tanggal
+        if ($event->event_date < now()->startOfDay()) {
+            return back()->with('error', 'Event ini sudah lewat tanggal pelaksanaannya.');
+        }
+
+        // Cek Duplikasi
         $exists = Application::where('user_id', $user->id)
             ->where('event_id', $event->id)
             ->exists();
 
         if ($exists) {
-            return back()->with('error', 'Kamu sudah melamar di event ini!');
+            return back()->with('error', 'Kamu sudah mengirim lamaran untuk event ini!');
         }
+
+        // --- SIMPAN DATA ---
 
         $request->validate([
             'cv' => 'required|mimes:pdf|max:2048',
@@ -52,14 +68,15 @@ class ApplicationController extends Controller
             'message' => $request->message,
         ]);
 
-        return back()->with('success', 'Lamaran berhasil dikirim! Tunggu kabar selanjutnya.');
+        return back()->with('success', 'Lamaran berhasil dikirim! Tunggu kabar dari Organizer.');
     }
 
     // 2. UPDATE STATUS (ORGANIZER)
     public function update(Request $request, Application $application)
     {
+        // Validasi Kepemilikan Event
         if ($application->event->organizer_id !== Auth::id()) {
-            abort(403, 'Anda tidak memiliki akses.');
+            abort(403, 'Anda tidak memiliki akses untuk mengubah status ini.');
         }
 
         $request->validate([
@@ -71,10 +88,10 @@ class ApplicationController extends Controller
         return back()->with('success', 'Status pelamar berhasil diperbarui.');
     }
 
-    // 3. KIRIM PESAN CHAT (ORGANIZER & VOLUNTEER)
+    // 3. KIRIM PESAN CHAT
     public function sendMessage(Request $request, Application $application)
     {
-        // Validasi akses (Security)
+        // Validasi Akses (Hanya Pelamar atau Organizer yang boleh chat)
         if (Auth::id() !== $application->user_id && Auth::id() !== $application->event->organizer_id) {
             abort(403);
         }
@@ -83,47 +100,102 @@ class ApplicationController extends Controller
             'message' => 'required|string|max:500',
         ]);
 
-        // 1. Simpan Pesan ke Database
+        // 1. Simpan Pesan
         $application->messages()->create([
             'user_id' => Auth::id(),
             'message' => $request->message,
         ]);
 
-        // 2. LOGIKA NOTIFIKASI 🔥
-        // Tentukan siapa penerimanya (Lawan bicara)
-        if (Auth::id() == $application->user_id) {
-            // Kalau yg kirim Volunteer, penerimanya Organizer
-            $recipient = $application->event->organizer;
-        } else {
-            // Kalau yg kirim Organizer, penerimanya Volunteer
-            $recipient = $application->user;
-        }
+        // 2. Logika Notifikasi
+        // Tentukan penerima (Lawan bicara)
+        $recipient = (Auth::id() == $application->user_id)
+            ? $application->event->organizer // Jika pengirim volunteer -> kirim ke organizer
+            : $application->user;            // Jika pengirim organizer -> kirim ke volunteer
 
-        // Kirim Notifikasi
-        $recipient->notify(new NewMessageNotification(
-            $request->message,
-            Auth::user(),
-            $application->id
-        ));
+        // Kirim Notifikasi Database
+        try {
+            $recipient->notify(new NewMessageNotification(
+                $request->message,
+                Auth::user(),
+                $application->id
+            ));
+        } catch (\Exception $e) {
+            // Biarkan kosong agar error notifikasi tidak membatalkan chat
+            // (Opsional: Log error)
+        }
 
         return back()->with('success', 'Pesan terkirim.');
     }
 
-    // 4. RIWAYAT LAMARAN (VOLUNTEER) 🔥 INI YANG TADI HILANG 🔥
+    // 4. RIWAYAT LAMARAN (VOLUNTEER)
     public function history()
     {
-        // Cek: Cuma Volunteer yang boleh akses
         if (Auth::user()->role !== 'volunteer') {
             return redirect()->route('home');
         }
 
-        // Ambil semua lamaran user ini, urutkan dari terbaru
-        // Eager load 'event' dan 'event.organizer' biar loading cepat
-        $applications = Application::with('event.organizer')
+        // Ambil data lamaran + Pesan terakhir (untuk notif badge di view jika perlu)
+        $applications = Application::with(['event.organizer', 'messages'])
             ->where('user_id', Auth::id())
             ->latest()
             ->paginate(10);
 
         return view('applications.history', compact('applications'));
+    }
+
+    public function markChatRead(Application $application)
+    {
+        // Validasi Akses
+        if (Auth::id() !== $application->user_id && Auth::id() !== $application->event->organizer_id) {
+            abort(403);
+        }
+
+        // Update semua pesan dari LAWAN BICARA yang belum dibaca jadi terbaca
+        $application->messages()
+            ->where('user_id', '!=', Auth::id()) // Pesan dari orang lain
+            ->where('is_read', false)            // Yang belum dibaca
+            ->update(['is_read' => true]);       // Tandai jadi TRUE
+
+        return response()->json(['success' => true]);
+    }
+
+    // 5. DOWNLOAD SERTIFIKAT
+    public function certificate(Application $application)
+    {
+        // Validasi Akses (Hanya pemilik lamaran yang boleh lihat)
+        if (Auth::id() !== $application->user_id) {
+            abort(403);
+        }
+
+        // Validasi Status (Hanya yang sudah selesai/diterima)
+        // Kita izinkan 'accepted' juga jaga-jaga kalau organizer lupa klik 'completed'
+        if (!in_array($application->status, ['accepted', 'completed'])) {
+            return back()->with('error', 'Sertifikat belum tersedia untuk status ini.');
+        }
+
+        // Load relasi agar data di view sertifikat lengkap
+        $application->load(['event.organizer', 'user']);
+
+        return view('applications.certificate', compact('application'));
+    }
+
+    // 6. BATALKAN EVENT (ORGANIZER)
+    public function cancelEvent(Event $event)
+    {
+        // Validasi: Hanya Organizer pemilik event
+        if (Auth::id() !== $event->organizer_id) {
+            abort(403);
+        }
+
+        // Update Status Event
+        $event->status = 'cancelled';
+        $event->save();
+
+        // Notifikasi ke semua pelamar
+        foreach ($event->applications as $app) {
+            $app->user->notify(new \App\Notifications\EventCancelledNotification($event));
+        }
+
+        return back()->with('success', 'Event berhasil dibatalkan dan semua pelamar telah diberitahu.');
     }
 }

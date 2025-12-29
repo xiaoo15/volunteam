@@ -63,7 +63,7 @@
         <div class="container">
             <div class="d-flex align-items-center">
                 <div class="me-4 d-none d-md-block">
-                    <img src="https://ui-avatars.com/api/?name={{ $event->organizer->name }}&background=4f46e5&color=fff&size=128&bold=true"
+                    <img src="{{ Auth::user()->avatar_url }}"
                         class="organizer-avatar-lg">
                 </div>
 
@@ -88,10 +88,28 @@
                     </div>
                 </div>
 
-                <div class="d-none d-lg-block">
-                    <button class="btn btn-white border rounded-pill px-4 fw-bold shadow-sm">
+                <div class="d-none d-lg-block dropdown">
+                    <button class="btn btn-white border rounded-pill px-4 fw-bold shadow-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-share-nodes me-2"></i> Bagikan
                     </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2" style="min-width: 200px;">
+                        <li>
+                            <a class="dropdown-item py-2" href="https://wa.me/?text={{ urlencode('Cek event volunteer ini: ' . $event->title . ' ' . request()->url()) }}" target="_blank">
+                                <i class="fa-brands fa-whatsapp me-2 text-success fa-fw"></i> WhatsApp
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2" href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->url()) }}" target="_blank">
+                                <i class="fa-brands fa-facebook me-2 text-primary fa-fw"></i> Facebook
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <button class="dropdown-item py-2" onclick="copyLink(this)">
+                                <i class="fa-regular fa-copy me-2 text-secondary fa-fw"></i> Salin Link
+                            </button>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -256,10 +274,16 @@
                                     @endforelse
                                 </div>
                             </div>
-                            <div class="mt-3 text-center">
+                            <div class="mt-3 text-center d-flex justify-content-center gap-3">
                                 <a href="{{ route('events.edit', $event->id) }}" class="text-white text-decoration-none small fw-bold">
-                                    <i class="fa-solid fa-pen me-1"></i> Edit Event Ini
+                                    <i class="fa-solid fa-pen me-1"></i> Edit
                                 </a>
+                                <form action="{{ route('events.cancel', $event->id) }}" method="POST" onsubmit="return confirm('⚠️ PERINGATAN: Apakah Anda yakin ingin membatalkan event ini?\n\nNotifikasi akan dikirim ke semua pelamar dan event akan ditandai sebagai Cancelled.');">
+                                    @csrf
+                                    <button type="submit" class="btn btn-link text-white text-decoration-none small fw-bold p-0 border-0">
+                                        <i class="fa-solid fa-ban me-1"></i> Batalkan
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -509,5 +533,13 @@
                 });
             });
         });
+
+        function copyLink(btn) {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                let original = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check me-2 text-success fa-fw"></i> Tersalin!';
+                setTimeout(() => { btn.innerHTML = original; }, 2000);
+            });
+        }
     </script>
 @endsection

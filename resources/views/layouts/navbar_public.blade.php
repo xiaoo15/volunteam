@@ -433,7 +433,7 @@
                     {{-- 👤 USER PROFILE --}}
                     <div class="dropdown">
                         <a href="#" class="user-dropdown-toggle text-decoration-none" data-bs-toggle="dropdown">
-                            <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=4f46e5&color=fff&size=128&bold=true' }}"
+                            <img src="{{ Auth::user()->avatar_url }}"
                                 class="rounded-circle object-fit-cover shadow-sm" style="width: 36px; height: 36px;">
 
                             <div class="d-none d-md-block text-start lh-1">
@@ -448,7 +448,7 @@
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-premium" style="width: 240px;">
                             {{-- Mobile Only Header --}}
                             <li class="d-block d-md-none px-3 py-3 border-bottom mb-2 text-center bg-light rounded-top">
-                                <img src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) . '&background=4f46e5&color=fff&size=128&bold=true' }}"
+                                <img src="{{ Auth::user()->avatar_url }}"
                                     class="rounded-circle mb-2 shadow-sm object-fit-cover"
                                     style="width: 60px; height: 60px;">
                                 <div class="fw-bold text-dark">{{ Auth::user()->name }}</div>

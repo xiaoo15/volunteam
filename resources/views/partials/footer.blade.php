@@ -1,65 +1,111 @@
-<footer class="bg-white text-dark pt-5 pb-4 border-top mt-auto">
-    <div class="container text-center text-md-start">
-        <div class="row">
+<footer class="bg-white pt-5 pb-4 mt-auto" style="border-top: 1px solid #f1f5f9;">
+    <div class="container">
+        <div class="row g-4 justify-content-between">
             
-            <div class="col-md-4 col-lg-4 col-xl-3 mx-auto mb-4">
-                <h5 class="fw-bold text-primary mb-3 d-flex align-items-center justify-content-center justify-content-md-start">
-                    <i class="fa-solid fa-hand-holding-heart fa-lg me-2"></i> VolunTeam
-                </h5>
-                <p class="text-secondary small">
-                    Wadah digital untuk menghubungkan semangat relawan muda dengan aksi sosial yang berdampak nyata.
+            {{-- 1. LOGO & TAGLINE --}}
+            <div class="col-md-4">
+                {{-- Logo Konsisten dengan Navbar --}}
+                <a href="{{ url('/') }}" class="d-flex align-items-center gap-2 text-decoration-none mb-3">
+                    <img src="{{ asset('images/logo_volunteam.png') }}" alt="VolunTeam" style="height: 36px; width: auto;">
+                    <span class="logo-text">VolunTeam</span>
+                </a>
+                
+                <p class="text-muted small lh-base mb-4" style="max-width: 320px;">
+                    Wadah digital yang menghubungkan semangat relawan muda dengan aksi sosial yang berdampak nyata bagi komunitas.
                 </p>
-                <div class="mt-3">
-                    <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle me-1"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle me-1"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle"><i class="fab fa-linkedin-in"></i></a>
+
+                {{-- Social Media Links Minimalis --}}
+                <div class="d-flex gap-2">
+                    <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
 
-            <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-                <h6 class="text-uppercase fw-bold mb-3 text-dark">Eksplorasi</h6>
-                <ul class="list-unstyled">
-                    <li class="mb-2"><a href="{{ route('events.index') }}" class="text-secondary text-decoration-none footer-link">Cari Event</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary text-decoration-none footer-link">Tentang Kami</a></li>
-                    <li class="mb-2"><a href="#" class="text-secondary text-decoration-none footer-link">Cerita Relawan</a></li>
-                </ul>
+            {{-- 2. NAVIGASI (Digabung jadi satu kolom lebar) --}}
+            <div class="col-md-6 d-flex justify-content-md-end gap-5">
+                {{-- Kolom Navigasi 1 --}}
+                <div>
+                    <h6 class="fw-bold text-dark mb-3">Platform</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                        <li><a href="{{ route('events.index') }}" class="footer-link">Cari Lowongan</a></li>
+                        <li><a href="#" class="footer-link">Tentang Kami</a></li>
+                        <li><a href="#" class="footer-link">Blog & Cerita</a></li>
+                    </ul>
+                </div>
+
+                {{-- Kolom Navigasi 2 --}}
+                <div>
+                    <h6 class="fw-bold text-dark mb-3">Dukungan</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                        <li><a href="#" class="footer-link">Pusat Bantuan</a></li>
+                        <li><a href="#" class="footer-link">Syarat & Ketentuan</a></li>
+                        <li><a href="#" class="footer-link">Kebijakan Privasi</a></li>
+                    </ul>
+                </div>
             </div>
 
-            <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-                <h6 class="text-uppercase fw-bold mb-3 text-dark">Akun</h6>
-                <ul class="list-unstyled">
-                    @guest
-                        <li class="mb-2"><a href="{{ route('login') }}" class="text-secondary text-decoration-none footer-link">Masuk</a></li>
-                        <li class="mb-2"><a href="{{ route('register') }}" class="text-secondary text-decoration-none footer-link">Daftar</a></li>
-                    @else
-                        <li class="mb-2"><a href="{{ route('home') }}" class="text-secondary text-decoration-none footer-link">Dashboard</a></li>
-                    @endguest
-                    <li class="mb-2"><a href="#" class="text-secondary text-decoration-none footer-link">Bantuan</a></li>
-                </ul>
-            </div>
-
-            <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-                <h6 class="text-uppercase fw-bold mb-3 text-dark">Hubungi Kami</h6>
-                <p class="text-secondary small mb-2"><i class="fas fa-home me-2 text-primary"></i> SMKS PGRI 2 Sidoarjo</p>
-                <p class="text-secondary small mb-2"><i class="fas fa-envelope me-2 text-primary"></i> help@volunteam.com</p>
-                <p class="text-secondary small"><i class="fas fa-phone me-2 text-primary"></i> +62 812-3456-7890</p>
-            </div>
         </div>
-    </div>
 
-    <div class="text-center py-3 mt-4 border-top bg-light">
-        <small class="text-muted">
-            &copy; {{ date('Y') }} <strong>VolunTeam</strong>. Dibuat oleh <strong>Revan</strong>.
-        </small>
+        {{-- 3. COPYRIGHT --}}
+        <div class="border-top mt-5 pt-4 d-flex justify-content-between align-items-center flex-wrap gap-3" style="border-color: #f1f5f9 !important;">
+            <small class="text-muted fw-medium">
+                &copy; {{ date('Y') }} VolunTeam. Dibuat dengan ❤️ oleh <span class="fw-bold text-dark">Revan</span>.
+            </small>
+            <small class="text-muted">
+                SMKS PGRI 2 Sidoarjo
+            </small>
+        </div>
     </div>
 </footer>
 
 <style>
-    .footer-link {
-        transition: all 0.3s ease;
+    /* === STYLE FOOTER MINIMALIS === */
+
+    /* Style Logo Text (Sama seperti Navbar) */
+    .logo-text {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 800;
+        font-size: 1.4rem;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, #1e293b 0%, #4f46e5 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
+
+    /* Style Link Navigasi */
+    .footer-link {
+        color: #64748b; /* Slate-500 */
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
     .footer-link:hover {
-        color: #4f46e5 !important; /* Warna Ungu Utama */
-        padding-left: 5px; /* Efek geser dikit */
+        color: #4f46e5; /* Warna Ungu VolunTeam */
+        transform: translateX(3px); /* Efek geser halus */
+    }
+
+    /* Style Social Media Buttons */
+    .social-link {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px; /* Rounded Square */
+        background-color: #f1f5f9;
+        color: #64748b;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 1rem;
+    }
+
+    .social-link:hover {
+        background-color: #4f46e5;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
     }
 </style>

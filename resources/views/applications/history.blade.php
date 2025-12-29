@@ -154,21 +154,23 @@
                                 </td>
                                 <td class="pe-5 text-end">
                                     <div class="d-flex justify-content-end gap-2">
-                                        {{-- Tombol Chat: HANYA TRIGGER, MODALNYA DI LUAR --}}
+                                        {{-- Tombol Diskusi --}}
                                         <button
-                                            class="btn btn-outline-primary btn-sm rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-2 hover-scale transition-all position-relative"
-                                            data-bs-toggle="modal" data-bs-target="#chatModal{{ $app->id }}">
-                                            <i class="far fa-comments"></i>
-                                            <span>Diskusi</span>
-                                            @if($app->messages->where('user_id', '!=', Auth::id())->count() > 0)
+                                            class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-bold position-relative btn-chat"
+                                            data-id="{{ $app->id }}" data-bs-toggle="modal"
+                                            data-bs-target="#chatModal{{ $app->id }}">
+                                            <i class="far fa-comments me-1"></i> Diskusi
+
+                                            {{-- 🔥 LOGIKA BARU: Cuma muncul kalau ada pesan BELUM DIBACA 🔥 --}}
+                                            @if($app->messages->where('user_id', '!=', Auth::id())->where('is_read', false)->count() > 0)
                                                 <span
-                                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                                                    class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle notification-dot"></span>
                                             @endif
                                         </button>
 
                                         @if($app->status == 'completed' || $app->status == 'accepted')
-                                            <a href="#"
-                                                class="btn btn-success btn-sm rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-2 hover-scale transition-all shadow-sm text-white">
+                                            <a href="{{ route('applications.certificate', $app->id) }}" target="_blank"
+                                                class="btn btn-success btn-sm rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-2 hover-scale transition-all shadow-sm text-white position-relative" style="z-index: 2;">
                                                 <i class="fas fa-download"></i>
                                                 <span>Sertifikat</span>
                                             </a>
@@ -426,31 +428,58 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Filter Logic
-            const filterButtons = document.querySelectorAll('[data-filter]');
-            const appItems = document.querySelectorAll('.application-item');
+            const chatButtons = document.querySelectorAll('.btn-chat');
 
-            filterButtons.forEach(btn => {
-                btn.addEventListener('click', function () {
-                    filterButtons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    const filterValue = this.getAttribute('data-filter');
-                    appItems.forEach(item => {
-                        const status = item.getAttribute('data-status');
-                        item.style.display = (filterValue === 'all' || status === filterValue) ? '' : 'none';
-                    });
+            chatButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const appId = this.getAttribute('data-id');
+                    const dot = this.querySelector('.notification-dot');
+
+                    // Kalau ada titik merahnya, kita request ke server buat ilangin
+                    if (dot) {
+                        fetch(`/applications/${appId}/mark-read`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    // Hapus titik merahnya secara visual (langsung hilang tanpa refresh)
+                                    dot.remove();
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
+                    }
                 });
             });
+        });
+        // Filter Logic
+        const filterButtons = document.querySelectorAll('[data-filter]');
+        const appItems = document.querySelectorAll('.application-item');
 
-            // Chat Scroll Bottom
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                modal.addEventListener('shown.bs.modal', function () {
-                    const chatContainer = this.querySelector('.chat-container');
-                    const input = this.querySelector('input[name="message"]');
-                    if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
-                    if (input) input.focus();
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const filterValue = this.getAttribute('data-filter');
+                appItems.forEach(item => {
+                    const status = item.getAttribute('data-status');
+                    item.style.display = (filterValue === 'all' || status === filterValue) ? '' : 'none';
                 });
+            });
+        });
+
+        // Chat Scroll Bottom
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('shown.bs.modal', function () {
+                const chatContainer = this.querySelector('.chat-container');
+                const input = this.querySelector('input[name="message"]');
+                if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+                if (input) input.focus();
             });
         });
     </script>

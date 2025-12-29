@@ -28,7 +28,7 @@
                 </div>
 
                 {{-- CONTENT AREA --}}
-                <div class="col-lg-9">
+                <div class="col-lg-18">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
 
                         {{-- Card Header --}}
@@ -94,7 +94,7 @@
                                             {{-- Kolom Organizer --}}
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($event->organizer->name) }}&background=e0e7ff&color=4f46e5"
+                                                    <img src="{{ $event->organizer->avatar_url }}"
                                                         class="rounded-circle me-2 border border-white shadow-sm" width="32"
                                                         height="32">
                                                     <div class="small fw-semibold text-dark">{{ $event->organizer->name }}</div>
@@ -115,6 +115,11 @@
                                                     <span
                                                         class="badge bg-success-subtle text-success rounded-pill px-3 py-2 border border-success border-opacity-10">
                                                         <i class="fa-solid fa-circle me-1 x-small text-success"></i> Open
+                                                    </span>
+                                                @elseif($event->status == 'cancelled')
+                                                    <span
+                                                        class="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 border border-danger border-opacity-10">
+                                                        <i class="fa-solid fa-ban me-1 x-small text-danger"></i> Cancelled
                                                     </span>
                                                 @else
                                                     <span
@@ -169,6 +174,11 @@
     </div>
 
     <style>
+        .row.g-4 {
+            row-gap: 1.5rem !important;
+            column-gap: 1.5rem !important;
+        }
+
         .mt-n5 {
             margin-top: -3.5rem;
         }
@@ -224,6 +234,10 @@
 
         .bg-secondary-subtle {
             background-color: #f1f5f9 !important;
+        }
+
+        .bg-danger-subtle {
+            background-color: #fef2f2 !important;
         }
     </style>
 @endsection
