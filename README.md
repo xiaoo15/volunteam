@@ -1,49 +1,98 @@
-# 🤝 VolunTeam
-**Platform Manajemen Relawan & Event**
+========================================================================
+PANDUAN INSTALASI & MENJALANKAN PROJECT - VOLUNTEAM
+Oleh: Revan Andi Laksono
+========================================================================
 
-Selamat datang di repositori **VolunTeam**. Dokumen ini berisi panduan lengkap untuk instalasi, konfigurasi, dan pengujian aplikasi di lingkungan lokal.
+Terima kasih telah meninjau proyek VolunTeam.
+Agar aplikasi berjalan lancar 100%, mohon ikuti langkah-langkah di bawah ini.
 
-> **Catatan Penting:** Demi efisiensi ukuran file, folder `vendor` (PHP Dependencies) dan `node_modules` (JS Dependencies) **tidak disertakan**. Mohon ikuti langkah instalasi di bawah ini untuk mengunduhnya.
+Catatan: Folder 'vendor' dan 'node_modules' tidak disertakan untuk efisiensi ukuran file.
 
----
+------------------------------------------------------------------------
+1. PRASYARAT SISTEM (SYSTEM REQUIREMENTS)
+------------------------------------------------------------------------
+Pastikan di komputer Juri sudah terinstall:
+- PHP >= 8.1
+- Composer
+- Node.js & NPM
+- MySQL (XAMPP / Laragon)
 
-## 💻 1. Prasyarat Sistem (System Requirements)
-Pastikan perangkat Anda telah terinstall *software* berikut agar aplikasi berjalan 100% lancar:
+------------------------------------------------------------------------
+2. LANGKAH INSTALASI (BACKEND & DEPENDENCIES)
+------------------------------------------------------------------------
+1. Buka Terminal / CMD, arahkan ke folder '1_Source_Code'.
+2. Install Library PHP (Wajib):
+   Ketik: composer install
 
-* **PHP** >= 8.1
-* **Composer**
-* **Node.js & NPM**
-* **MySQL Database** (via XAMPP, Laragon, atau DB Manager lainnya)
+3. Install Library JavaScript (Wajib):
+   Ketik: npm install
 
----
+4. Build Aset Frontend (Agar tampilan rapi):
+   Ketik: npm run build
 
-## ⚙️ 2. Langkah Instalasi (Backend & Dependencies)
+------------------------------------------------------------------------
+3. KONFIGURASI ENV & DATABASE
+------------------------------------------------------------------------
+1. Duplikat file .env.example dan ubah namanya menjadi .env
+2. Buka file .env tersebut dengan Notepad/Text Editor.
+3. Pastikan pengaturan database sesuai (biasanya seperti ini):
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=volunteam
+   DB_USERNAME=root
+   DB_PASSWORD=
 
-Silakan buka terminal (CMD/PowerShell/Git Bash) dan arahkan ke direktori project `1_Source_Code`.
+4. Generate App Key (Penting agar tidak error 500):
+   Di terminal, ketik: php artisan key:generate
 
-### Step 1: Install Dependencies
-Jalankan perintah berikut secara berurutan untuk mengunduh library yang dibutuhkan:
+5. Setup Database MySQL:
+   - Buka phpMyAdmin (localhost/phpmyadmin).
+   - Buat database baru dengan nama: volunteam
+   - Klik menu 'Import'.
+   - Pilih file 'volunteam.sql' yang ada di dalam folder '2_Database'.
+   - Klik 'Go' / 'Kirim'.
 
-```bash
-# 1. Install Library PHP (Backend)
-composer install
+6. Aktifkan Penyimpanan Gambar (PENTING):
+   Agar foto profil dan event muncul, ketik di terminal:
+   php artisan storage:link
 
-# 2. Install Library JavaScript (Frontend)
-npm install
+------------------------------------------------------------------------
+4. MENJALANKAN APLIKASI
+------------------------------------------------------------------------
+1. Di terminal folder '1_Source_Code', jalankan server:
+   Ketik: php artisan serve
 
-# 3. Compile Aset Frontend (Agar tampilan CSS/JS rapi)
-npm run build
-🔧 3. Konfigurasi Environment & DatabaseStep 1: Setup File .envDuplikat file konfigurasi contoh, lalu ubah namanya menjadi .env.Bashcp .env.example .env
-(Atau lakukan rename manual melalui File Explorer)Step 2: Konfigurasi DatabaseBuka file .env dengan Text Editor, lalu sesuaikan konfigurasi database Anda:Cuplikan kodeDB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=volunteam
-DB_USERNAME=root
-DB_PASSWORD=
-Step 3: Generate App Key & Import DatabaseJalankan perintah ini di terminal:Bash# Generate kunci enkripsi aplikasi (Wajib agar tidak Error 500)
-php artisan key:generate
-Langkah Import SQL:Buka phpMyAdmin atau Database Client Anda.Buat database baru dengan nama: volunteam.Import file SQL yang terletak di: 2_Database/volunteam.sql.Step 4: Storage Link (PENTING ⚠️)Agar foto profil dan banner event dapat muncul dengan benar, jalankan:Bashphp artisan storage:link
-🚀 4. Menjalankan AplikasiSetelah semua konfigurasi selesai, jalankan server lokal:Bashphp artisan serve
-Buka browser favorit Anda dan akses:👉 http://127.0.0.1:8000🔑 5. Akun Demo (Siap Pakai)Gunakan kredensial berikut untuk pengujian agar tidak perlu melakukan registrasi ulang.Tipe AkunRoleEmailPasswordOrganizerPenyelenggara Eventorganizer@volunteam.compasswordVolunteerRelawanrevan@volunteam.compasswordSuper AdminAdministrator Paneladmin@volunteam.compassword🛠 6. TroubleshootingJika Anda menemui kendala seperti Error 500 atau tampilan layout berantakan, jalankan perintah pembersihan cache berikut:Bashphp artisan optimize:clear
-php artisan config:cache
-Jika masalah berlanjut, pastikan file database .sql telah ter-import sepenuhnya tanpa error.<p align="center">Dibuat dengan ❤️ oleh <b>Revan Andi Laksono</b></p>
+2. Buka browser (Chrome/Edge) dan akses:
+   http://127.0.0.1:8000, atau
+   http://localhost:8000/
+
+------------------------------------------------------------------------
+5. AKUN DEMO (SIAP PAKAI)
+------------------------------------------------------------------------
+Gunakan akun ini untuk pengujian agar tidak perlu register ulang:
+
+A. AKUN ORGANIZER (Penyelenggara Event)
+   Email    : organizer@volunteam.com
+   Password : password
+
+B. AKUN VOLUNTEER (Relawan)
+   Email    : revan@volunteam.com
+   Password : password
+
+C. AKUN ADMIN (Panel Admin)
+   Email    : admin@volunteam.com
+   Password : password
+------------------------------------------------------------------------
+6. TROUBLESHOOTING (JIKA ADA ERROR)
+------------------------------------------------------------------------
+Jika terjadi error "500 Server Error" atau tampilan berantakan:
+1. Coba bersihkan cache dengan perintah:
+   php artisan optimize:clear
+   php artisan config:cache
+
+2. Pastikan file database (.sql) sudah sukses di-import sepenuhnya.
+
+========================================================================
+Terima Kasih! - Revan Andi Laksono
+========================================================================
