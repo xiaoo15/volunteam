@@ -172,7 +172,7 @@
         }
     </style>
 
-    {{-- HEADER --}}
+    
     <div class="header-banner mb-5">
         <div class="container position-relative z-1">
             <div class="d-flex align-items-center flex-wrap flex-md-nowrap">
@@ -183,8 +183,10 @@
                 <div class="flex-grow-1 text-center text-md-start">
                     <div
                         class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-2 flex-wrap">
-                        <span class="fw-bold text-primary">{{ $event->organizer->name }}</span>
-                        <i class="fa-solid fa-circle-check text-primary small" title="Terverifikasi"
+                        <a href="{{ route('profile.show', $event->organizer->id) }}"
+                            class="fw-bold text-primary text-decoration-none hover-underline">
+                            {{ $event->organizer->name }}
+                        </a> <i class="fa-solid fa-circle-check text-primary small" title="Terverifikasi"
                             data-bs-toggle="tooltip"></i>
                         @if($event->status == 'open')
                             <span class="badge badge-soft-success rounded-pill px-3"><i class="fa-solid fa-door-open me-1"></i>
@@ -241,16 +243,15 @@
     <div class="container pb-5">
         <div class="row g-4">
 
-            {{-- KOLOM KIRI (UTAMA) --}}
+            
             <div class="col-lg-8">
                 <div class="content-card">
 
-                    {{-- POSTER EVENT (LIGHTBOX) --}}
+                    
                     @if($event->image)
                         <div class="mb-5 position-relative overflow-hidden rounded-4">
-                            <img src="{{ asset('storage/' . $event->image) }}"
-                                class="img-fluid w-100 object-fit-cover shadow-sm poster-hover" style="max-height: 450px;"
-                                data-bs-toggle="modal" data-bs-target="#posterModal">
+                            <img src="{{ $event->image_url }}" class="img-fluid w-100 object-fit-cover shadow-sm poster-hover"
+                                style="max-height: 450px;" data-bs-toggle="modal" data-bs-target="#posterModal">
                             <div class="position-absolute bottom-0 end-0 m-3">
                                 <button class="btn btn-dark btn-sm rounded-circle opacity-75 shadow" data-bs-toggle="modal"
                                     data-bs-target="#posterModal">
@@ -316,7 +317,7 @@
                         <div>
                             <h6 class="fw-bold text-primary mb-1">Benefit Relawan</h6>
                             <p class="mb-0 small text-primary text-opacity-75">
-                                {{-- Jika ada salary, tampilkan. Jika tidak, tampilkan default --}}
+                                
                                 {{ $event->salary ? $event->salary : 'Sertifikat, Relasi Baru, & Pengalaman Berharga' }}
                             </p>
                         </div>
@@ -325,11 +326,11 @@
                 </div>
             </div>
 
-            {{-- KOLOM KANAN (SIDEBAR) --}}
+            
             <div class="col-lg-4">
 
-                {{-- 🔥 FITUR AI: COMPATIBILITY SCORE 🔥 --}}
-                {{-- Hanya muncul untuk Volunteer yang login --}}
+                
+                
                 @auth
                     @if(Auth::user()->role == 'volunteer')
                         @php
@@ -337,7 +338,7 @@
                             $score = 80 + (($event->id + Auth::id()) % 20); 
                         @endphp
                         <div class="content-card bg-dark text-white border-0 position-relative overflow-hidden mb-4">
-                            {{-- Background effect --}}
+                            
                             <div class="position-absolute top-0 end-0 p-4 opacity-25">
                                 <i class="fa-solid fa-robot fa-6x text-white"></i>
                             </div>
@@ -368,7 +369,7 @@
                     @endif
                 @endauth
 
-                {{-- SIDEBAR ORGANIZER (CONTROL CENTER) --}}
+                
                 @if(Auth::check() && (Auth::user()->role == 'organizer' || Auth::user()->role == 'admin'))
                     @php
                         // 🔥 QUERY PAKSA: Ambil semua pelamar event ini 🔥
@@ -391,7 +392,7 @@
                             </div>
                         </div>
 
-                        {{-- LIST RELAWAN --}}
+                        
                         <div class="bg-white rounded-4 overflow-hidden text-dark shadow-sm">
                             <div class="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
                                 <span class="fw-bold small text-uppercase">Daftar Relawan</span>
@@ -417,7 +418,7 @@
                                             </span>
                                         </div>
 
-                                        {{-- Link CV --}}
+                                        
                                         @if($app->cv)
                                             <a href="{{ asset('storage/' . $app->cv) }}" target="_blank"
                                                 class="d-block small text-decoration-none text-primary mb-2"><i
@@ -480,7 +481,7 @@
                     </div>
 
                 @else
-                    {{-- SIDEBAR VOLUNTEER (PUBLIC) --}}
+                    
                     <div class="content-card position-sticky" style="top: 100px;">
                         <h5 class="fw-bold mb-4">Ringkasan Misi</h5>
 
@@ -552,7 +553,7 @@
         </div>
     </div>
 
-    {{-- MODAL POSTER --}}
+    
     @if($event->image)
         <div class="modal fade" id="posterModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -561,78 +562,179 @@
                         <button type="button"
                             class="btn-close btn-close-white position-absolute top-0 end-0 m-3 z-3 bg-white p-2 rounded-circle"
                             data-bs-dismiss="modal" style="opacity: 0.9;"></button>
-                        <img src="{{ asset('storage/' . $event->image) }}" class="img-fluid rounded-4 shadow-lg"
-                            style="max-height: 85vh;">
+                        <img src="{{ $event->image_url }}"" class=" img-fluid rounded-4 shadow-lg" style="max-height: 85vh;">
                     </div>
                 </div>
             </div>
         </div>
     @endif
 
-    {{-- MODAL CHAT ORGANIZER (LOOPING) --}}
-    @if(isset($manualApplicants))
-        @foreach($manualApplicants as $app)
-            <div class="modal fade" id="chatModalOrganizer{{ $app->id }}" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
-                <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
-                        <div class="modal-header border-0 p-4" style="background: linear-gradient(135deg, #4f46e5, #6366f1);">
-                            <div class="d-flex align-items-center text-white gap-3">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($app->user->name) }}&background=fff&color=4f46e5"
-                                    class="rounded-circle border border-2 border-white" width="45">
-                                <div>
-                                    <h6 class="fw-bold mb-0">Diskusi dengan {{ $app->user->name }}</h6>
-                                    <small class="opacity-75">Status: {{ ucfirst($app->status) }}</small>
+    {{-- 
+    =============================================
+    MODAL CHAT ORGANIZER - MODERN STYLE
+    Style: WhatsApp Web / Telegram Premium Vibes
+    =============================================
+--}}
+
+<style>
+    /* CUSTOM SCROLLBAR UNTUK CHAT */
+    .chat-scroll-area::-webkit-scrollbar { width: 5px; }
+    .chat-scroll-area::-webkit-scrollbar-track { background: #f1f5f9; }
+    .chat-scroll-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .chat-scroll-area::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* BUBBLE CHAT STYLES */
+    .chat-bubble {
+        max-width: 75%;
+        padding: 12px 16px;
+        position: relative;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    /* Bubble Orang Lain (Kiri) */
+    .bubble-received {
+        background-color: #ffffff;
+        color: #1e293b;
+        border-radius: 0px 15px 15px 15px; /* Lancip di kiri atas */
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Bubble Kita (Kanan) */
+    .bubble-sent {
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        color: white;
+        border-radius: 15px 0px 15px 15px; /* Lancip di kanan atas */
+    }
+
+    /* Bubble Note Awal */
+    .bubble-note {
+        background-color: #fffbeb; /* Kuning muda */
+        border: 1px dashed #fbbf24;
+        color: #92400e;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        width: 100%;
+        text-align: center;
+    }
+</style>
+
+@if(isset($manualApplicants))
+    @foreach($manualApplicants as $app)
+        
+        <div class="modal fade" id="chatModalOrganizer{{ $app->id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                <div class="modal-content border-0 rounded-4 shadow-2xl overflow-hidden" style="height: 600px;">
+                    
+                    
+                    <div class="modal-header border-bottom p-3 bg-white d-flex align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="position-relative">
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode($app->user->name) }}&background=e0e7ff&color=4f46e5"
+                                     class="rounded-circle" width="45" height="45">
+                                
+                                <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle"></span>
+                            </div>
+                            <div class="lh-1">
+                                <h6 class="fw-bold text-dark mb-1">{{ $app->user->name }}</h6>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-light text-secondary border rounded-pill fw-normal" style="font-size: 0.7rem;">
+                                        Pelamar #{{ $app->id }}
+                                    </span>
+                                    <small class="text-muted" style="font-size: 0.75rem;">
+                                        • {{ $app->event->title }}
+                                    </small>
                                 </div>
                             </div>
-                            <button type="button" class="btn-close btn-close-white opacity-75" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body p-0 bg-light-subtle">
-                            <div class="chat-container p-4"
-                                style="height: 400px; overflow-y: auto; background-image: radial-gradient(#e0e7ff 1px, transparent 1px); background-size: 20px 20px;">
-                                @if($app->message)
-                                    <div class="d-flex justify-content-start mb-4">
-                                        <div class="message-bubble message-received shadow-sm">
-                                            <div class="d-flex align-items-center gap-2 mb-1 border-bottom pb-1 opacity-50"><i
-                                                    class="fas fa-quote-left small"></i> <span class="small fw-bold">NOTE</span></div>
-                                            <p class="mb-0">{{ $app->message }}</p>
-                                        </div>
-                                    </div>
-                                @endif
-                                @foreach($app->messages as $msg)
-                                    <div
-                                        class="mb-3 d-flex {{ $msg->user_id == Auth::id() ? 'justify-content-end' : 'justify-content-start' }}">
-                                        <div
-                                            class="message-bubble {{ $msg->user_id == Auth::id() ? 'message-sent' : 'message-received shadow-sm' }}">
-                                            <p class="mb-1">{{ $msg->message }}</p>
-                                            <div class="text-end small opacity-50" style="font-size: 0.7rem;">
-                                                {{ $msg->created_at->format('H:i') }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="modal-footer border-0 p-3 bg-white shadow-lg-top">
-                            <form action="{{ route('applications.message', $app->id) }}" method="POST"
-                                class="w-100 position-relative">
-                                @csrf
-                                <div class="input-group">
-                                    <input type="text" name="message"
-                                        class="form-control form-control-lg bg-light border-0 ps-4 rounded-pill"
-                                        placeholder="Ketik pesan..." required>
-                                    <button type="submit"
-                                        class="btn btn-primary rounded-circle position-absolute top-50 end-0 translate-middle-y me-2 shadow-sm d-flex align-items-center justify-content-center"
-                                        style="width: 42px; height: 42px;"><i class="fas fa-paper-plane"></i></button>
-                                </div>
-                            </form>
+                        
+                        <div class="d-flex align-items-center gap-2 ms-auto">
+                            
+                            @if($app->status == 'pending')
+                                <form action="{{ route('applications.update', $app->id) }}" method="POST" class="d-inline">
+                                    @csrf @method('PATCH')
+                                    <input type="hidden" name="status" value="accepted">
+                                    <button class="btn btn-sm btn-success rounded-pill px-3 fw-bold" title="Terima Langsung">
+                                        <i class="fas fa-check me-1"></i> Terima
+                                    </button>
+                                </form>
+                            @endif
+                            <button type="button" class="btn btn-light btn-sm rounded-circle" data-bs-dismiss="modal">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>
+
+                    
+                    <div class="modal-body p-4 bg-light chat-scroll-area" id="chatContainer{{ $app->id }}"
+                         style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); background-color: #f8fafc;">
+                        
+                        
+                        @if($app->message)
+                            <div class="d-flex justify-content-center mb-4">
+                                <div class="bubble-note p-3 shadow-sm">
+                                    <div class="fw-bold mb-1"><i class="fas fa-quote-left me-2 opacity-50"></i>Pesan Lamaran</div>
+                                    "{{ $app->message }}"
+                                </div>
+                            </div>
+                        @endif
+
+                        
+                        @foreach($app->messages as $msg)
+                            <div class="d-flex w-100 mb-3 {{ $msg->user_id == Auth::id() ? 'justify-content-end' : 'justify-content-start' }}">
+                                <div class="chat-bubble {{ $msg->user_id == Auth::id() ? 'bubble-sent' : 'bubble-received' }}">
+                                    <div class="mb-1">{{ $msg->message }}</div>
+                                    <div class="text-end lh-1" style="opacity: 0.7; font-size: 0.65rem; margin-bottom: -4px;">
+                                        {{ $msg->created_at->format('H:i') }}
+                                        @if($msg->user_id == Auth::id())
+                                            <i class="fas fa-check-double ms-1"></i>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                        
+                        <div style="height: 10px;"></div>
+                    </div>
+
+                    
+                    <div class="modal-footer border-top p-3 bg-white">
+                        <form action="{{ route('applications.message', $app->id) }}" method="POST" class="w-100">
+                            @csrf
+                            <div class="input-group bg-light rounded-pill border overflow-hidden p-1">
+                                <input type="text" name="message" 
+                                       class="form-control border-0 bg-transparent shadow-none px-3" 
+                                       placeholder="Tulis pesan balasan..." required autocomplete="off">
+                                <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold m-1 transition-all hover-scale">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
-        @endforeach
-    @endif
+        </div>
 
-    {{-- 🔥 MODAL APPLY + AI GENERATOR 🔥 --}}
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const modalId = "#chatModalOrganizer{{ $app->id }}";
+                const chatContainer = document.getElementById("chatContainer{{ $app->id }}");
+                
+                const myModal = document.querySelector(modalId);
+                myModal.addEventListener('shown.bs.modal', function () {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                });
+            });
+            
+        </script>
+    @endforeach
+@endif
+
+    
     @auth
         <div class="modal fade" id="applyModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -664,7 +766,7 @@
                                 <div class="d-flex justify-content-between align-items-end mb-2">
                                     <label class="form-label fw-bold small text-muted mb-0">ALASAN BERGABUNG</label>
 
-                                    {{-- 🔥 TOMBOL AI: MUNCULKAN KEAJAIBAN 🔥 --}}
+                                    
                                     <button type="button"
                                         class="btn btn-sm bg-gradient-primary text-white border-0 rounded-pill px-3 shadow-sm ai-btn-glow"
                                         onclick="generateCoverLetter()">

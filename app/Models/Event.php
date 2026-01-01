@@ -38,4 +38,20 @@ class Event extends Model
     {
         return $this->hasMany(Application::class);
     }
+
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) {
+            // Gambar Default jika kosong
+            return 'https://ui-avatars.com/api/?name=' . urlencode($this->title) . '&background=random&color=fff&size=500';
+        }
+
+        // Jika gambar adalah URL eksternal (dari Seeder)
+        if (str_starts_with($this->image, 'http')) {
+            return $this->image;
+        }
+
+        // Jika gambar hasil upload (masuk storage)
+        return asset('storage/' . $this->image);
+    }
 }

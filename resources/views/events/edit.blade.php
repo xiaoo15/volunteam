@@ -33,22 +33,22 @@
 
                     <form action="{{ route('events.update', $event->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        @method('PUT') {{-- PENTING: Method PUT untuk Update --}}
+                        @method('PUT') 
                         
-                        {{-- GAMBAR --}}
+                        
                         <div class="mb-4">
                             <label class="form-label fw-bold small text-secondary">POSTER / BANNER EVENT</label>
                             
                             <div class="mb-3 text-center bg-light border rounded-3 p-3 position-relative" style="min-height: 200px; border-style: dashed !important;">
                                 
-                                {{-- Preview Gambar Lama/Baru --}}
+                                
                                 <img id="img-preview" 
                                      src="{{ $event->image ? asset('storage/' . $event->image) : '#' }}" 
                                      alt="Preview" 
                                      class="img-fluid rounded shadow-sm {{ $event->image ? '' : 'd-none' }}" 
                                      style="max-height: 300px; width: 100%; object-fit: cover;">
 
-                                {{-- Placeholder text (muncul kalau ga ada gambar) --}}
+                                
                                 <div id="placeholder-text" class="d-flex flex-column justify-content-center align-items-center text-muted {{ $event->image ? 'd-none' : '' }}" style="height: 100%; min-height: 200px;">
                                     <i class="fa-regular fa-image fa-3x mb-2 opacity-50"></i>
                                     <small>Preview gambar baru akan muncul disini</small>
@@ -60,12 +60,12 @@
                         </div>
 
                         <div class="row mb-4">
-                            {{-- JUDUL --}}
+                            
                             <div class="col-md-7">
                                 <label class="form-label fw-bold small text-secondary">JUDUL POSISI</label>
                                 <input type="text" name="title" class="form-control bg-light border-0" value="{{ old('title', $event->title) }}" required>
                             </div>
-                            {{-- KATEGORI --}}
+                            
                             <div class="col-md-5">
                                 <label class="form-label fw-bold small text-secondary">KATEGORI</label>
                                 <select name="category" class="form-select bg-light border-0" required>
@@ -79,7 +79,7 @@
                             </div>
                         </div>
 
-                        {{-- STATUS (Tambahan Penting buat Edit) --}}
+                        
                         <div class="mb-4">
                             <label class="form-label fw-bold small text-secondary">STATUS EVENT</label>
                             <select name="status" class="form-select bg-light border-0 fw-bold {{ $event->status == 'open' ? 'text-success' : ($event->status == 'closed' ? 'text-secondary' : 'text-danger') }}">
@@ -89,38 +89,38 @@
                             </select>
                         </div>
 
-                        {{-- DESKRIPSI --}}
+                        
                         <div class="mb-4">
                             <label class="form-label fw-bold small text-secondary">DESKRIPSI SINGKAT</label>
                             <textarea name="description" class="form-control bg-light border-0" rows="3" required>{{ old('description', $event->description) }}</textarea>
                         </div>
 
-                        {{-- TANGGUNG JAWAB --}}
+                        
                         <div class="mb-4">
                             <label class="form-label fw-bold small text-secondary">TANGGUNG JAWAB</label>
                             <textarea name="responsibilities" class="form-control bg-light border-0" rows="4" required>{{ old('responsibilities', $event->responsibilities) }}</textarea>
                         </div>
 
-                        {{-- KUALIFIKASI --}}
+                        
                         <div class="mb-4">
                             <label class="form-label fw-bold small text-secondary">KUALIFIKASI PELAMAR</label>
                             <textarea name="requirements" class="form-control bg-light border-0" rows="4" required>{{ old('requirements', $event->requirements) }}</textarea>
                         </div>
 
                         <div class="row">
-                            {{-- DEADLINE --}}
+                            
                             <div class="col-md-4 mb-4">
                                 <label class="form-label fw-bold small text-secondary">DEADLINE</label>
-                                {{-- Format tanggal wajib Y-m-d untuk input date --}}
+                                
                                 <input type="date" name="event_date" class="form-control bg-light border-0" 
                                        value="{{ old('event_date', \Carbon\Carbon::parse($event->event_date)->format('Y-m-d')) }}" required>
                             </div>
-                            {{-- LOKASI --}}
+                            
                             <div class="col-md-4 mb-4">
                                 <label class="form-label fw-bold small text-secondary">LOKASI</label>
                                 <input type="text" name="location" class="form-control bg-light border-0" value="{{ old('location', $event->location) }}" required>
                             </div>
-                            {{-- GAJI --}}
+                            
                             <div class="col-md-4 mb-4">
                                 <label class="form-label fw-bold small text-secondary">GAJI / BENEFIT</label>
                                 <input type="text" name="salary" class="form-control bg-light border-0" value="{{ old('salary', $event->salary) }}">
@@ -141,7 +141,7 @@
             </div>
         </div>
 
-        {{-- Sidebar Tips --}}
+        
         <div class="col-lg-4 mt-4 mt-lg-0">
             <div class="card border-0 shadow-sm rounded-4 bg-info bg-opacity-10 text-dark">
                 <div class="card-body p-4">

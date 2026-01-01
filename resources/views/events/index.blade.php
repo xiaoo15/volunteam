@@ -148,9 +148,78 @@
             .btn-search-round { width: 100%; border-radius: 15px; margin-top: 10px; height: 50px; }
             .search-container-floating { margin-top: -40px; }
         }
+
+        /* Custom Dropdown Container */
+.custom-dropdown-menu {
+    position: absolute;
+    top: 120%; /* Muncul sedikit di bawah input */
+    left: 0;
+    width: 280px; /* Lebih lebar biar lega */
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px -5px rgba(0,0,0,0.15); /* Shadow lembut */
+    border: 1px solid #f1f5f9;
+    padding: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); /* Animasi smooth */
+    z-index: 100;
+}
+
+/* State saat muncul */
+.custom-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    top: 110%;
+}
+
+/* Item Dropdown */
+.dropdown-item-custom {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: #475569;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.dropdown-item-custom:hover {
+    background-color: #f8fafc;
+    color: #4f46e5;
+}
+
+.dropdown-item-custom.active {
+    background-color: #e0e7ff; /* Biru muda banget */
+    color: #4f46e5; /* Ungu brand */
+    font-weight: 700;
+}
+
+/* Icon Box di kiri item */
+.dropdown-item-custom .icon-box {
+    width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    color: inherit;
+    opacity: 0.7;
+}
+
+/* Panah rotasi */
+.transition-rotate {
+    transition: transform 0.3s ease;
+}
+.rotate-180 {
+    transform: rotate(180deg);
+}
     </style>
 
-    {{-- HEADER HALAMAN --}}
+    
     <div class="page-header text-center">
         <div class="container position-relative z-2">
             <span class="badge bg-white bg-opacity-10 text-white border border-white border-opacity-25 rounded-pill px-3 py-2 mb-3 fw-bold small backdrop-blur">
@@ -159,11 +228,11 @@
             <h1 class="fw-bold display-5 mb-2">Mulai Misi Kebaikanmu</h1>
             <p class="lead opacity-75 mb-0" style="font-weight: 300;">Temukan ribuan cara untuk membuat dunia tersenyum hari ini.</p>
         </div>
-        {{-- Background Hiasan --}}
+        
         <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 40px 40px;"></div>
     </div>
 
-    {{-- SEARCH BAR (Airbnb Style) --}}
+    
     <div class="container search-container-floating" id="list-misi">
         <div class="row justify-content-center">
             <div class="col-xl-10 col-lg-11">
@@ -171,37 +240,70 @@
                 <form action="{{ route('events.index') }}" method="GET">
                     <div class="unified-search-bar">
                         
-                        {{-- 1. Keyword (Dengan Typewriter Effect) --}}
+                        
                         <div class="search-segment flex-grow-1">
                             <label class="segment-label">Cari Aktivitas</label>
                             <input type="text" name="search" id="typing-input" class="segment-input" placeholder="Cth: Mengajar..." value="{{ request('search') }}" autocomplete="off">
                         </div>
 
-                        {{-- 2. Lokasi --}}
+                        
                         <div class="search-segment" style="flex: 0 0 25%;">
                             <label class="segment-label">Lokasi</label>
                             <input type="text" name="location" class="segment-input" placeholder="Semua Kota" value="{{ request('location') }}">
                         </div>
 
-                        {{-- 3. Kategori --}}
-                        <div class="search-segment" style="flex: 0 0 25%;">
-                            <label class="segment-label">Kategori</label>
-                            <select name="category" class="segment-input cursor-pointer" style="appearance: none;">
-                                <option value="">Semua Isu</option>
-                                @foreach(['Pendidikan', 'Lingkungan', 'Kesehatan', 'Sosial', 'Teknologi'] as $cat)
-                                    <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>{{ $cat }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        
+                        <div class="search-segment position-relative cursor-pointer" id="categoryDropdownTrigger">
+    <label class="segment-label">Kategori</label>
+    
+    
+    <div class="d-flex align-items-center justify-content-between">
+        <span id="selectedCategoryText" class="fw-bold text-dark text-truncate" style="font-size: 0.95rem;">
+            {{ request('category') ? request('category') : 'Semua Isu' }}
+        </span>
+        <i class="fas fa-chevron-down text-muted small transition-rotate" id="dropdownArrow"></i>
+    </div>
 
-                        {{-- Tombol Cari --}}
+    
+    <input type="hidden" name="category" id="categoryInput" value="{{ request('category') }}">
+
+    
+    <div class="custom-dropdown-menu" id="categoryMenu">
+        <div class="dropdown-item-custom {{ !request('category') ? 'active' : '' }}" data-value="">
+            <div class="icon-box"><i class="fas fa-border-all"></i></div>
+            <span>Semua Isu</span>
+        </div>
+        
+        @foreach(['Pendidikan', 'Lingkungan', 'Kesehatan', 'Sosial', 'Teknologi'] as $cat)
+            <div class="dropdown-item-custom {{ request('category') == $cat ? 'active' : '' }}" data-value="{{ $cat }}">
+                
+                <div class="icon-box">
+                    @if($cat == 'Pendidikan') <i class="fas fa-book-open"></i>
+                    @elseif($cat == 'Lingkungan') <i class="fas fa-leaf"></i>
+                    @elseif($cat == 'Kesehatan') <i class="fas fa-heartbeat"></i>
+                    @elseif($cat == 'Sosial') <i class="fas fa-hands-helping"></i>
+                    @elseif($cat == 'Teknologi') <i class="fas fa-laptop-code"></i>
+                    @endif
+                </div>
+                <span>{{ $cat }}</span>
+                
+                
+                @if(request('category') == $cat)
+                    <i class="fas fa-check text-primary ms-auto small"></i>
+                @endif
+            </div>
+        @endforeach
+    </div>
+</div>
+
+                        
                         <button type="submit" class="btn-search-round" title="Cari Misi">
                             <i class="fas fa-search"></i>
                         </button>
                     </div>
                 </form>
 
-                {{-- Smart Tags (Quick Filters) --}}
+                
                 <div class="smart-pills">
                     <span class="text-white small fw-bold mt-2 text-shadow-sm d-none d-md-block">Saran Cepat:</span>
                     <a href="{{ route('events.index', ['category' => 'Lingkungan']) }}" class="pill-item"><i class="fa-solid fa-tree"></i> Lingkungan</a>
@@ -214,10 +316,10 @@
         </div>
     </div>
 
-    {{-- MAIN CONTENT --}}
+    
     <div class="container py-5 mt-4">
         
-        {{-- Header Result --}}
+        
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
                 <h5 class="fw-bold text-dark mb-1">Misi Tersedia <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill ms-2 align-middle" style="font-size: 0.7rem;">{{ $events->total() }}</span></h5>
@@ -226,7 +328,7 @@
                 @endif
             </div>
             
-            {{-- Simple Sort --}}
+            
             <form action="{{ route('events.index') }}" method="GET" class="d-none d-md-block">
                 @foreach(request()->except('sort') as $key => $val)
                     <input type="hidden" name="{{ $key }}" value="{{ $val }}">
@@ -238,16 +340,16 @@
             </form>
         </div>
 
-        {{-- LIST EVENTS --}}
+        
         <div class="row">
             <div class="col-12">
                 @forelse($events as $event)
                     <div class="job-card p-0 position-relative">
                         <div class="row g-0">
-                            {{-- GAMBAR --}}
+                            
                             <div class="col-md-3 position-relative overflow-hidden">
                                 @if($event->image)
-                                    <img src="{{ asset('storage/' . $event->image) }}" class="w-100 h-100 object-fit-cover transition-scale" style="min-height: 180px;" alt="Poster">
+                                    <img src="{{ $event->image_url }}" class="w-100 h-100 object-fit-cover transition-scale" style="min-height: 180px;" alt="Poster">
                                 @else
                                     <div class="bg-light h-100 d-flex align-items-center justify-content-center text-muted" style="min-height: 180px;">
                                         <i class="fa-regular fa-image fa-3x opacity-25"></i>
@@ -258,7 +360,7 @@
                                 </span>
                             </div>
 
-                            {{-- KONTEN --}}
+                            
                             <div class="col-md-9">
                                 <div class="p-4 h-100 d-flex flex-column">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
@@ -315,11 +417,11 @@
         </div>
     </div>
 
-    {{-- SCRIPT TYPEWRITER EFFECT UNTUK SEARCH --}}
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const input = document.getElementById('typing-input');
-            // Cuma jalanin efek kalau input kosong (user belum ngetik)
+            
             if (!input || input.value !== '') return;
 
             const placeholders = [
@@ -341,16 +443,16 @@
                 if (isDeleting) {
                     input.setAttribute('placeholder', currentText.substring(0, charIndex - 1));
                     charIndex--;
-                    typeSpeed = 50; // Hapus lebih cepet
+                    typeSpeed = 50; 
                 } else {
                     input.setAttribute('placeholder', currentText.substring(0, charIndex + 1));
                     charIndex++;
-                    typeSpeed = 100; // Ngetik normal
+                    typeSpeed = 100; 
                 }
 
                 if (!isDeleting && charIndex === currentText.length) {
                     isDeleting = true;
-                    typeSpeed = 2000; // Tahan sebentar pas udah ketik semua
+                    typeSpeed = 2000; 
                 } else if (isDeleting && charIndex === 0) {
                     isDeleting = false;
                     textIndex = (textIndex + 1) % placeholders.length;
@@ -363,6 +465,61 @@
             typeWriter();
         });
     </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const trigger = document.getElementById('categoryDropdownTrigger');
+    const menu = document.getElementById('categoryMenu');
+    const arrow = document.getElementById('dropdownArrow');
+    const input = document.getElementById('categoryInput');
+    const displayText = document.getElementById('selectedCategoryText');
+    const items = document.querySelectorAll('.dropdown-item-custom');
+
+    
+    trigger.addEventListener('click', function(e) {
+        
+        if(e.target.closest('.custom-dropdown-menu')) return;
+        
+        menu.classList.toggle('show');
+        arrow.classList.toggle('rotate-180');
+    });
+
+    
+    items.forEach(item => {
+        item.addEventListener('click', function() {
+            const value = this.getAttribute('data-value');
+            const text = this.querySelector('span').innerText;
+
+            
+            input.value = value;
+            
+            
+            displayText.innerText = text;
+
+            
+            items.forEach(i => {
+                i.classList.remove('active');
+                const check = i.querySelector('.fa-check');
+                if(check) check.remove();
+            });
+            this.classList.add('active');
+
+            
+            menu.classList.remove('show');
+            arrow.classList.remove('rotate-180');
+        });
+    });
+
+    
+    document.addEventListener('click', function(e) {
+        if (!trigger.contains(e.target)) {
+            menu.classList.remove('show');
+            arrow.classList.remove('rotate-180');
+        }
+    });
+});
+    </script>
+
 
     <style>
         .transition-scale:hover { transform: scale(1.05); transition: 5s ease; }

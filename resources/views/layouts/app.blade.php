@@ -37,7 +37,7 @@
 <body>
 
     @if(Request::is('admin*') && Auth::check() && Auth::user()->role == 'admin')
-        {{-- Layout Admin Tetap Sama --}}
+        
         <div class="d-flex">
             @include('partials.admin-sidebar')
             <div class="flex-grow-1" style="margin-left: 260px; min-height: 100vh; background-color: #f3f4f6;">
@@ -59,11 +59,11 @@
             </div>
         </div>
     @else
-        {{-- Layout Public --}}
+        
         @include('layouts.navbar_public')
         
         <div class="flex-grow-1">
-            {{-- Container buat alerts biar rapi --}}
+            
             @if(session('success') || session('error'))
             <div class="container mt-4">
                 @include('layouts.alerts')
@@ -76,10 +76,12 @@
         @include('partials.footer')
     @endif
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
 
-    {{-- SCRIPT SCROLL NAVBAR --}}
+    
     <script>
         window.addEventListener('scroll', function() {
             var navbar = document.querySelector('.navbar-glass');

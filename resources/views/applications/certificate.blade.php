@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sertifikat - {{ $application->user->name }}</title>
 
-    {{-- Font Keren --}}
+    
     <link
         href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
         rel="stylesheet">
@@ -254,14 +254,14 @@
     </button>
 
     <div class="certificate-container">
-        {{-- Hiasan --}}
+        
         <div class="border-pattern"></div>
         <div class="corner top-left"></div>
         <div class="corner top-right"></div>
         <div class="corner bottom-left"></div>
         <div class="corner bottom-right"></div>
 
-        {{-- Logo samar di tengah --}}
+        
         <i class="fa-solid fa-hand-holding-heart watermark fa-10x"></i>
 
         <div class="content">
@@ -270,7 +270,7 @@
 
             <p class="present-to">Diberikan dengan bangga kepada:</p>
 
-            {{-- NAMA USER (DINAMIS) --}}
+            
             <h2 class="recipient-name">{{ $application->user->name }}</h2>
 
             <p class="description">
@@ -285,7 +285,7 @@
 
             <div class="signatures">
                 <div class="sig-box">
-                    {{-- QR Code Palsu tapi Keren --}}
+                    
                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ route('certificate.print', $application->id) }}"
                         style="margin-bottom: 10px; opacity: 0.8;">
                     <div class="sig-title" style="font-size: 0.7rem;">ID:
@@ -294,7 +294,7 @@
                 </div>
 
                 <div class="sig-box">
-                    {{-- Tanda Tangan Gambar (Pake Font Script aja biar cepet) --}}
+                    
                     <div
                         style="font-family: 'Great Vibes', cursive; font-size: 2rem; color: #1e293b; height: 50px; border-bottom: 2px solid #1e293b; margin-bottom: 10px;">
                         {{ $application->event->organizer->name }}

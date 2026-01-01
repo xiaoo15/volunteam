@@ -18,7 +18,7 @@
                         <form action="{{ route('events.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
-                            {{-- GAMBAR --}}
+                            
                             <div class="mb-4">
                                 <label class="form-label fw-bold small text-secondary">POSTER KEGIATAN</label>
                                 <div class="mb-3 text-center bg-light border rounded-3 p-3 position-relative"
@@ -37,13 +37,13 @@
                             </div>
 
                             <div class="row mb-4">
-                                {{-- JUDUL --}}
+                                
                                 <div class="col-md-7">
                                     <label class="form-label fw-bold small text-secondary">NAMA MISI / KEGIATAN</label>
                                     <input type="text" name="title" class="form-control bg-light border-0"
                                         placeholder="Cth: Gerakan Pungut Sampah Pesisir" required>
                                 </div>
-                                {{-- KATEGORI --}}
+                                
                                 <div class="col-md-5">
                                     <label class="form-label fw-bold small text-secondary">ISU UTAMA</label>
                                     <select name="category" class="form-select bg-light border-0" required>
@@ -57,7 +57,7 @@
                                 </div>
                             </div>
 
-                            {{-- DESKRIPSI --}}
+                            
                             <div class="mb-4">
                                 <label class="form-label fw-bold small text-secondary">CERITA & TUJUAN</label>
                                 <textarea name="description" class="form-control bg-light border-0" rows="3"
@@ -65,7 +65,7 @@
                                     required></textarea>
                             </div>
 
-                            {{-- TANGGUNG JAWAB --}}
+                            
                             <div class="mb-4">
                                 <label class="form-label fw-bold small text-secondary">AKSI YANG DILAKUKAN</label>
                                 <textarea name="responsibilities" class="form-control bg-light border-0" rows="4"
@@ -74,7 +74,7 @@
                                 <small class="text-muted">Gunakan tanda strip (-) untuk poin-poin.</small>
                             </div>
 
-                            {{-- SYARAT --}}
+                            
                             <div class="mb-4">
                                 <label class="form-label fw-bold small text-secondary">KRITERIA RELAWAN</label>
                                 <textarea name="requirements" class="form-control bg-light border-0" rows="4"
@@ -83,18 +83,18 @@
                             </div>
 
                             <div class="row">
-                                {{-- DEADLINE --}}
+                                
                                 <div class="col-md-4 mb-4">
                                     <label class="form-label fw-bold small text-secondary">TANGGAL PELAKSANAAN</label>
                                     <input type="date" name="event_date" class="form-control bg-light border-0" required>
                                 </div>
-                                {{-- LOKASI --}}
+                                
                                 <div class="col-md-4 mb-4">
                                     <label class="form-label fw-bold small text-secondary">LOKASI KEGIATAN</label>
                                     <input type="text" name="location" class="form-control bg-light border-0"
                                         placeholder="Kota / Alamat Lengkap" required>
                                 </div>
-                                {{-- BENEFIT --}}
+                                
                                 <div class="col-md-4 mb-4">
                                     <label class="form-label fw-bold small text-secondary">BENEFIT RELAWAN</label>
                                     <input type="text" name="salary" class="form-control bg-light border-0"
@@ -116,7 +116,7 @@
                 </div>
             </div>
 
-            {{-- SIDEBAR TIPS --}}
+            
             <div class="col-lg-4 mt-4 mt-lg-0">
                 <div class="card border-0 shadow-sm rounded-4 bg-primary text-white">
                     <div class="card-body p-4">

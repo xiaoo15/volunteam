@@ -3,7 +3,7 @@
 @section('content')
     <div class="bg-light min-vh-100 pb-5">
 
-        {{-- 1. HEADER HERO --}}
+        
         <div class="position-relative bg-dark text-white overflow-hidden"
             style="height: 250px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%);">
             <div class="container position-relative h-100 d-flex align-items-center" style="z-index: 1;">
@@ -12,40 +12,40 @@
                     <p class="text-white-50 mb-0">Monitor semua lowongan volunteer yang tersedia.</p>
                 </div>
             </div>
-            {{-- Decorative Circle --}}
+            
             <div class="position-absolute top-0 end-0 p-5 opacity-10">
                 <i class="fa-solid fa-calendar-check fa-10x"></i>
             </div>
         </div>
 
-        {{-- 2. MAIN CONTENT --}}
+        
         <div class="container mt-n5 position-relative" style="z-index: 2;">
             <div class="row g-4">
 
-                {{-- SIDEBAR --}}
+                
                 <div class="col-lg-3 d-none d-lg-block">
                     @include('partials.admin-sidebar')
                 </div>
 
-                {{-- CONTENT AREA --}}
+                
                 <div class="col-lg-18">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
 
-                        {{-- Card Header --}}
+                        
                         <div
                             class="card-header bg-white border-bottom border-light py-4 px-4 d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="fw-bold mb-0">Daftar Event</h6>
                                 <small class="text-muted">Total {{ $events->total() }} event terdaftar</small>
                             </div>
-                            {{-- (Optional) Search Bar Placeholder --}}
+                            
                             <div class="d-flex gap-2">
                                 <button class="btn btn-sm btn-light rounded-pill px-3"><i
                                         class="fa-solid fa-filter me-1"></i> Filter</button>
                             </div>
                         </div>
 
-                        {{-- Table --}}
+                        
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-light-subtle">
@@ -71,7 +71,7 @@
                                 <tbody>
                                     @forelse($events as $event)
                                         <tr>
-                                            {{-- Kolom Event --}}
+                                            
                                             <td class="ps-4 py-3">
                                                 <div class="d-flex align-items-center">
                                                     <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3 text-primary d-flex align-items-center justify-content-center shadow-sm"
@@ -91,7 +91,7 @@
                                                 </div>
                                             </td>
 
-                                            {{-- Kolom Organizer --}}
+                                            
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <img src="{{ $event->organizer->avatar_url }}"
@@ -101,7 +101,7 @@
                                                 </div>
                                             </td>
 
-                                            {{-- Kolom Pelamar --}}
+                                            
                                             <td class="text-center">
                                                 <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fw-normal">
                                                     <i class="fa-solid fa-user-group me-1 text-muted"></i>
@@ -109,7 +109,7 @@
                                                 </span>
                                             </td>
 
-                                            {{-- Kolom Status --}}
+                                            
                                             <td>
                                                 @if($event->status == 'open')
                                                     <span
@@ -129,7 +129,7 @@
                                                 @endif
                                             </td>
 
-                                            {{-- Kolom Aksi --}}
+                                            
                                             <td class="text-end pe-4">
                                                 <div class="d-flex justify-content-end gap-2">
                                                     <a href="{{ route('events.show', $event->id) }}" target="_blank"
@@ -161,7 +161,7 @@
                             </table>
                         </div>
 
-                        {{-- Pagination --}}
+                        
                         @if($events->hasPages())
                             <div class="card-footer bg-white border-0 py-4 d-flex justify-content-center">
                                 {{ $events->links('pagination::bootstrap-5') }}

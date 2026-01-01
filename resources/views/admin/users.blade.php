@@ -3,7 +3,7 @@
 @section('content')
     <div class="bg-light min-vh-100 pb-5">
 
-        {{-- 1. HEADER HERO --}}
+        
         <div class="position-relative bg-dark text-white overflow-hidden"
             style="height: 250px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%);">
             <div class="container position-relative h-100 d-flex align-items-center" style="z-index: 1;">
@@ -12,26 +12,26 @@
                     <p class="text-white-50 mb-0">Manajemen data volunteer dan organizer.</p>
                 </div>
             </div>
-            {{-- Decorative Circle --}}
+            
             <div class="position-absolute top-0 end-0 p-5 opacity-10">
                 <i class="fa-solid fa-users-gear fa-10x"></i>
             </div>
         </div>
 
-        {{-- 2. CONTENT AREA --}}
+        
         <div class="container mt-n5 position-relative" style="z-index: 2;">
             <div class="row g-4">
 
-                {{-- SIDEBAR --}}
+                
                 <div class="col-lg-3 d-none d-lg-block">
                     @include('partials.admin-sidebar')
                 </div>
 
-                {{-- MAIN CARD --}}
+                
                 <div class="col-lg-18">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
 
-                        {{-- Card Header --}}
+                        
                         <div
                             class="card-header bg-white border-bottom border-light py-4 px-4 d-flex justify-content-between align-items-center">
                             <div>
@@ -39,7 +39,7 @@
                                 <small class="text-muted">Total {{ $users->total() }} user terdaftar</small>
                             </div>
 
-                            {{-- Search UI (Visual Only) --}}
+                            
                             <div class="position-relative" style="width: 250px;">
                                 <input type="text" class="form-control form-control-sm rounded-pill ps-5 bg-light border-0"
                                     placeholder="Cari nama atau email...">
@@ -48,7 +48,7 @@
                             </div>
                         </div>
 
-                        {{-- Table --}}
+                        
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-light-subtle">
@@ -70,10 +70,10 @@
                                 <tbody>
                                     @foreach($users as $user)
                                         <tr>
-                                            {{-- Kolom Profil --}}
+                                            
                                             <td class="ps-4 py-3">
                                                 <div class="d-flex align-items-center">
-                                                    {{-- Avatar (Pakai logic accessor yang sudah dibuat) --}}
+                                                    
                                                     <img src="{{ $user->avatar_url }}"
                                                         class="rounded-circle me-3 border border-white shadow-sm object-fit-cover"
                                                         width="45" height="45">
@@ -85,7 +85,7 @@
                                                 </div>
                                             </td>
 
-                                            {{-- Kolom Role --}}
+                                            
                                             <td class="py-3">
                                                 @if($user->role == 'admin')
                                                     <span
@@ -105,7 +105,7 @@
                                                 @endif
                                             </td>
 
-                                            {{-- Kolom Tanggal --}}
+                                            
                                             <td class="py-3">
                                                 <span class="text-muted small">
                                                     <i class="far fa-calendar me-1 opacity-50"></i>
@@ -113,7 +113,7 @@
                                                 </span>
                                             </td>
 
-                                            {{-- Kolom Aksi --}}
+                                            
                                             <td class="text-end pe-4 py-3">
                                                 @if($user->id !== Auth::id())
                                                     <form action="{{ route('admin.user.delete', $user->id) }}" method="POST"
@@ -135,7 +135,7 @@
                             </table>
                         </div>
 
-                        {{-- Pagination --}}
+                        
                         @if($users->hasPages())
                             <div class="card-footer bg-white border-0 py-4 d-flex justify-content-center">
                                 {{ $users->links('pagination::bootstrap-5') }}

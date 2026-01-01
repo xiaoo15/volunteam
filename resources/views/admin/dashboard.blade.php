@@ -104,11 +104,11 @@
 
         <div class="bg-light min-vh-100 pb-5">
 
-            {{-- HEADER --}}
+            
             <div class="bg-dark text-white pt-4 pb-5">
                 <div class="container">
                     <div class="row align-items-center">
-                        <div class="col-lg-3"></div> {{-- Spacer Sidebar --}}
+                        <div class="col-lg-3"></div> 
                         <div class="col-lg-9 ps-lg-4">
                             <div class="d-flex justify-content-between align-items-end">
                                 <div>
@@ -129,17 +129,17 @@
             <div class="container mt-n5" style="margin-top: -30px;">
                 <div class="row g-4">
 
-                    {{-- SIDEBAR --}}
+                    
                     <div class="col-lg-3 d-none d-lg-block">
                         @include('partials.admin-sidebar')
                     </div>
 
-                    {{-- MAIN CONTENT --}}
+                    
                     <div class="col-lg-19">
 
-                        {{-- 1. BARIS KARTU STATISTIK (4 KARTU) --}}
+                        
                         <div class="stats-grid">
-                            {{-- Total User --}}
+                            
                             <div class="stat-card">
                                 <div class="d-flex justify-content-between">
                                     <div>
@@ -155,7 +155,7 @@
                                 </div>
                             </div>
 
-                            {{-- Total Event --}}
+                            
                             <div class="stat-card">
                                 <div class="d-flex justify-content-between">
                                     <div>
@@ -169,7 +169,7 @@
                                 </div>
                             </div>
 
-                            {{-- Lamaran Masuk --}}
+                            
                             <div class="stat-card">
                                 <div class="d-flex justify-content-between">
                                     <div>
@@ -185,7 +185,7 @@
                                 </div>
                             </div>
 
-                            {{-- Lamaran Selesai --}}
+                            
                             <div class="stat-card">
                                 <div class="d-flex justify-content-between">
                                     <div>
@@ -197,10 +197,10 @@
                             </div>
                         </div>
 
-                        {{-- 2. BARIS SMART ANALYTICS & TOP ORGANIZER --}}
+                        
                         <div class="row g-4 mb-4">
 
-                            {{-- Kiri: Distribusi Kategori (Visual Progress) --}}
+                            
                             <div class="col-md-7">
                                 <div class="insight-card shadow-sm">
                                     <div class="insight-header">
@@ -230,7 +230,7 @@
                                 </div>
                             </div>
 
-                            {{-- Kanan: Top Organizer --}}
+                            
                             <div class="col-md-5">
                                 <div class="insight-card shadow-sm">
                                     <div class="insight-header">
@@ -258,7 +258,7 @@
                             </div>
                         </div>
 
-                        {{-- 3. BARIS TABEL USER TERBARU (FULL WIDTH) --}}
+                        
                         <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
                             <div class="card-header bg-white p-4 border-bottom d-flex justify-content-between align-items-center">
                                 <h6 class="fw-bold mb-0"><i class="fa-solid fa-user-clock me-2 text-info"></i>Pengguna Terbaru</h6>
@@ -310,7 +310,7 @@
                             </div>
                         </div>
 
-                        {{-- 4. BARIS EVENT BARU --}}
+                        
                         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                             <div class="card-header bg-white p-4 border-bottom">
                                 <h6 class="fw-bold mb-0"><i class="fa-solid fa-bullhorn me-2 text-danger"></i>Misi Kebaikan Terbaru</h6>

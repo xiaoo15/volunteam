@@ -300,7 +300,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-premium sticky-top">
     <div class="container position-relative">
-        {{-- Logo --}}
+        
         <a class="navbar-brand" href="{{ url('/') }}">
             <img src="{{ asset('images/logo_volunteam.png') }}" alt="VolunTeam" style="height: 40px; width: auto;">
             <span class="logo-text">VolunTeam</span>
@@ -309,12 +309,12 @@
         <button class="navbar-toggler border-0 shadow-none p-0" type="button" data-bs-toggle="collapse"
             data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon" style="background-image: url('data:image/svg+xml,...');"></span>
-            {{-- Note: Standard toggler icon is fine, or customize SVG --}}
+            
             <i class="fas fa-bars fa-lg text-dark"></i>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-           {{-- Center Menu --}}
+           
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}">
@@ -322,13 +322,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    
                     <a class="nav-link {{ request()->routeIs('events.index') ? 'active' : '' }}" href="{{ route('events.index') }}">
-                        <i class="fas fa-search"></i> Cari Lowongan
+                        <i class="fas fa-search-location"></i> Cari Misi
                     </a>
                 </li>
 
                 @auth
-                    {{-- 🔥 MENU KHUSUS ADMIN 🔥 --}}
+                    
                     @if(Auth::user()->role == 'admin')
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" 
@@ -338,27 +339,28 @@
                         </li>
                     @endif
 
-                    {{-- MENU ORGANIZER --}}
+                    
                     @if(Auth::user()->role == 'organizer')
                         <li class="nav-item">
+                            
                             <a class="nav-link {{ request()->routeIs('organizer.events') ? 'active' : '' }}" href="{{ route('organizer.events') }}">
-                                <i class="fas fa-calendar-check"></i> Kelola Event
+                                <i class="fas fa-clipboard-list"></i> Kelola Misi
                             </a>
                         </li>
                     @endif
 
-                    {{-- MENU VOLUNTEER --}}
+                    
                     @if(Auth::user()->role == 'volunteer')
                         <li class="nav-item">
+                            
                             <a class="nav-link {{ request()->routeIs('applications.history') ? 'active' : '' }}" href="{{ route('applications.history') }}">
-                                <i class="fas fa-history"></i> Riwayat
+                                <i class="fas fa-history"></i> Jejak Kebaikan
                             </a>
                         </li>
                     @endif
                 @endauth
             </ul>
-
-            {{-- Right Section (User/Auth) --}}
+            
             <div class="d-flex align-items-center user-section">
                 @guest
                     <div class="d-flex auth-section">
@@ -366,7 +368,7 @@
                         <a href="{{ route('register') }}" class="btn btn-register btn-auth">Daftar Sekarang</a>
                     </div>
                 @else
-                    {{-- 🔔 NOTIFICATION BELL --}}
+                    
                     <div class="dropdown notification-wrapper">
                         <a href="#" class="nav-link position-relative" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="far fa-bell fa-lg"></i>
@@ -430,60 +432,130 @@
                         </div>
                     </div>
 
-                    {{-- 👤 USER PROFILE --}}
-                    <div class="dropdown">
-                        <a href="#" class="user-dropdown-toggle text-decoration-none" data-bs-toggle="dropdown">
-                            <img src="{{ Auth::user()->avatar_url }}"
-                                class="rounded-circle object-fit-cover shadow-sm" style="width: 36px; height: 36px;">
+                    
+                   <div class="dropdown">
+    
+    <a href="#" class="d-flex align-items-center text-decoration-none py-1 px-2 rounded-pill hover-bg-light transition-all" 
+       data-bs-toggle="dropdown" aria-expanded="false">
+     
+        
+        <img src="{{ Auth::user()->avatar_url }}" 
+             class="rounded-circle object-fit-cover shadow-sm border border-2 border-white" 
+             style="width: 40px; height: 40px;">
 
-                            <div class="d-none d-md-block text-start lh-1">
-                                <div class="fw-bold text-dark" style="font-size: 0.85rem;">
-                                    {{ Str::limit(Auth::user()->name, 12) }}</div>
-                                <div class="text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">
-                                    {{ Auth::user()->role }}</div>
-                            </div>
-                            <i class="fas fa-chevron-down text-muted small ms-1"></i>
-                        </a>
+        
+        <div class="d-none d-md-block text-start ms-2 lh-1">
+            <div class="fw-bold text-dark text-truncate" style="max-width: 120px; font-size: 0.9rem;">
+                {{ Auth::user()->name }}
+            </div>
+            <div class="text-primary fw-bold text-uppercase mt-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">
+                {{ Auth::user()->role }}
+            </div>
+        </div>
+        
+        <i class="fas fa-chevron-down text-muted small ms-3 me-1"></i>
+    </a>
 
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-premium" style="width: 240px;">
-                            {{-- Mobile Only Header --}}
-                            <li class="d-block d-md-none px-3 py-3 border-bottom mb-2 text-center bg-light rounded-top">
-                                <img src="{{ Auth::user()->avatar_url }}"
-                                    class="rounded-circle mb-2 shadow-sm object-fit-cover"
-                                    style="width: 60px; height: 60px;">
-                                <div class="fw-bold text-dark">{{ Auth::user()->name }}</div>
-                                <div class="small text-muted text-uppercase">{{ Auth::user()->role }}</div>
-                            </li>
+    
+    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 mt-2 p-2 overflow-hidden animate-slide-down" 
+        style="width: 260px;">
+        
+        
+        <li class="px-2 py-3 mb-2 border-bottom text-center">
+            <div class="position-relative d-inline-block">
+                <img src="{{ Auth::user()->avatar_url }}" 
+                     class="rounded-circle shadow-sm object-fit-cover p-1 bg-white border"
+                     style="width: 64px; height: 64px;">
+                <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-2 border-white rounded-circle"></span>
+            </div>
+            <div class="mt-2">
+                <h6 class="fw-bold text-dark mb-0">{{ Auth::user()->name }}</h6>
+                <small class="text-muted" style="font-size: 0.8rem;">{{ Auth::user()->email }}</small>
+            </div>
+        </li>
 
-                            <li>
-                                <a class="dropdown-item" href="{{ route('home') }}">
-                                    <div class="icon-box-small bg-primary bg-opacity-10 text-primary"><i
-                                            class="fas fa-gauge-high"></i></div>
-                                    Dashboard
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                    <div class="icon-box-small bg-info bg-opacity-10 text-info"><i
-                                            class="fas fa-user-gear"></i></div>
-                                    Edit Profil
-                                </a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider my-2 opacity-50">
-                            </li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <div class="icon-box-small bg-danger bg-opacity-10 text-danger"><i
-                                            class="fas fa-sign-out-alt"></i></div>
-                                    Keluar
-                                </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
+        
+        <li>
+            <a class="dropdown-item d-flex align-items-center gap-3 p-2 rounded-3 mb-1" href="{{ route('home') }}">
+                <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-3">
+                    <i class="fas fa-gauge-high"></i>
+                </div>
+                <div>
+                    <span class="fw-bold d-block text-dark small">Dashboard</span>
+                    <span class="text-muted x-small">Panel Utama</span>
+                </div>
+            </a>
+        </li>
+        
+        <li>
+            <a class="dropdown-item d-flex align-items-center gap-3 p-2 rounded-3 mb-1" href="{{ route('profile.edit') }}">
+                <div class="icon-box bg-info bg-opacity-10 text-info rounded-3">
+                    <i class="fas fa-user-gear"></i>
+                </div>
+                <div>
+                    <span class="fw-bold d-block text-dark small">Edit Profil</span>
+                    <span class="text-muted x-small">Atur Akun</span>
+                </div>
+            </a>
+        </li>
+
+        <li><hr class="dropdown-divider my-2 opacity-10"></li>
+
+        <li>
+            <a class="dropdown-item d-flex align-items-center gap-3 p-2 rounded-3 text-danger group-hover-danger" href="{{ route('logout') }}"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <div class="icon-box bg-danger bg-opacity-10 text-danger rounded-3 transition-colors">
+                    <i class="fas fa-arrow-right-from-bracket"></i>
+                </div>
+                <span class="fw-bold small">Keluar</span>
+            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+        </li>
+    </ul>
+</div>
+
+<style>
+    /* CSS TAMBAHAN BIAR CANTIK */
+    .hover-bg-light:hover { background-color: #f8f9fa; }
+    .transition-all { transition: all 0.2s ease; }
+    
+    .icon-box {
+        width: 32px; height: 32px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+
+    .dropdown-item {
+        transition: all 0.2s ease;
+        border-left: 3px solid transparent;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        transform: translateX(5px); /* Geser kanan dikit pas hover */
+        border-left-color: #4f46e5; /* Garis ungu di kiri */
+    }
+    
+    /* Khusus tombol Logout pas di hover jadi merah */
+    .dropdown-item.text-danger:hover {
+        background-color: #fef2f2 !important; /* Merah sangat muda */
+        border-left-color: #dc3545;
+    }
+
+    .x-small { font-size: 0.7rem; }
+
+    /* Animasi Dropdown Muncul */
+    .animate-slide-down {
+        animation: slideDown 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transform-origin: top right;
+    }
+    
+    @keyframes slideDown {
+        0% { opacity: 0; transform: translateY(-10px) scale(0.95); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+</style>
                 @endguest
             </div>
         </div>

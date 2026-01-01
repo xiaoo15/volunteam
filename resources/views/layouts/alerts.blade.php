@@ -1,7 +1,7 @@
-{{-- WRAPPER FLOAT: Biar alertnya melayang di pojok kanan atas --}}
+
 <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999; max-width: 400px;">
 
-    {{-- 1. SUKSES --}}
+    
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show shadow-lg border-0 rounded-4 d-flex align-items-center gap-3 mb-3 bg-white" role="alert" style="border-left: 5px solid #198754 !important;">
             <div class="bg-success bg-opacity-10 text-success rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
@@ -15,7 +15,7 @@
         </div>
     @endif
 
-    {{-- 2. ERROR (SESSION) --}}
+    
     @if(session('error'))
         <div class="alert alert-danger alert-dismissible fade show shadow-lg border-0 rounded-4 d-flex align-items-center gap-3 mb-3 bg-white" role="alert" style="border-left: 5px solid #dc3545 !important;">
             <div class="bg-danger bg-opacity-10 text-danger rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
@@ -29,7 +29,7 @@
         </div>
     @endif
 
-    {{-- 3. WARNING --}}
+    
     @if(session('warning'))
         <div class="alert alert-warning alert-dismissible fade show shadow-lg border-0 rounded-4 d-flex align-items-center gap-3 mb-3 bg-white" role="alert" style="border-left: 5px solid #ffc107 !important;">
             <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
@@ -43,7 +43,7 @@
         </div>
     @endif
 
-    {{-- 4. VALIDATION ERRORS (FORM) --}}
+    
     @if($errors->any())
         <div class="alert alert-danger alert-dismissible fade show shadow-lg border-0 rounded-4 mb-3 bg-white" role="alert" style="border-left: 5px solid #dc3545 !important;">
             <div class="d-flex align-items-start gap-3">
@@ -65,7 +65,7 @@
 
 </div>
 
-{{-- SCRIPT AUTO-CLOSE (Hilang sendiri setelah 5 detik) --}}
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {

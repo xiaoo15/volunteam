@@ -4,17 +4,17 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         
-        {{-- BAGIAN KIRI: PROFIL, LEVEL, & BADGES --}}
+        
         <div class="col-md-4 mb-4">
             <div class="card border-0 shadow-sm rounded-4 text-center p-4 h-100 position-relative overflow-hidden">
-                {{-- Background Hiasan Abstrak --}}
+                
                 <div class="position-absolute top-0 start-0 w-100 h-100 bg-light opacity-50" style="z-index: 0;"></div>
                 <div class="position-absolute top-0 end-0 p-3 opacity-10">
                     <i class="fa-solid fa-trophy fa-6x text-warning"></i>
                 </div>
                 
                 <div class="position-relative" style="z-index: 1;">
-                    {{-- Avatar --}}
+                    
                     <div class="position-relative d-inline-block mb-3 mx-auto">
                         <img src="{{ $user->avatar_url }}" class="rounded-circle shadow-lg border border-4 border-white" width="120" height="120">
                         <label for="avatarInput" class="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle p-2 shadow-sm cursor-pointer hover-scale" style="width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
@@ -25,7 +25,7 @@
                     <h5 class="fw-bold text-dark mb-1">{{ $user->name }}</h5>
                     <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 mb-3">{{ ucfirst($user->role) }}</span>
 
-                    {{-- 🔥 FITUR GAMIFIKASI: LEVEL SYSTEM (HARDCODE) 🔥 --}}
+                    
                     <div class="mb-4 px-3 mt-2">
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <span class="small fw-bold text-dark"><i class="fa-solid fa-bolt text-warning me-1"></i> Level 5</span>
@@ -40,7 +40,7 @@
                         </div>
                     </div>
 
-                    {{-- 🔥 FITUR GAMIFIKASI: KOLEKSI BADGES (HARDCODE) 🔥 --}}
+                    
                     <div class="bg-white rounded-4 p-3 shadow-sm border mb-4 text-start position-relative">
                         <h6 class="fw-bold small text-muted mb-3 text-uppercase d-flex align-items-center justify-content-between">
                             <span>Koleksi Lencana</span>
@@ -49,35 +49,35 @@
                         
                         <div class="d-flex flex-wrap gap-2 justify-content-center">
                             
-                            {{-- Badge 1: Early Adopter (Emas) --}}
+                            
                             <div class="badge-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Perintis: Bergabung di Bulan Pertama Rilis">
                                 <div class="badge-icon bg-warning bg-opacity-10 text-warning border-warning">
                                     <i class="fa-solid fa-crown"></i>
                                 </div>
                             </div>
 
-                            {{-- Badge 2: Verified (Biru) --}}
+                            
                             <div class="badge-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Terverifikasi: Identitas & Dokumen Asli">
                                 <div class="badge-icon bg-info bg-opacity-10 text-info border-info">
                                     <i class="fa-solid fa-user-shield"></i>
                                 </div>
                             </div>
 
-                            {{-- Badge 3: Dedication (Merah) --}}
+                            
                             <div class="badge-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Dedikasi: 50+ Jam Mengabdi">
                                 <div class="badge-icon bg-danger bg-opacity-10 text-danger border-danger">
                                     <i class="fa-solid fa-fire"></i>
                                 </div>
                             </div>
 
-                            {{-- Badge 4: Social (Ungu) --}}
+                            
                             <div class="badge-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Connector: Membawa 5 Teman Baru">
                                 <div class="badge-icon bg-primary bg-opacity-10 text-primary border-primary">
                                     <i class="fa-solid fa-users"></i>
                                 </div>
                             </div>
 
-                            {{-- Badge 5: Locked (Hitam Putih) --}}
+                            
                             <div class="badge-item grayscale" data-bs-toggle="tooltip" data-bs-placement="top" title="LOCKED: Ikuti 5 Event Lingkungan untuk membuka">
                                 <div class="badge-icon bg-light text-muted border-light">
                                     <i class="fa-solid fa-leaf"></i>
@@ -100,7 +100,7 @@
             </div>
         </div>
 
-        {{-- BAGIAN KANAN: FORM EDIT (Tetap Sama) --}}
+        
         <div class="col-md-8">
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-header bg-white border-bottom p-4">
@@ -119,7 +119,7 @@
                         @csrf
                         @method('PUT')
 
-                        {{-- Hidden File Input --}}
+                        
                         <input type="file" name="avatar" id="avatarInput" class="d-none" accept="image/*" onchange="this.form.submit()">
 
                         <div class="row mb-4">
@@ -171,7 +171,7 @@
     </div>
 </div>
 
-{{-- CSS KHUSUS BADGES & ANIMASI --}}
+
 <style>
     .hover-scale { transition: transform 0.2s; }
     .hover-scale:hover { transform: scale(1.05); }
@@ -207,7 +207,7 @@
     }
 </style>
 
-{{-- SCRIPT TOOLTIP (Biar pas di-hover muncul teksnya) --}}
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))

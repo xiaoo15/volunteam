@@ -62,7 +62,7 @@
                                 {{-- Image Thumbnail --}}
                                 <div class="bg-light d-none d-sm-block position-relative" style="width: 140px; min-height: 160px;">
                                     @if($event->image)
-                                        <img src="{{ asset('storage/' . $event->image) }}" class="w-100 h-100 object-fit-cover position-absolute">
+                                        <img src="{{ $event->image_url }}" class="w-100 h-100 object-fit-cover position-absolute">
                                     @else
                                         <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
                                             <i class="fa-regular fa-image fa-2x opacity-25"></i>

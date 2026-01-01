@@ -70,7 +70,7 @@
     <div class="container">
         <div class="frame-outer">
             <div class="frame-inner">
-                {{-- Ornamen Sudut Gold --}}
+                
                 <div class="corner top-left"></div>
                 <div class="corner top-right"></div>
                 <div class="corner bottom-left"></div>

@@ -1,120 +1,149 @@
-<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark h-100 shadow"
-    style="width: 260px; position: fixed; top: 0; left: 0; z-index: 1000;">
+<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark h-100 shadow-lg border-end border-secondary border-opacity-25"
+    style="width: 280px; position: fixed; top: 0; left: 0; z-index: 1050; background: #111827 !important;">
 
-    {{-- BRAND --}}
+    
     <a href="{{ route('admin.dashboard') }}"
-        class="d-flex align-items-center mb-4 mb-md-0 me-md-auto text-white text-decoration-none px-2">
-        <div class="bg-primary rounded p-2 me-3 shadow-sm d-flex align-items-center justify-content-center"
-            style="width: 40px; height: 40px;">
-            <i class="fa-solid fa-user-shield fa-lg text-white"></i>
+        class="d-flex align-items-center mb-4 mt-2 px-2 text-white text-decoration-none transition-scale">
+        
+        
+        <div class="bg-white rounded-3 p-1 me-3 shadow-sm d-flex align-items-center justify-content-center logo-box">
+            
+            <img src="{{ asset('images/logo_volunteam.png') }}" alt="Logo" width="32" height="32" class="object-fit-contain">
         </div>
+        
         <div class="lh-1">
-            <span class="fs-5 fw-bold d-block">VolunTeam</span>
-            <small class="text-white-50" style="font-size: 10px; letter-spacing: 1px;">ADMINISTRATOR</small>
+            <span class="fs-5 fw-bold d-block tracking-tight text-white">VolunTeam</span>
+            <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25 rounded-1 mt-1 px-2 py-1" 
+                  style="font-size: 9px; letter-spacing: 1px;">ADMIN PANEL</span>
         </div>
     </a>
 
-    <hr class="opacity-10 my-3">
+    <hr class="opacity-10 my-3 border-secondary">
 
-    {{-- NAVIGATION --}}
-    <ul class="nav nav-pills flex-column mb-auto gap-1">
+    
+    <ul class="nav nav-pills flex-column mb-auto gap-2">
+        
         <li class="nav-item">
             <a href="{{ route('admin.dashboard') }}"
-                class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'active bg-primary fw-bold shadow-sm' : '' }}">
-                <i class="fa-solid fa-gauge me-3 text-center" style="width: 20px;"></i>
-                Dashboard
+                class="nav-link d-flex align-items-center {{ request()->routeIs('admin.dashboard') ? 'active-gradient shadow-sm text-white' : 'text-white-50 hover-light' }}">
+                <div class="icon-width text-center me-3"><i class="fa-solid fa-gauge-high"></i></div>
+                <span class="fw-medium">Dashboard</span>
             </a>
         </li>
 
-        {{-- 🔥 LINK KELOLA USER (SUDAH BENAR) 🔥 --}}
+        <li class="nav-header mt-4 mb-2 px-3 text-white">
+            <small class="text-uppercase text-white-50 fw-bold" style="font-size: 10px; letter-spacing: 1.2px;">Master Data</small>
+        </li>
+
         <li class="nav-item">
             <a href="{{ route('admin.users') }}"
-                class="nav-link text-white {{ request()->routeIs('admin.users') ? 'active bg-primary fw-bold shadow-sm' : '' }} hover-white">
-                <i class="fa-solid fa-users me-3 text-center" style="width: 20px;"></i>
-                Kelola User
+                class="nav-link d-flex align-items-center {{ request()->routeIs('admin.users') ? 'active-gradient shadow-sm text-white' : 'text-white-50 hover-light' }}">
+                <div class="icon-width text-center me-3"><i class="fa-solid fa-users"></i></div>
+                <span class="fw-medium">Kelola User</span>
             </a>
         </li>
 
-        {{-- 🔥 LINK KELOLA EVENT (SUDAH BENAR) 🔥 --}}
         <li class="nav-item">
             <a href="{{ route('admin.events') }}"
-                class="nav-link text-white {{ request()->routeIs('admin.events') ? 'active bg-primary fw-bold shadow-sm' : '' }} hover-white">
-                <i class="fa-solid fa-calendar-check me-3 text-center" style="width: 20px;"></i>
-                Kelola Event
+                class="nav-link d-flex align-items-center {{ request()->routeIs('admin.events') ? 'active-gradient shadow-sm text-white' : 'text-white-50 hover-light' }}">
+                <div class="icon-width text-center me-3"><i class="fa-solid fa-calendar-days"></i></div>
+                <span class="fw-medium">Kelola Event</span>
             </a>
         </li>
 
-        <li class="mt-4 mb-2">
-            <small class="text-uppercase text-white-50 ms-3 fw-bold"
-                style="font-size: 10px; letter-spacing: 1px;">Shortcuts</small>
+        <li class="nav-header mt-4 mb-2 px-3 text-white">
+            <small class="text-uppercase text-white-50 fw-bold" style="font-size: 10px; letter-spacing: 1.2px;">System</small>
         </li>
 
         <li class="nav-item">
-            <a href="{{ route('events.index') }}" target="_blank" class="nav-link text-white-50 hover-white">
-                <i class="fa-solid fa-arrow-up-right-from-square me-3 text-center" style="width: 20px;"></i>
-                Lihat Web Utama
+            <a href="{{ route('events.index') }}" target="_blank" class="nav-link d-flex align-items-center text-white-50 hover-light">
+                <div class="icon-width text-center me-3"><i class="fa-solid fa-arrow-up-right-from-square"></i></div>
+                <span class="fw-medium">Lihat Website</span>
             </a>
         </li>
     </ul>
 
-    <hr class="opacity-10 mt-auto">
-
-    {{-- USER PROFILE --}}
-    <div class="dropdown">
-        <a href="#"
-            class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2 rounded hover-bg-dark-light"
-            id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="{{ Auth::user()->avatar_url }}" width="32" height="32"
-                class="rounded-circle me-2 border border-2 border-dark shadow-sm">
-            <div class="lh-1 me-auto">
-                <strong class="d-block" style="font-size: 0.9rem;">{{ explode(' ', Auth::user()->name)[0] }}</strong>
-            </div>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-dark text-small shadow border-0 mb-2" aria-labelledby="dropdownUser1">
-            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Edit Profil</a></li>
-            <li>
-                <hr class="dropdown-divider border-secondary opacity-25">
-            </li>
-            <li>
-                {{-- GANTI ID-NYA JADI 'admin-logout-form' BIAR GAK BENTROK SAMA NAVBAR --}}
-                <a class="dropdown-item text-danger fw-bold" href="{{ route('logout') }}"
-                    onclick="event.preventDefault(); document.getElementById('admin-logout-form').submit();">
-                    <i class="fa-solid fa-right-from-bracket me-2"></i> Sign out
-                </a>
-
-                {{-- ID FORM JUGA DIGANTI --}}
-                <form id="admin-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                    @csrf
-                </form>
-            </li>
-        </ul>
+    
+    <div class="mt-auto pt-3 border-top border-secondary border-opacity-25">
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle p-2 rounded-3 hover-bg-dark-light transition-all"
+                id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                
+                <img src="{{ Auth::user()->avatar_url }}" width="38" height="38"
+                    class="rounded-circle me-3 border border-2 border-secondary shadow-sm object-fit-cover">
+                
+                <div class="lh-1 me-auto overflow-hidden">
+                    <strong class="d-block text-truncate mb-1" style="font-size: 0.9rem;">{{ explode(' ', Auth::user()->name)[0] }}</strong>
+                    <small class="text-white-50 d-block" style="font-size: 0.75rem;">Administrator</small>
+                </div>
+            </a>
+            
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow-lg border-0 mb-2 rounded-3 overflow-hidden p-1" aria-labelledby="dropdownUser1" style="width: 100%;">
+                <li><a class="dropdown-item rounded-2 py-2 small" href="{{ route('profile.edit') }}"><i class="fa-solid fa-user-gear me-2 text-secondary"></i> Edit Profil</a></li>
+                <li><hr class="dropdown-divider border-secondary opacity-25 my-1"></li>
+                <li>
+                    <a class="dropdown-item text-danger fw-bold rounded-2 py-2 small" href="{{ route('logout') }}"
+                        onclick="event.preventDefault(); document.getElementById('admin-logout-form').submit();">
+                        <i class="fa-solid fa-power-off me-2"></i> Sign out
+                    </a>
+                    <form id="admin-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 
+{{-- 
+    =============================================
+    CSS KHUSUS SIDEBAR ADMIN
+    =============================================
+--}}
 <style>
-    /* CSS Tambahan Biar Rapi */
-    .hover-white {
-        transition: all 0.2s;
-        color: rgba(255, 255, 255, 0.7);
+    /* Background Lebih Gelap & Elegan */
+    .bg-dark {
+        background-color: #111827 !important; /* Cool Dark Gray */
     }
 
-    .hover-white:hover {
+    /* Logo Box Glowing Effect */
+    .logo-box {
+        width: 42px; height: 42px;
+        transition: all 0.3s ease;
+    }
+    .logo-box:hover {
+        transform: rotate(10deg) scale(1.1);
+    }
+
+    /* Typography */
+    .tracking-tight { letter-spacing: -0.5px; }
+    .icon-width { width: 24px; }
+
+    /* Menu Item Styling */
+    .nav-link {
+        padding: 12px 16px;
+        border-radius: 12px; /* Rounded Modern */
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.9rem;
+    }
+
+    /* Hover Effect Halus */
+    .hover-light:hover {
         color: white !important;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 6px;
+        background-color: rgba(255, 255, 255, 0.08);
+        transform: translateX(4px);
     }
 
-    .hover-bg-dark-light {
-        transition: background 0.2s;
-    }
-
-    .hover-bg-dark-light:hover {
-        background: rgba(255, 255, 255, 0.08);
-    }
-
-    .nav-link.active {
+    /* Active State Gradient (Keren!) */
+    .active-gradient {
         background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
-        /* Gradient Ungu */
-        border: none;
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3) !important;
+    }
+
+    /* User Profile Hover */
+    .hover-bg-dark-light:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    .transition-scale:hover {
+        opacity: 0.9;
     }
 </style>

@@ -17,8 +17,7 @@ return new class extends Migration
             $table->date('event_date');
             $table->string('location');
 
-            $table->enum('status', ['open', 'closed', 'canceled'])->default('open');
-
+            $table->enum('status', ['open', 'closed', 'completed']);
             $table->timestamps();
         });
     }

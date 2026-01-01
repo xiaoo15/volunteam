@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    {{-- 1. HEADER --}}
+    
     <div class="position-relative overflow-hidden">
         <div class="header-gradient position-absolute top-0 start-0 w-100"
             style="height: 350px; z-index: 0; background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #8b5cf6 100%);">
@@ -16,22 +16,22 @@
 
     <div class="container position-relative py-5" style="z-index: 1; margin-top: 0px;">
 
-        {{-- 2. TITLE --}}
+        
         <div class="row align-items-end mb-5">
             <div class="col-lg-8">
                 <div class="mb-4">
-                    {{-- Badge: Background Putih, Teks Ungu --}}
+                    
                     <span class="badge bg-white text-primary px-3 py-2 rounded-pill mb-3 shadow-sm fw-bold">
                         <i class="fas fa-history me-2"></i>Jejak Kebaikanmu
                     </span>
 
-                    {{-- Judul --}}
+                    
                     <h1 class="display-5 fw-bold mb-3 tracking-tight text-black"
                         style="text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                         Riwayat Misi Sosial
                     </h1>
 
-                    {{-- Deskripsi --}}
+                    
                     <p class="text-black text-opacity-75 mb-0 lead" style="max-width: 600px; font-weight: 300;">
                         Lihat progres kontribusimu dan diskusi dengan penyelenggara di sini.
                     </p>
@@ -41,13 +41,13 @@
             <div class="col-lg-4 mt-4 mt-lg-0">
                 <div class="d-flex gap-3 justify-content-lg-end">
 
-                    {{-- Stat 1 --}}
+                    
                     <div class="stat-box p-3 rounded-4 text-center w-100 shadow-lg" style="background: white;">
                         <h3 class="fw-bold mb-0 text-primary">{{ $applications->total() }}</h3>
                         <small class="text-uppercase x-small text-muted fw-bold ls-1">Misi Diikuti</small>
                     </div>
 
-                    {{-- Stat 2 --}}
+                    
                     <div class="stat-box p-3 rounded-4 text-center w-100 shadow-lg" style="background: white;">
                         <h3 class="fw-bold mb-0 text-success">{{ $applications->where('status', 'accepted')->count() }}</h3>
                         <small class="text-uppercase x-small text-muted fw-bold ls-1">Diterima</small>
@@ -57,12 +57,12 @@
             </div>
         </div>
 
-        {{-- 3. MAIN CARD --}}
+        
         <div class="card border-0 shadow-2xl rounded-4 overflow-hidden mb-5 bg-white">
             <div class="card-header bg-white border-bottom border-light-subtle py-4 px-4 px-lg-5">
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
 
-                    {{-- Filter Tabs Modern --}}
+                    
                     <div class="nav nav-pills nav-custom gap-2">
                         <button
                             class="nav-link active rounded-pill px-4 py-2 fw-bold x-small d-flex align-items-center gap-2 shadow-sm-active"
@@ -86,7 +86,7 @@
                         </button>
                     </div>
 
-                    {{-- Tombol Cari Event --}}
+                    
                     <a href="{{ route('events.index') }}"
                         class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2 hover-scale transition-all">
                         <i class="fas fa-search"></i>
@@ -153,14 +153,14 @@
                                 </td>
                                 <td class="pe-5 text-end">
                                     <div class="d-flex justify-content-end gap-2">
-                                        {{-- Tombol Diskusi --}}
+                                        
                                         <button
                                             class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-bold position-relative btn-chat"
                                             data-id="{{ $app->id }}" data-bs-toggle="modal"
                                             data-bs-target="#chatModal{{ $app->id }}">
                                             <i class="far fa-comments me-1"></i> Diskusi
 
-                                            {{-- 🔥 LOGIKA BARU: Cuma muncul kalau ada pesan BELUM DIBACA 🔥 --}}
+                                            
                                             @if($app->messages->where('user_id', '!=', Auth::id())->where('is_read', false)->count() > 0)
                                                 <span
                                                     class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle notification-dot"></span>
@@ -199,102 +199,217 @@
         </div>
     </div>
 
-    {{-- 🔥 4. MODAL CHAT SECTION (DIPISAH DARI TABEL) 🔥 --}}
-    {{-- Ini solusi dari bug layar freeze --}}
-    @foreach($applications as $app)
-        <div class="modal fade" id="chatModal{{ $app->id }}" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content border-0 rounded-4 shadow-3xl overflow-hidden">
-                    {{-- Modal Header --}}
-                    <div class="modal-header border-0 p-4" style="background: linear-gradient(135deg, #4f46e5, #6366f1);">
-                        <div class="d-flex align-items-center text-white">
-                            <div class="position-relative me-3">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($app->event->organizer->name) }}&background=fff&color=4f46e5"
-                                    class="rounded-circle border border-2 border-white shadow-sm" width="50" height="50">
-                                <span
-                                    class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle p-1"></span>
-                            </div>
-                            <div>
-                                <h6 class="fw-bold mb-0 fs-5">{{ $app->event->organizer->name }}</h6>
-                                <div class="opacity-75 small d-flex align-items-center gap-1">
-                                    <i class="fas fa-briefcase fa-xs"></i> Penyelenggara • {{ Str::limit($app->event->title, 30) }}
-                                </div>
+   {{-- 
+    =============================================
+    MODAL CHAT VOLUNTEER - MODERN STYLE
+    Style: WhatsApp Web / Telegram Premium Vibes
+    =============================================
+--}}
+
+<style>
+    /* CUSTOM SCROLLBAR UNTUK CHAT */
+    .chat-scroll-area::-webkit-scrollbar { width: 5px; }
+    .chat-scroll-area::-webkit-scrollbar-track { background: #f1f5f9; }
+    .chat-scroll-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .chat-scroll-area::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* BUBBLE CHAT STYLES */
+    .chat-bubble {
+        max-width: 75%;
+        padding: 12px 16px;
+        position: relative;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    /* Bubble Orang Lain (Kiri) - Organizer */
+    .bubble-received {
+        background-color: #ffffff;
+        color: #1e293b;
+        border-radius: 0px 15px 15px 15px; /* Lancip di kiri atas */
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Bubble Kita (Kanan) - Volunteer */
+    .bubble-sent {
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        color: white;
+        border-radius: 15px 0px 15px 15px; /* Lancip di kanan atas */
+    }
+
+    /* Bubble Note Awal */
+    .bubble-note {
+        background-color: #fffbeb; /* Kuning muda */
+        border: 1px dashed #fbbf24;
+        color: #92400e;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        width: 100%;
+        text-align: center;
+    }
+    
+    /* Animation */
+    .animate__fadeInUp {
+        animation: fadeInUp 0.3s ease-out;
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+@foreach($applications as $app)
+    <div class="modal fade" id="chatModal{{ $app->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow-2xl overflow-hidden" style="height: 600px;">
+                
+                
+                <div class="modal-header border-bottom p-3 bg-white d-flex align-items-center">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="position-relative">
+                            
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode($app->event->organizer->name) }}&background=e0e7ff&color=4f46e5"
+                                 class="rounded-circle" width="45" height="45">
+                            
+                            <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle"></span>
+                        </div>
+                        <div class="lh-1">
+                            <h6 class="fw-bold text-dark mb-1">{{ $app->event->organizer->name }}</h6>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-light text-secondary border rounded-pill fw-normal" style="font-size: 0.7rem;">
+                                    Organizer
+                                </span>
+                                <small class="text-muted" style="font-size: 0.75rem;">
+                                    • {{ Str::limit($app->event->title, 25) }}
+                                </small>
                             </div>
                         </div>
-                        <button type="button" class="btn-close btn-close-white opacity-75" data-bs-dismiss="modal"></button>
                     </div>
-
-                    {{-- Modal Body --}}
-                    <div class="modal-body p-0 bg-light-subtle">
-                        <div class="bg-white px-4 py-2 border-bottom d-flex justify-content-between align-items-center shadow-sm position-relative"
-                            style="z-index: 2;">
-                            <small class="text-muted fw-bold letter-spacing-1 x-small text-uppercase">Status: <span
-                                    class="text-primary">{{ ucfirst($app->status) }}</span></small>
-                            <small class="text-muted x-small">Melamar: {{ $app->created_at->format('d M Y') }}</small>
-                        </div>
-
-                        <div class="chat-container p-4"
-                            style="height: 400px; overflow-y: auto; background-image: radial-gradient(#e0e7ff 1px, transparent 1px); background-size: 20px 20px;">
-                            {{-- Pesan Awal --}}
-                            @if($app->message)
-                                <div class="d-flex justify-content-end mb-4">
-                                    <div class="message-bubble message-sent bg-primary text-white p-3 shadow-sm position-relative">
-                                        <div
-                                            class="d-flex align-items-center gap-2 mb-1 border-bottom border-white border-opacity-25 pb-1">
-                                            <i class="fas fa-quote-left small opacity-75"></i>
-                                            <span class="x-small fw-bold text-uppercase opacity-90">Pesan Pengantar</span>
-                                        </div>
-                                        <p class="mb-1 text-break">{{ $app->message }}</p>
-                                        <div class="text-end x-small opacity-75">{{ $app->created_at->format('H:i') }}</div>
-                                    </div>
-                                </div>
-                            @endif
-
-                            {{-- Loop Pesan --}}
-                            @foreach($app->messages as $msg)
-                                <div
-                                    class="mb-3 d-flex {{ $msg->user_id == Auth::id() ? 'justify-content-end' : 'justify-content-start' }}">
-                                    @if($msg->user_id != Auth::id())
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($app->event->organizer->name) }}&background=fff&color=4f46e5"
-                                            class="rounded-circle me-2 align-self-end shadow-sm border border-white" width="32"
-                                            height="32">
-                                    @endif
-
-                                    <div
-                                        class="message-bubble {{ $msg->user_id == Auth::id() ? 'message-sent bg-primary text-white' : 'message-received bg-white text-dark border' }} p-3 shadow-sm">
-                                        <p class="mb-1 text-break">{{ $msg->message }}</p>
-                                        <div
-                                            class="{{ $msg->user_id == Auth::id() ? 'text-end text-white-50' : 'text-end text-muted' }} x-small">
-                                            {{ $msg->created_at->format('H:i') }}
-                                            @if($msg->user_id == Auth::id()) <i class="fas fa-check-double ms-1"></i> @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    {{-- Footer (Input) --}}
-                    <div class="modal-footer border-0 p-3 bg-white shadow-lg-top">
-                        <form action="{{ route('applications.message', $app->id) }}" method="POST"
-                            class="w-100 position-relative">
-                            @csrf
-                            <div class="input-group">
-                                <input type="text" name="message"
-                                    class="form-control form-control-lg bg-light border-0 ps-4 rounded-pill"
-                                    placeholder="Balas pesan penyelenggara..." required autocomplete="off">
-                                <button type="submit"
-                                    class="btn btn-primary rounded-circle position-absolute top-50 end-0 translate-middle-y me-2 shadow-md hover-scale d-flex align-items-center justify-content-center"
-                                    style="width: 42px; height: 42px; z-index: 5;">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                    
+                    <button type="button" class="btn btn-light btn-sm rounded-circle ms-auto" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
+
+                
+                <div class="modal-body p-4 bg-light chat-scroll-area" id="chatContainer{{ $app->id }}"
+                     style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); background-color: #f8fafc;">
+                    
+                    
+                    @if($app->message)
+                        <div class="d-flex justify-content-center mb-4">
+                            <div class="bubble-note p-3 shadow-sm">
+                                <div class="fw-bold mb-1"><i class="fas fa-quote-left me-2 opacity-50"></i>Pesan Lamaran Saya</div>
+                                "{{ $app->message }}"
+                            </div>
+                        </div>
+                    @endif
+
+                    
+                    @foreach($app->messages as $msg)
+                        <div class="d-flex w-100 mb-3 {{ $msg->user_id == Auth::id() ? 'justify-content-end' : 'justify-content-start' }}">
+                            <div class="chat-bubble {{ $msg->user_id == Auth::id() ? 'bubble-sent' : 'bubble-received' }}">
+                                <div class="mb-1">{{ $msg->message }}</div>
+                                <div class="text-end lh-1" style="opacity: 0.7; font-size: 0.65rem; margin-bottom: -4px;">
+                                    {{ $msg->created_at->format('H:i') }}
+                                    @if($msg->user_id == Auth::id())
+                                        <i class="fas fa-check-double ms-1"></i>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    
+                    <div style="height: 10px;"></div>
+                </div>
+
+                
+                <div class="modal-footer border-top p-3 bg-white">
+                    <form action="{{ route('applications.message', $app->id) }}" method="POST" class="w-100 chat-form" data-id="{{ $app->id }}">
+                        @csrf
+                        <div class="input-group bg-light rounded-pill border overflow-hidden p-1">
+                            <input type="text" name="message" 
+                                   class="form-control border-0 bg-transparent shadow-none px-3" 
+                                   placeholder="Tulis pesan ke organizer..." required autocomplete="off">
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold m-1 transition-all hover-scale">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </div>
-    @endforeach
+    </div>
+@endforeach
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. AUTO SCROLL KE BAWAH SAAT MODAL DIBUKA
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('shown.bs.modal', function () {
+                const id = this.id.replace('chatModal', ''); // Ambil ID App
+                const chatContainer = document.getElementById('chatContainer' + id);
+                if(chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+            });
+        });
+
+        // 2. AJAX SEND MESSAGE
+        $('.chat-form').on('submit', function(e) {
+            e.preventDefault(); // Stop Reload
+
+            let form = $(this);
+            let input = form.find('input[name="message"]');
+            let message = input.val();
+            let appId = form.data('id'); // Ambil ID dari atribut data-id
+            let container = $('#chatContainer' + appId);
+
+            if(message.trim() === '') return;
+
+            // Efek UI: Kosongkan input & Disable tombol bentar
+            input.val('');
+            let btn = form.find('button');
+            btn.prop('disabled', true);
+
+            $.ajax({
+                url: form.attr('action'),
+                method: "POST",
+                data: form.serialize(), // Kirim data form
+                success: function(response) {
+                    // BUAT BUBBLE CHAT BARU (HTML)
+                    let newBubble = `
+                        <div class="d-flex w-100 mb-3 justify-content-end">
+                            <div class="chat-bubble bubble-sent animate__fadeInUp">
+                                <div class="mb-1">${response.message}</div>
+                                <div class="text-end lh-1" style="opacity: 0.7; font-size: 0.65rem; margin-bottom: -4px;">
+                                    ${response.time} <i class="fas fa-check-double ms-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // TEMPEL KE CONTAINER
+                    container.append(newBubble);
+                    
+                    // SCROLL KE BAWAH
+                    container.scrollTop(container[0].scrollHeight);
+
+                    // Re-enable tombol
+                    btn.prop('disabled', false);
+                },
+                error: function(xhr) {
+                    alert('Gagal mengirim pesan. Cek koneksi.');
+                    btn.prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>
 
     <style>
         .x-small {

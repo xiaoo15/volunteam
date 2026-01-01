@@ -126,12 +126,25 @@ Route::get('/certificate/{application}', [App\Http\Controllers\ApplicationContro
 // ==========================================
 
 // Route Darurat buat benerin akun
-Route::get('/fix-my-role', function() {
+Route::get('/fix-my-role', function () {
     $user = \App\Models\User::where('email', 'organizer@volunteam.com')->first();
-    if($user) {
+    if ($user) {
         $user->role = 'organizer';
         $user->save();
         return "Role updated to Organizer! Silakan login ulang.";
     }
     return "User not found.";
 });
+
+// Route Lihat Profil Orang Lain
+Route::get('/user/{user}', [App\Http\Controllers\ProfileController::class, 'showPublicProfile'])
+    ->name('profile.show');
+
+// GROUP ROUTE ADMIN
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'index'])->name('dashboard');
+    Route::delete('/users/{user}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('users.delete');
+    Route::delete('/events/{event}', [App\Http\Controllers\AdminController::class, 'deleteEvent'])->name('events.delete');
+});
+
+Route::view('/pricing', 'pricing')->name('pricing');
