@@ -387,37 +387,93 @@
                                 @endif
                             </div>
 
-                            <div class="notification-list">
-                                @forelse(Auth::user()->notifications as $notification)
-                                    @php
-                                        $link = '#';
-                                        if (isset($notification->data['type']) && $notification->data['type'] == 'chat') {
-                                            $link = route('applications.history');
-                                        }
-                                    @endphp
-                                    <a href="{{ $link }}"
-                                        class="notification-item d-flex gap-3 text-decoration-none {{ $notification->unread() ? 'bg-primary bg-opacity-10 border-start border-3 border-primary ps-3' : 'ps-4 bg-white' }}">
-                                        <div class="notification-icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                                            style="width: 38px; height: 38px; background: {{ $notification->unread() ? 'rgba(79, 70, 229, 0.2)' : '#f1f5f9' }}">
-                                            <i
-                                                class="fas fa-comment-dots text-{{ $notification->unread() ? 'primary' : 'secondary' }}"></i>
-                                        </div>
-                                        <div class="flex-grow-1 overflow-hidden">
-                                            <div class="fw-bold text-dark text-truncate small">
-                                                {{ $notification->data['sender_name'] ?? 'Sistem' }}</div>
-                                            <p class="mb-0 text-muted small text-truncate">
-                                                {{ $notification->data['message'] ?? 'Pesan baru masuk' }}</p>
-                                            <div class="text-muted mt-1" style="font-size: 0.7rem;">
-                                                {{ $notification->created_at->diffForHumans() }}</div>
-                                        </div>
-                                    </a>
-                                @empty
-                                    <div class="text-center py-5">
-                                        <i class="far fa-bell-slash fa-2x text-muted mb-3 opacity-50"></i>
-                                        <p class="text-muted small mb-0 fw-medium">Belum ada notifikasi</p>
-                                    </div>
-                                @endforelse
-                            </div>
+                           <div class="notification-list" style="max-height: 350px; overflow-y: auto;">
+    @forelse(Auth::user()->notifications as $notification)
+        @php
+            // Tentukan link tujuan berdasarkan tipe notifikasi
+            $link = '#';
+            $icon = 'fas fa-info-circle';
+            $bgColor = 'bg-light';
+            $textColor = 'text-primary';
+
+            if (isset($notification->data['type'])) {
+                if ($notification->data['type'] == 'chat') {
+                    $link = route('applications.history');
+                    $icon = 'fas fa-comment-dots';
+                    $bgColor = 'bg-primary bg-opacity-10'; // Biru muda
+                    $textColor = 'text-primary';
+                } elseif ($notification->data['type'] == 'status') {
+                    $link = route('applications.history');
+                    $icon = 'fas fa-clipboard-check';
+                    $bgColor = 'bg-success bg-opacity-10'; // Hijau muda
+                    $textColor = 'text-success';
+                }
+            }
+            
+            // Cek status read/unread
+            $isUnread = $notification->unread();
+        @endphp
+
+        <a href="{{ $link }}" 
+           class="notification-item d-flex align-items-start gap-3 p-3 border-bottom text-decoration-none transition-all hover-bg-light position-relative {{ $isUnread ? 'bg-aliceblue' : 'bg-white' }}">
+            
+            {{-- Icon Bulat --}}
+            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" 
+                 style="width: 40px; height: 40px; background-color: {{ $isUnread ? '#e0e7ff' : '#f1f5f9' }};">
+                <i class="{{ $icon }} {{ $isUnread ? 'text-primary' : 'text-secondary' }}"></i>
+            </div>
+
+            {{-- Konten Notif --}}
+            <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold text-dark small">
+                        {{ $notification->data['sender_name'] ?? 'Sistem VolunTeam' }}
+                    </span>
+                    <span class="text-muted x-small" style="font-size: 0.65rem;">
+                        {{ $notification->created_at->diffForHumans() }}
+                    </span>
+                </div>
+                
+                <p class="mb-0 text-secondary small text-truncate" style="max-width: 220px; line-height: 1.4;">
+                    {{ $notification->data['message'] ?? 'Ada pemberitahuan baru.' }}
+                </p>
+            </div>
+
+            {{-- Titik Merah (Indikator Belum Dibaca) --}}
+            @if($isUnread)
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3 p-1 bg-danger border border-light rounded-circle"></span>
+            @endif
+        </a>
+    @empty
+        {{-- Tampilan Kosong --}}
+        <div class="text-center py-5">
+            <div class="mb-3">
+                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                    <i class="far fa-bell-slash fa-lg text-muted opacity-50"></i>
+                </div>
+            </div>
+            <h6 class="fw-bold text-dark mb-1">Tidak ada notifikasi</h6>
+            <p class="text-muted small mb-0">Kamu sudah update dengan semua info terbaru!</p>
+        </div>
+    @endforelse
+</div>
+
+{{-- CSS Tambahan (Taruh di <style> atau file CSS) --}}
+<style>
+    .bg-aliceblue {
+        background-color: #f0f9ff !important; /* Biru sangat muda untuk unread */
+    }
+    .hover-bg-light:hover {
+        background-color: #f8fafc !important;
+    }
+    .notification-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    .notification-list::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 10px;
+    }
+</style>
 
                             @if(Auth::user()->notifications->count() > 0)
                                 <div class="text-center p-2 border-top bg-light">

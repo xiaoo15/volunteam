@@ -349,62 +349,80 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. AUTO SCROLL KE BAWAH SAAT MODAL DIBUKA
+        
+        // 1. AUTO SCROLL (Tetap sama)
         const modals = document.querySelectorAll('.modal');
         modals.forEach(modal => {
             modal.addEventListener('shown.bs.modal', function () {
-                const id = this.id.replace('chatModal', ''); // Ambil ID App
+                const id = this.id.replace('chatModal', '');
                 const chatContainer = document.getElementById('chatContainer' + id);
                 if(chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
             });
         });
 
-        // 2. AJAX SEND MESSAGE
+        // 2. AJAX SEND MESSAGE (REVISI LOGIKA)
         $('.chat-form').on('submit', function(e) {
-            e.preventDefault(); // Stop Reload
+            e.preventDefault(); 
 
             let form = $(this);
             let input = form.find('input[name="message"]');
-            let message = input.val();
-            let appId = form.data('id'); // Ambil ID dari atribut data-id
+            let message = input.val(); // Simpan pesan di variabel dulu
+            let appId = form.data('id');
             let container = $('#chatContainer' + appId);
+            let btn = form.find('button');
+            
+            // Simpan data form SEBELUM dihapus inputnya
+            let formData = form.serialize(); 
 
+            // Validasi Client Side
             if(message.trim() === '') return;
 
-            // Efek UI: Kosongkan input & Disable tombol bentar
-            input.val('');
-            let btn = form.find('button');
-            btn.prop('disabled', true);
+            // Efek UI Loading
+            let originalBtnHtml = btn.html();
+            btn.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
 
             $.ajax({
                 url: form.attr('action'),
                 method: "POST",
-                data: form.serialize(), // Kirim data form
+                data: formData, // Pakai data yang sudah disimpan di awal
+                dataType: 'json',
                 success: function(response) {
-                    // BUAT BUBBLE CHAT BARU (HTML)
+                    // HAPUS INPUT HANYA KALAU SUKSES
+                    input.val(''); 
+
+                    let content = response.data.message; 
+                    let time = response.data.time;
+
                     let newBubble = `
                         <div class="d-flex w-100 mb-3 justify-content-end">
                             <div class="chat-bubble bubble-sent animate__fadeInUp">
-                                <div class="mb-1">${response.message}</div>
+                                <div class="mb-1">${content}</div>
                                 <div class="text-end lh-1" style="opacity: 0.7; font-size: 0.65rem; margin-bottom: -4px;">
-                                    ${response.time} <i class="fas fa-check-double ms-1"></i>
+                                    ${time} <i class="fas fa-check-double ms-1"></i>
                                 </div>
                             </div>
                         </div>
                     `;
 
-                    // TEMPEL KE CONTAINER
                     container.append(newBubble);
-                    
-                    // SCROLL KE BAWAH
                     container.scrollTop(container[0].scrollHeight);
-
-                    // Re-enable tombol
-                    btn.prop('disabled', false);
                 },
                 error: function(xhr) {
-                    alert('Gagal mengirim pesan. Cek koneksi.');
-                    btn.prop('disabled', false);
+                    console.error(xhr);
+                    let errorMsg = 'Gagal mengirim pesan.';
+                    
+                    if(xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg += ' ' + xhr.responseJSON.message;
+                    } else if (xhr.responseJSON && xhr.responseJSON.errors && xhr.responseJSON.errors.message) {
+                        // Kadang Laravel balikin error detail di object 'errors'
+                        errorMsg += ' ' + xhr.responseJSON.errors.message[0];
+                    }
+                    
+                    alert(errorMsg);
+                },
+                complete: function() {
+                    btn.html(originalBtnHtml).prop('disabled', false);
+                    input.focus();
                 }
             });
         });

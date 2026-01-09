@@ -425,11 +425,24 @@
                                                     class="fa-solid fa-file-pdf me-1"></i> Lihat CV</a>
                                         @endif
 
-                                        <button class="btn btn-sm btn-outline-primary w-100 mb-2 rounded-pill fw-bold"
-                                            data-bs-toggle="modal" data-bs-target="#chatModalOrganizer{{ $app->id }}"
-                                            style="font-size: 0.75rem;">
-                                            <i class="far fa-comments me-1"></i> Diskusi
-                                        </button>
+                                        <button class="btn btn-sm btn-outline-primary w-100 mb-2 rounded-pill fw-bold position-relative btn-chat-organizer"
+    data-id="{{ $app->id }}"
+    data-bs-toggle="modal" data-bs-target="#chatModalOrganizer{{ $app->id }}"
+    style="font-size: 0.75rem;">
+    <i class="far fa-comments me-1"></i> Diskusi
+
+    {{-- 🔥 LOGIKA NOTIFIKASI (TITIK MERAH) 🔥 --}}
+    @php
+        // Hitung pesan yang BUKAN dari saya (Auth::id()) dan BELUM dibaca
+        $unread = $app->messages->where('user_id', '!=', Auth::id())->where('is_read', false)->count();
+    @endphp
+
+    @if($unread > 0)
+        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle notification-dot">
+            <span class="visually-hidden">Pesan baru</span>
+        </span>
+    @endif
+</button>
 
                                         <div class="d-flex gap-1">
                                             @if($app->status == 'pending')
@@ -701,17 +714,17 @@
 
                     
                     <div class="modal-footer border-top p-3 bg-white">
-                        <form action="{{ route('applications.message', $app->id) }}" method="POST" class="w-100">
-                            @csrf
-                            <div class="input-group bg-light rounded-pill border overflow-hidden p-1">
-                                <input type="text" name="message" 
-                                       class="form-control border-0 bg-transparent shadow-none px-3" 
-                                       placeholder="Tulis pesan balasan..." required autocomplete="off">
-                                <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold m-1 transition-all hover-scale">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </form>
+                        <form action="{{ route('applications.message', $app->id) }}" method="POST" class="w-100 chat-form-organizer" data-id="{{ $app->id }}">
+    @csrf
+    <div class="input-group bg-light rounded-pill border overflow-hidden p-1">
+        <input type="text" name="message" 
+               class="form-control border-0 bg-transparent shadow-none px-3" 
+               placeholder="Tulis pesan balasan..." required autocomplete="off">
+        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold m-1 transition-all hover-scale">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</form>
                     </div>
 
                 </div>
@@ -737,56 +750,193 @@
     
     @auth
         <div class="modal fade" id="applyModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
-                    <div class="modal-header border-0 p-4 pb-0">
-                        <h5 class="modal-title fw-bold text-dark"><i
-                                class="fa-solid fa-paper-plane text-primary me-2"></i>Gabung Misi</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <form action="{{ route('applications.store', $event->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="modal-body p-4">
-                            <div
-                                class="alert alert-primary bg-primary bg-opacity-10 border-0 rounded-3 small text-primary mb-4 d-flex align-items-center">
-                                <i class="fa-solid fa-circle-info me-2"></i>
-                                <div>Kamu melamar untuk posisi di <strong>{{ $event->title }}</strong>.</div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label fw-bold small text-muted">UPLOAD CV (PDF)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-0"><i
-                                            class="fa-solid fa-file-pdf text-danger"></i></span>
-                                    <input type="file" name="cv" class="form-control bg-light border-0" accept=".pdf" required>
-                                </div>
-                            </div>
-
-                            <div class="mb-3 position-relative">
-                                <div class="d-flex justify-content-between align-items-end mb-2">
-                                    <label class="form-label fw-bold small text-muted mb-0">ALASAN BERGABUNG</label>
-
-                                    
-                                    <button type="button"
-                                        class="btn btn-sm bg-gradient-primary text-white border-0 rounded-pill px-3 shadow-sm ai-btn-glow"
-                                        onclick="generateCoverLetter()">
-                                        <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Buatkan dengan AI
-                                    </button>
-                                </div>
-                                <textarea name="message" id="messageInput" class="form-control bg-light border-0 rounded-3 p-3"
-                                    rows="5" placeholder="Ceritakan motivasi dan keahlianmu secara singkat..."></textarea>
-                            </div>
-                        </div>
-                        <div class="modal-footer border-0 p-4 pt-0">
-                            <button type="button" class="btn btn-light rounded-pill px-4 fw-bold text-muted"
-                                data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-lg hover-scale">Kirim
-                                Lamaran <i class="fa-solid fa-arrow-right ms-2"></i></button>
-                        </div>
-                    </form>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-2xl overflow-hidden">
+            
+            {{-- HEADER: Clean & Modern --}}
+            <div class="modal-header border-0 p-4 pb-2 bg-white">
+                <div>
+                    <h5 class="modal-title fw-bolder text-dark mb-1" style="letter-spacing: -0.5px;">
+                        Siap Beraksi? 🚀
+                    </h5>
+                    <p class="text-muted small mb-0">Lengkapi data untuk bergabung di misi ini.</p>
                 </div>
+                <button type="button" class="btn-close bg-light p-2 rounded-circle" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="{{ route('applications.store', $event->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body p-4 pt-3">
+                    
+                    {{-- EVENT INFO CARD --}}
+                    <div class="d-flex align-items-center gap-3 p-3 mb-4 rounded-3 bg-primary bg-opacity-5 border border-primary border-opacity-10">
+                        <div class="bg-white p-2 rounded-circle shadow-sm text-primary">
+                            <i class="fa-solid fa-briefcase fa-lg"></i>
+                        </div>
+                        <div class="lh-1">
+                            <small class="text-muted text-uppercase fw-bold" style="color: white; font-size: 0.65rem;">POSISI DILAMAR</small>
+                            <div class="fw-bold text-white mt-1">{{ $event->title }}</div>
+                        </div>
+                    </div>
+
+                    {{-- UPLOAD CV (CUSTOM STYLE) --}}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-muted mb-2">UPLOAD CV (PDF)</label>
+                        <div class="upload-zone position-relative rounded-3 border-2 border-dashed text-center p-4 transition-all hover-border-primary">
+                            <input type="file" name="cv" class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer" 
+                                   accept=".pdf" required onchange="updateFileName(this)">
+                            
+                            <div class="upload-content transition-all">
+                                <div class="mb-2">
+                                    <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle" style="width: 50px; height: 50px;">
+                                        <i class="fa-solid fa-cloud-arrow-up text-primary fs-5"></i>
+                                    </div>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1 file-label">Klik atau Tarik File CV ke Sini</h6>
+                                <p class="text-muted x-small mb-0">Maksimal 2MB (Format .PDF)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- MOTIVATION LETTER & AI BUTTON --}}
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label fw-bold small text-muted mb-0">ALASAN BERGABUNG</label>
+                            
+                            {{-- AI Button yang lebih 'Compact' --}}
+                            <button type="button" 
+                                class="btn btn-sm btn-link text-decoration-none fw-bold ai-btn-glow px-0" 
+                                onclick="generateCoverLetter()"
+                                style="font-size: 0.8rem;">
+                                <span class="bg-gradient-primary text-white px-2 py-1 rounded-pill shadow-sm d-flex align-items-center gap-2">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> 
+                                    <span>Buatkan dengan AI</span>
+                                </span>
+                            </button>
+                        </div>
+                        
+                        <div class="position-relative">
+                            <textarea name="message" id="messageInput" 
+                                class="form-control bg-light border-0 rounded-3 p-3 shadow-inner custom-scrollbar"
+                                rows="5" 
+                                placeholder="Ceritakan kenapa kamu orang yang tepat untuk misi ini..."
+                                style="resize: none;"></textarea>
+                            
+                            {{-- Icon dekoratif di pojok textarea --}}
+                            <div class="position-absolute bottom-0 end-0 p-3 opacity-25 pointer-events-none">
+                                <i class="fa-solid fa-pen-nib"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 p-4 pt-0 d-flex justify-content-between align-items-center">
+                    <button type="button" class="btn btn-light rounded-pill px-4 fw-bold text-secondary" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-lg hover-scale d-flex align-items-center gap-2">
+                        <span>Kirim Lamaran</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- MODAL ERROR SIZE (Add this at the bottom of content) --}}
+<div class="modal fade" id="fileSizeErrorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 rounded-4 shadow-lg text-center overflow-hidden">
+            <div class="modal-body p-4">
+                <div class="mb-3">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle" 
+                         style="width: 60px; height: 60px;">
+                        <i class="fa-solid fa-triangle-exclamation fa-xl"></i>
+                    </div>
+                </div>
+                <h6 class="fw-bold text-dark mb-2">File Terlalu Besar! 😫</h6>
+                <p class="text-muted small mb-4" style="line-height: 1.5;">
+                    Waduh, ukuran CV kamu lebih dari <strong>2MB</strong>. Kompres dulu ya biar server nggak keberatan!
+                </p>
+                <button type="button" class="btn btn-danger rounded-pill w-100 fw-bold shadow-sm" data-bs-dismiss="modal">
+                    Oke, Aku Kecilin Dulu
+                </button>
             </div>
         </div>
+    </div>
+</div>
+
+{{-- CSS KHUSUS MODAL INI --}}
+<style>
+    /* Dashed Border untuk Upload Zone */
+    .border-dashed { border-style: dashed !important; border-color: #cbd5e1; background-color: #f8fafc; }
+    .hover-border-primary:hover { border-color: #4f46e5 !important; background-color: #eef2ff; }
+    
+    /* Cursor Pointer */
+    .cursor-pointer { cursor: pointer; }
+    
+    /* Utility Font Size */
+    .x-small { font-size: 0.75rem; }
+    
+    /* Inner Shadow untuk Textarea biar kelihatan 'deep' */
+    .shadow-inner { box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05); }
+    
+    /* Transisi Halus */
+    .transition-all { transition: all 0.3s ease; }
+    
+    /* Scrollbar Textarea */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+    
+    /* Gradient Button AI */
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #ec4899 100%);
+        transition: filter 0.3s ease;
+    }
+    .bg-gradient-primary:hover {
+        filter: brightness(1.1);
+    }
+</style>
+
+{{-- SCRIPT SEDERHANA UNTUK UBAH NAMA FILE SAAT DI-UPLOAD --}}
+<script>
+    // Script Update File Name & Validasi Size
+function updateFileName(input) {
+    const label = input.parentElement.querySelector('.file-label');
+    const icon = input.parentElement.querySelector('.fa-cloud-arrow-up');
+    const maxSize = 2 * 1024 * 1024; // 2MB Limit
+
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+
+        // 1. CEK UKURAN FILE
+        if (file.size > maxSize) {
+            // Panggil Modal Error
+            const errorModal = new bootstrap.Modal(document.getElementById('fileSizeErrorModal'));
+            errorModal.show();
+
+            // Reset Input
+            input.value = ""; 
+            
+            // Balikin Tampilan ke Awal
+            label.textContent = "Klik atau Tarik File CV ke Sini";
+            label.classList.remove('text-primary');
+            icon.classList.remove('fa-check-circle', 'text-success');
+            icon.classList.add('fa-cloud-arrow-up', 'text-primary');
+            return; 
+        }
+
+        // 2. FILE AMAN -> TAMPILKAN NAMA
+        label.textContent = file.name;
+        label.classList.remove('text-dark');
+        label.classList.add('text-primary');
+        
+        icon.classList.remove('fa-cloud-arrow-up', 'text-primary');
+        icon.classList.add('fa-check-circle', 'text-success');
+    }
+}
+</script>
     @endauth
 
     <style>
@@ -845,63 +995,165 @@
     </style>
 
     <script>
-        // Init Tooltips
-        document.addEventListener('DOMContentLoaded', function () {
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl)
-            });
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // 1. INIT TOOLTIP & MODAL SCROLL
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
 
-            // Scroll Chat to Bottom
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                modal.addEventListener('shown.bs.modal', function () {
-                    const chatContainer = this.querySelector('.chat-container');
-                    if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+        // Auto Scroll Chat ke Bawah
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('shown.bs.modal', function () {
+                // Support untuk Modal Volunteer & Organizer
+                const chatContainer = this.querySelector('.chat-scroll-area');
+                if (chatContainer) chatContainer.scrollTop = chatContainer.scrollHeight;
+            });
+        });
+
+        // 2. LOGIKA CHAT ORGANIZER (Anti Error)
+        const chatFormsOrg = document.querySelectorAll('.chat-form-organizer');
+        chatFormsOrg.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); 
+
+                let input = this.querySelector('input[name="message"]');
+                let message = input.value;
+                let appId = this.getAttribute('data-id');
+                let container = document.getElementById('chatContainer' + appId);
+                let btn = this.querySelector('button');
+                let formData = new FormData(this); // Pakai FormData biar simpel
+
+                if(!message.trim()) return;
+
+                // UI Loading
+                let originalBtnHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+
+                // Fetch API (Lebih Modern dari $.ajax)
+                fetch(this.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Sukses! Tambah Bubble Chat
+                    input.value = '';
+                    
+                    let newBubble = `
+                        <div class="d-flex w-100 mb-3 justify-content-end">
+                            <div class="chat-bubble bubble-sent animate__fadeInUp">
+                                <div class="mb-1">${data.data.message}</div>
+                                <div class="text-end lh-1" style="opacity: 0.7; font-size: 0.65rem; margin-bottom: -4px;">
+                                    ${data.data.time} <i class="fas fa-check-double ms-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.insertAdjacentHTML('beforeend', newBubble);
+                    container.scrollTop = container.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("⚠️ Gagal kirim pesan. Cek koneksi!");
+                })
+                .finally(() => {
+                    btn.innerHTML = originalBtnHtml;
+                    btn.disabled = false;
+                    input.focus();
                 });
             });
         });
 
-        // Copy Link
-        function copyLink(btn) {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                let original = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-check text-success me-2 w-20"></i> Tersalin!';
-                setTimeout(() => { btn.innerHTML = original; }, 2000);
+        // 3. TANDAI DIBACA (Hapus Titik Merah)
+        const chatButtonsOrg = document.querySelectorAll('.btn-chat-organizer');
+        chatButtonsOrg.forEach(button => {
+            button.addEventListener('click', function () {
+                const appId = this.getAttribute('data-id');
+                const dot = this.querySelector('.notification-dot');
+
+                if (dot) {
+                    fetch(`/applications/${appId}/mark-read`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(res => res.json()).then(data => {
+                        if (data.success) dot.remove();
+                    });
+                }
             });
-        }
+        });
+    });
 
-        // 🔥 LOGIKA AI GENERATOR 🔥
-        function generateCoverLetter() {
-            const input = document.getElementById('messageInput');
-            const eventTitle = "{{ $event->title }}";
-            const userName = "{{ Auth::check() ? Auth::user()->name : 'Saya' }}";
+    // ==========================================
+    // 4. FITUR AI GENERATOR (VERSI AMAN)
+    // ==========================================
+    function generateCoverLetter() {
+        const btn = document.querySelector('.ai-btn-glow');
+        const textarea = document.getElementById('messageInput');
+        
+        // 🔥 FIX ERROR: Kita pakai Js::from() biar aman dari syntax error PHP 🔥
+        const eventTitle = {{ \Illuminate\Support\Js::from($event->title) }};
+        const organizerName = {{ \Illuminate\Support\Js::from($event->organizer->name) }};
+        const myName = {{ \Illuminate\Support\Js::from(Auth::check() ? Auth::user()->name : 'Saya') }};
 
-            // Effect Loading
-            input.value = "🤖 AI sedang merangkai kata...";
-            input.setAttribute('disabled', 'disabled');
-            input.style.opacity = '0.7';
+        // 1. Loading UI
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Meracik Kata...';
+        btn.disabled = true;
+        textarea.value = '';
+        textarea.placeholder = '🤖 AI sedang mengetik...';
 
-            setTimeout(() => {
-                // Template AI yang lebih variatif
-                const templates = [
-                    `Halo Tim Penyelenggara,\n\nPerkenalkan saya ${userName}. Saya sangat antusias untuk bergabung dalam kegiatan "${eventTitle}". \n\nSaya percaya bahwa kontribusi kecil dapat membawa perubahan besar. Dengan semangat dan dedikasi yang saya miliki, saya siap berkomitmen penuh untuk menyukseskan misi ini.\n\nTerima kasih atas kesempatannya.`,
+        // 2. Template Pilihan
+        const templates = [
+            `Halo Tim ${organizerName},\n\nPerkenalkan saya ${myName}. Saya sangat tertarik untuk bergabung di "${eventTitle}".\n\nSaya melihat visi misi kegiatan ini sangat inspiratif. Dengan semangat dan dedikasi yang saya miliki, saya siap berkontribusi penuh dan bekerja sama dengan tim untuk kesuksesan acara ini.\n\nTerima kasih atas kesempatannya!`,
+            
+            `Yth. Panitia ${organizerName},\n\nSaya ${myName}, ingin mendaftar sebagai relawan untuk "${eventTitle}".\n\nSaya adalah pribadi yang cekatan, mudah beradaptasi, dan senang bekerja di lapangan. Saya yakin bisa memberikan energi positif dan bantuan nyata bagi kelancaran kegiatan ini.\n\nBesar harapan saya untuk dapat bergabung.`,
+            
+            `Hai Tim ${organizerName}!\n\nIzinkan saya, ${myName}, menjadi bagian dari aksi keren "${eventTitle}".\n\nSaya memiliki komitmen tinggi dan siap mengikuti arahan koordinator dengan disiplin. Mari kita buat kegiatan ini berdampak luas bagi masyarakat!\n\nSalam semangat!`
+        ];
 
-                    `Yth. Panitia Seleksi,\n\nSaya ${userName}, ingin mengajukan diri sebagai relawan untuk "${eventTitle}". \n\nIsu yang diangkat dalam kegiatan ini sangat dekat dengan hati saya. Saya memiliki pengalaman yang relevan dan ingin menyalurkan energi positif saya untuk membantu sesama melalui program ini.\n\nBesar harapan saya untuk dapat bergabung.`,
+        // Pilih Acak
+        const chosenMessage = templates[Math.floor(Math.random() * templates.length)];
 
-                    `Halo,\n\nSaya tertarik sekali dengan "${eventTitle}". Sebagai ${userName}, saya ingin belajar dan berkontribusi langsung di lapangan. Saya siap bekerja dalam tim, disiplin, dan mengikuti arahan koordinator dengan baik.\n\nMohon pertimbangannya. Salam kebaikan!`
-                ];
+        // 3. Efek Ngetik (Typing Animation)
+        setTimeout(() => {
+            let i = 0;
+            const typingSpeed = 15; // Makin kecil makin ngebut
 
-                // Pilih acak
-                const randomTemplate = templates[Math.floor(Math.random() * templates.length)];
+            function typeWriter() {
+                if (i < chosenMessage.length) {
+                    textarea.value += chosenMessage.charAt(i);
+                    textarea.scrollTop = textarea.scrollHeight; // Auto scroll ke bawah textarea
+                    i++;
+                    setTimeout(typeWriter, typingSpeed);
+                } else {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                    textarea.focus();
+                }
+            }
+            typeWriter();
+        }, 1000);
+    }
 
-                // Ketik efek satu per satu (Typewriter effect simple)
-                input.value = randomTemplate;
-                input.removeAttribute('disabled');
-                input.style.opacity = '1';
-                input.focus(); // Fokus biar user bisa edit kalau mau
-
-            }, 1200); // Delay 1.2 detik biar kerasa "mikir"
-        }
-    </script>
+    // 5. COPY LINK
+    function copyLink(btn) {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            let original = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check text-success me-2 w-20"></i> Tersalin!';
+            setTimeout(() => { btn.innerHTML = original; }, 2000);
+        });
+    }
+</script>
 @endsection

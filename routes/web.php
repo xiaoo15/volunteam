@@ -85,16 +85,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    // --- NOTIFICATION READ ---
-    Route::get('/notifications/{id}', function ($id) {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-
-        $notification = $user->notifications()->findOrFail($id);
-        $notification->markAsRead();
-
-        return redirect($notification->data['url']);
-    })->name('notifications.read');
 });
 
 // 5. PUBLIC DETAIL EVENT (WILDCARD)

@@ -19,23 +19,22 @@ class HomeController extends Controller
     {
         $user = Auth::user();
 
-        // 🔥 FIX 1: CEK ROLE DULU SEBELUM JALANIN LOGIKA AI 🔥
-        
+        // --- 1. CEK ROLE (REDIRECT) ---
         // Kalau Admin, lempar ke Dashboard Admin
         if ($user->role == 'admin') {
             return redirect()->route('admin.dashboard');
         }
 
-        // Kalau Organizer, lempar ke Halaman "My Events" (Mission Control)
+        // Kalau Organizer, lempar ke Halaman "My Events"
         if ($user->role == 'organizer') {
             return redirect()->route('organizer.events');
         }
 
         // ==========================================
-        // DARI SINI KE BAWAH KHUSUS VOLUNTEER (AI)
+        //  KHUSUS VOLUNTEER (AI)
         // ==========================================
 
-        // 1. Cek Kategori Favorit User
+        // 2. ANALISIS MINAT USER
         $favoriteCategory = Application::where('user_id', $user->id)
             ->join('events', 'applications.event_id', '=', 'events.id')
             ->select('events.category', DB::raw('count(*) as total'))
@@ -43,29 +42,38 @@ class HomeController extends Controller
             ->orderByDesc('total')
             ->value('events.category');
 
-        // 2. Query Rekomendasi
+        // Siapkan variabel default
+        $recommendations = collect(); 
+        $aiMessage = "";
+
+        // 3. PLAN A: CARI SESUAI MINAT (IDEAL)
         if ($favoriteCategory) {
             $recommendations = Event::where('category', $favoriteCategory)
                 ->where('status', 'open')
                 ->whereDoesntHave('applications', function($q) use ($user) {
-                    $q->where('user_id', $user->id);
+                    $q->where('user_id', $user->id); // Jangan rekomen yang udah dilamar
                 })
                 ->inRandomOrder()
                 ->take(3)
                 ->get();
             
-            $aiMessage = "Berdasarkan minatmu di bidang " . $favoriteCategory;
-        } else {
-            $recommendations = Event::withCount('applications')
-                ->where('status', 'open')
-                ->orderByDesc('applications_count')
+            $aiMessage = "Spesial untukmu di bidang " . $favoriteCategory;
+        }
+
+        // 4. PLAN B: FALLBACK MECHANISM (JARING PENGAMAN)
+        if ($recommendations->isEmpty()) {
+            $recommendations = Event::where('status', 'open')
+                ->whereDoesntHave('applications', function($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                })
+                ->inRandomOrder() // Acak biar fresh
                 ->take(3)
                 ->get();
             
-            $aiMessage = "Misi paling diminati relawan saat ini";
+            $aiMessage = "Misi terbaru yang mungkin kamu suka";
         }
 
-        // Data statistik dashboard
+        // 5. DATA STATISTIK DASHBOARD
         $totalApplications = Application::where('user_id', $user->id)->count();
         $totalHours = Application::where('user_id', $user->id)->where('status', 'completed')->count() * 5;
 

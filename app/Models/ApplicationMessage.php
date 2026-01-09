@@ -11,11 +11,12 @@ class ApplicationMessage extends Model
         'application_id',
         'user_id',
         'message',
-        'is_organizer'
+        'is_organizer',
+        'is_read' 
     ];
 
     public function sender() 
     {
         return $this->belongsTo(User::class, 'user_id');
-    }    //
+    }
 }

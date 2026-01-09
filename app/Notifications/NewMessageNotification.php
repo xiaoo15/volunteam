@@ -3,35 +3,38 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Message;
 
 class NewMessageNotification extends Notification
 {
     use Queueable;
 
-    public $message;
-    public $sender;
-    public $application_id;
+    public $chat;
 
-    public function __construct($message, $sender, $application_id)
+    // Kita terima data pesan yang baru dibuat
+    public function __construct(Message $chat)
     {
-        $this->message = $message;
-        $this->sender = $sender;
-        $this->application_id = $application_id;
+        $this->chat = $chat;
     }
 
+    // Tentukan mau dikirim lewat apa (Database = Lonceng di web)
     public function via($notifiable)
     {
-        return ['database']; // Kita simpan di database biar bisa dilist di navbar
+        return ['database'];
     }
 
+    // Susun isi notifikasi yang bakal masuk ke database
     public function toArray($notifiable)
     {
         return [
-            'message' => $this->message,
-            'sender_name' => $this->sender->name,
-            'application_id' => $this->application_id,
-            'type' => 'chat'
+            'type' => 'chat', // Penanda kalau ini notif chat
+            'application_id' => $this->chat->application_id,
+            'sender_id' => $this->chat->user_id,
+            'sender_name' => $this->chat->user->name, // Nama pengirim
+            'message' => $this->chat->message, // Isi pesannya
         ];
     }
 }

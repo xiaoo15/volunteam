@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Application;
+use App\Models\ApplicationMessage;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\NewMessageNotification;
+use App\Notifications\NewApplicantNotification;
+use App\Notifications\ApplicationStatusNotification;
 
 class ApplicationController extends Controller
 {
@@ -60,13 +63,16 @@ class ApplicationController extends Controller
             $cvPath = $request->file('cv')->store('cv_files', 'public');
         }
 
-        Application::create([
+        $application = Application::create([
             'user_id' => $user->id,
             'event_id' => $event->id,
             'status' => 'pending',
             'cv' => $cvPath,
             'message' => $request->message,
         ]);
+
+        // Kirim notifikasi ke Organizer bahwa ada pelamar baru
+        $event->organizer->notify(new NewApplicantNotification($application));
 
         return back()->with('success', 'Lamaran berhasil dikirim! Tunggu kabar dari Organizer.');
     }
@@ -85,46 +91,61 @@ class ApplicationController extends Controller
 
         $application->update(['status' => $request->status]);
 
+        // Kirim notifikasi ke Volunteer tentang status lamaran mereka
+        $application->user->notify(new ApplicationStatusNotification($application));
+
         return back()->with('success', 'Status pelamar berhasil diperbarui.');
     }
 
     // 3. KIRIM PESAN CHAT
     public function sendMessage(Request $request, Application $application)
     {
-        // Validasi Akses (Hanya Pelamar atau Organizer yang boleh chat)
-        if (Auth::id() !== $application->user_id && Auth::id() !== $application->event->organizer_id) {
-            abort(403);
-        }
-
+        // 1. Validasi
         $request->validate([
-            'message' => 'required|string|max:500',
+            'message' => 'required|string|max:1000',
         ]);
 
-        // 1. Simpan Pesan
-        $application->messages()->create([
+        // 2. Cek Otorisasi (Sender harus Volunteer ATAU Organizer)
+        if (Auth::id() !== $application->user_id && Auth::id() !== $application->event->organizer_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // 3. Simpan Pesan
+        $chat = $application->messages()->create([
             'user_id' => Auth::id(),
             'message' => $request->message,
+            'is_read' => false,
         ]);
 
-        // 2. Logika Notifikasi
-        // Tentukan penerima (Lawan bicara)
-        $recipient = (Auth::id() == $application->user_id)
-            ? $application->event->organizer // Jika pengirim volunteer -> kirim ke organizer
-            : $application->user;            // Jika pengirim organizer -> kirim ke volunteer
+        // --- 🔥 BAGIAN BARU: KIRIM NOTIFIKASI 🔥 ---
 
-        // Kirim Notifikasi Database
-        try {
-            $recipient->notify(new NewMessageNotification(
-                $request->message,
-                Auth::user(),
-                $application->id
-            ));
-        } catch (\Exception $e) {
-            // Biarkan kosong agar error notifikasi tidak membatalkan chat
-            // (Opsional: Log error)
+        // Tentukan siapa penerimanya
+        $recipient = null;
+
+        if (Auth::id() == $application->user_id) {
+            // Kalau yang ngirim PELAMAR, notif ke ORGANIZER
+            $recipient = $application->event->organizer;
+        } else {
+            // Kalau yang ngirim ORGANIZER, notif ke PELAMAR
+            $recipient = $application->user;
         }
 
-        return back()->with('success', 'Pesan terkirim.');
+        // Kirim Notif (Jika penerima valid)
+        if ($recipient) {
+            $recipient->notify(new NewMessageNotification($chat));
+        }
+
+        // -------------------------------------------
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Pesan terkirim',
+            'data' => [
+                'message' => $chat->message,
+                'time' => $chat->created_at->format('H:i'),
+                'is_me' => true,
+            ]
+        ]);
     }
 
     // 4. RIWAYAT LAMARAN (VOLUNTEER)
